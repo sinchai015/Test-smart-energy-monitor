@@ -1,0 +1,2434 @@
+<!DOCTYPE html>
+<html lang="th" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Smart Energy Monitor Dashboard</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkbg: '#0f172a',
+                        cardbg: '#1e293b'
+                    },
+                    fontFamily: {
+                        sans: ['Prompt', 'Sarabun', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+    <link
+        href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- Font Awesome -->
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    >
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            min-height: 100%;
+            background: #0f172a;
+            color: #f8fafc;
+            font-family: "Prompt", sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .glass-card {
+            background: rgba(30, 41, 59, 0.82);
+            border: 1px solid rgba(71, 85, 105, 0.55);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 15px 35px rgba(2, 6, 23, 0.18);
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 340px;
+        }
+
+        .sub-chart-container {
+            position: relative;
+            width: 100%;
+            height: 420px;
+        }
+
+        .status-pulse {
+            animation: statusPulse 1.5s infinite;
+        }
+
+        @keyframes statusPulse {
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.45;
+                transform: scale(1.25);
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 999px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #0ea5e9;
+        }
+
+        input[type="date"] {
+            color-scheme: dark;
+        }
+
+        @media (max-width: 640px) {
+            .chart-container {
+                height: 310px;
+            }
+
+            .sub-chart-container {
+                height: 450px;
+            }
+        }
+    </style>
+</head>
+
+<body class="min-h-screen">
+
+    <!-- Header -->
+    <header
+        class="sticky top-0 z-40 border-b border-slate-700/70 bg-slate-950/90 backdrop-blur-xl"
+    >
+        <div
+            class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3"
+        >
+            <div class="flex items-center gap-3 min-w-0">
+                <div
+                    class="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-500 to-emerald-400 text-slate-950 flex items-center justify-center text-xl shadow-lg shadow-sky-500/20 shrink-0"
+                >
+                    <i class="fa-solid fa-bolt"></i>
+                </div>
+
+                <div class="min-w-0">
+                    <h1
+                        class="text-base sm:text-xl font-bold bg-gradient-to-r from-sky-400 to-emerald-400 bg-clip-text text-transparent truncate"
+                    >
+                        Smart Energy Monitor
+                    </h1>
+
+                    <div
+                        class="flex items-center gap-2 text-[10px] sm:text-xs text-slate-400"
+                    >
+                        <span>ESP32 + PZEM-004T + CT 6 ช่อง</span>
+                        <span
+                            class="w-2 h-2 rounded-full bg-emerald-400 status-pulse"
+                        ></span>
+                        <span class="text-emerald-400 font-semibold">
+                            DEMO LIVE
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div
+                class="hidden lg:flex items-center gap-1 bg-slate-900 border border-slate-800 rounded-xl p-1"
+            >
+                <button
+                    id="nav-dashboard"
+                    onclick="switchTab('dashboard')"
+                    class="nav-button px-4 py-2 rounded-lg bg-sky-500 text-white text-xs font-semibold"
+                >
+                    <i class="fa-solid fa-chart-line mr-1"></i>
+                    ภาพรวม
+                </button>
+
+                <button
+                    id="nav-subcircuits"
+                    onclick="switchTab('subcircuits')"
+                    class="nav-button px-4 py-2 rounded-lg text-slate-400 text-xs font-semibold hover:bg-slate-800"
+                >
+                    <i class="fa-solid fa-diagram-project mr-1"></i>
+                    วงจรย่อย
+                </button>
+
+                <button
+                    id="nav-tariff"
+                    onclick="switchTab('tariff')"
+                    class="nav-button px-4 py-2 rounded-lg text-slate-400 text-xs font-semibold hover:bg-slate-800"
+                >
+                    <i class="fa-solid fa-calculator mr-1"></i>
+                    ค่าไฟ
+                </button>
+
+                <button
+                    id="nav-settings"
+                    onclick="switchTab('settings')"
+                    class="nav-button px-4 py-2 rounded-lg text-slate-400 text-xs font-semibold hover:bg-slate-800"
+                >
+                    <i class="fa-solid fa-gear mr-1"></i>
+                    ตั้งค่า
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile navigation -->
+        <div
+            class="lg:hidden grid grid-cols-4 border-t border-slate-800 bg-slate-950/95"
+        >
+            <button
+                id="mobile-nav-dashboard"
+                onclick="switchTab('dashboard')"
+                class="mobile-nav-button py-2 text-[10px] text-sky-400 font-semibold"
+            >
+                <i class="fa-solid fa-chart-line block mb-1"></i>
+                ภาพรวม
+            </button>
+
+            <button
+                id="mobile-nav-subcircuits"
+                onclick="switchTab('subcircuits')"
+                class="mobile-nav-button py-2 text-[10px] text-slate-400"
+            >
+                <i class="fa-solid fa-diagram-project block mb-1"></i>
+                วงจรย่อย
+            </button>
+
+            <button
+                id="mobile-nav-tariff"
+                onclick="switchTab('tariff')"
+                class="mobile-nav-button py-2 text-[10px] text-slate-400"
+            >
+                <i class="fa-solid fa-calculator block mb-1"></i>
+                ค่าไฟ
+            </button>
+
+            <button
+                id="mobile-nav-settings"
+                onclick="switchTab('settings')"
+                class="mobile-nav-button py-2 text-[10px] text-slate-400"
+            >
+                <i class="fa-solid fa-gear block mb-1"></i>
+                ตั้งค่า
+            </button>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-3 sm:px-6 py-5">
+
+        <!-- Dashboard -->
+        <section id="tab-dashboard" class="tab-content space-y-5">
+
+            <!-- Summary cards -->
+            <div
+                class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3"
+            >
+                <article
+                    class="glass-card rounded-2xl p-4 border-l-4 border-l-sky-500"
+                >
+                    <div
+                        class="flex justify-between text-xs text-slate-400"
+                    >
+                        <span>แรงดันไฟฟ้า</span>
+                        <i class="fa-solid fa-plug text-sky-400"></i>
+                    </div>
+
+                    <div class="mt-2">
+                        <span
+                            id="value-voltage"
+                            class="text-2xl font-bold font-mono"
+                        >
+                            231.5
+                        </span>
+                        <span class="text-xs text-slate-400">V</span>
+                    </div>
+
+                    <div class="text-[10px] text-emerald-400 mt-1">
+                        <i class="fa-solid fa-circle-check"></i>
+                        อยู่ในเกณฑ์ปกติ
+                    </div>
+                </article>
+
+                <article
+                    class="glass-card rounded-2xl p-4 border-l-4 border-l-amber-500"
+                >
+                    <div
+                        class="flex justify-between text-xs text-slate-400"
+                    >
+                        <span>กระแสไฟฟ้ารวม</span>
+                        <i
+                            class="fa-solid fa-bolt-lightning text-amber-400"
+                        ></i>
+                    </div>
+
+                    <div class="mt-2">
+                        <span
+                            id="value-current"
+                            class="text-2xl font-bold font-mono text-amber-300"
+                        >
+                            18.42
+                        </span>
+                        <span class="text-xs text-slate-400">A</span>
+                    </div>
+
+                    <div class="text-[10px] text-slate-400 mt-1">
+                        Main PZEM-004T
+                    </div>
+                </article>
+
+                <article
+                    class="glass-card rounded-2xl p-4 border-l-4 border-l-emerald-500"
+                >
+                    <div
+                        class="flex justify-between text-xs text-slate-400"
+                    >
+                        <span>กำลังไฟฟ้ารวม</span>
+                        <i
+                            class="fa-solid fa-gauge-high text-emerald-400"
+                        ></i>
+                    </div>
+
+                    <div class="mt-2">
+                        <span
+                            id="value-power"
+                            class="text-2xl font-bold font-mono text-emerald-400"
+                        >
+                            4,264
+                        </span>
+                        <span class="text-xs text-slate-400">W</span>
+                    </div>
+
+                    <div
+                        id="value-power-kw"
+                        class="text-[10px] text-emerald-400 mt-1"
+                    >
+                        4.26 kW
+                    </div>
+                </article>
+
+                <article
+                    class="glass-card rounded-2xl p-4 border-l-4 border-l-indigo-500"
+                >
+                    <div
+                        class="flex justify-between text-xs text-slate-400"
+                    >
+                        <span>Power Factor</span>
+                        <i
+                            class="fa-solid fa-wave-square text-indigo-400"
+                        ></i>
+                    </div>
+
+                    <div class="mt-2">
+                        <span
+                            id="value-pf"
+                            class="text-2xl font-bold font-mono text-indigo-300"
+                        >
+                            0.98
+                        </span>
+                        <span class="text-xs text-slate-400">PF</span>
+                    </div>
+
+                    <div
+                        id="value-frequency"
+                        class="text-[10px] text-slate-400 mt-1"
+                    >
+                        50.0 Hz
+                    </div>
+                </article>
+
+                <article
+                    class="glass-card rounded-2xl p-4 border-l-4 border-l-purple-500"
+                >
+                    <div
+                        class="flex justify-between text-xs text-slate-400"
+                    >
+                        <span>พลังงานเดือนนี้</span>
+                        <i
+                            class="fa-solid fa-charging-station text-purple-400"
+                        ></i>
+                    </div>
+
+                    <div class="mt-2">
+                        <span
+                            id="value-energy"
+                            class="text-2xl font-bold font-mono text-purple-300"
+                        >
+                            284.50
+                        </span>
+                        <span class="text-xs text-slate-400">kWh</span>
+                    </div>
+
+                    <div class="text-[10px] text-slate-400 mt-1">
+                        หน่วยสะสม
+                    </div>
+                </article>
+
+                <article
+                    class="glass-card rounded-2xl p-4 border-l-4 border-l-rose-500"
+                >
+                    <div
+                        class="flex justify-between text-xs text-slate-400"
+                    >
+                        <span>ประมาณการค่าไฟ</span>
+                        <i
+                            class="fa-solid fa-baht-sign text-rose-400"
+                        ></i>
+                    </div>
+
+                    <div class="mt-2">
+                        <span
+                            id="value-cost"
+                            class="text-2xl font-bold font-mono text-rose-400"
+                        >
+                            1,238.65
+                        </span>
+                        <span class="text-xs text-slate-400">บาท</span>
+                    </div>
+
+                    <div class="text-[10px] text-slate-400 mt-1">
+                        รวม FT และ VAT
+                    </div>
+                </article>
+            </div>
+
+            <div class="grid grid-cols-1 xl:grid-cols-3 gap-5">
+
+                <!-- Main Power Trend -->
+                <article
+                    class="glass-card rounded-2xl p-4 sm:p-5 xl:col-span-2"
+                >
+                    <div
+                        class="flex flex-col lg:flex-row lg:items-start justify-between gap-3 pb-4 border-b border-slate-800"
+                    >
+                        <div>
+                            <h2
+                                class="text-base sm:text-lg font-bold text-slate-200"
+                            >
+                                <i
+                                    class="fa-solid fa-chart-area text-sky-400 mr-2"
+                                ></i>
+                                กราฟกำลังไฟฟ้า (Power Trend - Watt)
+                            </h2>
+
+                            <p
+                                id="main-chart-description"
+                                class="text-[11px] text-slate-400 mt-1"
+                            >
+                                แนวโน้มกำลังไฟฟ้ารวม Main PZEM-004T วันนี้
+                            </p>
+                        </div>
+
+                        <div
+                            class="flex flex-col sm:flex-row items-stretch gap-2"
+                        >
+                            <select
+                                id="chart-time-range"
+                                onchange="handleMainChartRangeChange(this.value)"
+                                class="min-w-[190px] bg-slate-900 text-xs text-slate-200 border border-sky-500 rounded-xl px-3 py-2.5 focus:outline-none cursor-pointer"
+                            >
+                                <option value="realtime">
+                                    Real-time (30 วินาที)
+                                </option>
+
+                                <option value="today" selected>
+                                    วันนี้ (24 ชม.)
+                                </option>
+
+                                <option value="week">
+                                    ย้อนหลัง 1 สัปดาห์
+                                </option>
+
+                                <option value="month">
+                                    ย้อนหลัง 1 เดือน
+                                </option>
+
+                                <option value="custom">
+                                    เลือกวันที่ย้อนหลัง
+                                </option>
+                            </select>
+
+                            <input
+                                type="date"
+                                id="chart-history-date"
+                                onchange="updateMainChart()"
+                                class="hidden bg-slate-900 text-xs text-slate-200 border border-emerald-500 rounded-xl px-3 py-2.5 focus:outline-none cursor-pointer"
+                            >
+                        </div>
+                    </div>
+
+                    <div
+                        id="history-date-help"
+                        class="hidden mt-3 text-[10px] text-slate-400"
+                    >
+                        <i
+                            class="fa-solid fa-circle-info text-sky-400 mr-1"
+                        ></i>
+                        เลือกดูข้อมูลย้อนหลังได้ไม่เกิน 30 วัน
+                    </div>
+
+                    <div class="chart-container mt-4">
+                        <canvas id="mainPowerChart"></canvas>
+                    </div>
+                </article>
+
+                <!-- CT summary -->
+                <article class="glass-card rounded-2xl p-4 sm:p-5">
+                    <div
+                        class="flex items-center justify-between pb-3 border-b border-slate-800"
+                    >
+                        <div>
+                            <h2 class="text-sm font-bold text-slate-200">
+                                <i
+                                    class="fa-solid fa-sitemap text-amber-400 mr-1"
+                                ></i>
+                                โหลดวงจรย่อย CT
+                            </h2>
+
+                            <p class="text-[10px] text-slate-400">
+                                แสดงค่าปัจจุบัน 6 ช่อง
+                            </p>
+                        </div>
+
+                        <span
+                            class="text-[10px] text-slate-300 bg-slate-900 border border-slate-700 rounded-full px-2 py-1"
+                        >
+                            Max 30A
+                        </span>
+                    </div>
+
+                    <div
+                        id="ct-summary-list"
+                        class="space-y-2 mt-3"
+                    ></div>
+                </article>
+            </div>
+
+            <!-- Wiring -->
+            <article class="glass-card rounded-2xl p-4 sm:p-5">
+                <div class="mb-3">
+                    <h2 class="text-sm font-semibold text-sky-400">
+                        <i class="fa-solid fa-microchip mr-1"></i>
+                        การเชื่อมต่อ CT Sensor กับ ESP32
+                    </h2>
+
+                    <p class="text-[10px] text-slate-400 mt-1">
+                        ใช้ขา ADC1 เพื่อให้สามารถใช้งานร่วมกับ Wi-Fi ได้
+                    </p>
+                </div>
+
+                <div
+                    id="gpio-list"
+                    class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2"
+                ></div>
+            </article>
+        </section>
+
+        <!-- Subcircuits -->
+        <section
+            id="tab-subcircuits"
+            class="tab-content hidden space-y-5"
+        >
+            <article class="glass-card rounded-2xl p-4 sm:p-5">
+                <div
+                    class="flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                >
+                    <div>
+                        <h2 class="text-lg font-bold">
+                            <i
+                                class="fa-solid fa-diagram-project text-sky-400 mr-2"
+                            ></i>
+                            รายละเอียดวงจรย่อย CT 6 ช่อง
+                        </h2>
+
+                        <p class="text-xs text-slate-400 mt-1">
+                            กำลังไฟฟ้า กระแสไฟฟ้า และสัดส่วนโหลดแต่ละวงจร
+                        </p>
+                    </div>
+
+                    <div class="sm:text-right">
+                        <div class="text-[10px] text-slate-400">
+                            กำลังไฟฟ้ารวมวงจรย่อย
+                        </div>
+
+                        <div
+                            id="subcircuit-total"
+                            class="text-xl font-bold font-mono text-sky-400"
+                        >
+                            4,262 W
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <div
+                id="subcircuit-card-grid"
+                class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4"
+            ></div>
+
+            <article class="glass-card rounded-2xl p-4 sm:p-5">
+                <div
+                    class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pb-4 border-b border-slate-800"
+                >
+                    <div>
+                        <h2 class="text-base font-bold">
+                            <i
+                                class="fa-solid fa-chart-line text-teal-400 mr-2"
+                            ></i>
+                            วิเคราะห์กำลังไฟฟ้าแต่ละวงจรย่อย (Watt)
+                        </h2>
+
+                        <p
+                            id="sub-chart-description"
+                            class="text-[11px] text-slate-400 mt-1"
+                        >
+                            เปรียบเทียบ CT1–CT6 แบบกราฟเส้นซ้อนในช่วง 1 วัน
+                        </p>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <label
+                            for="sub-chart-range"
+                            class="text-xs text-slate-300"
+                        >
+                            <i
+                                class="fa-solid fa-calendar-days text-sky-400"
+                            ></i>
+                            ช่วงเวลา:
+                        </label>
+
+                        <select
+                            id="sub-chart-range"
+                            onchange="updateSubcircuitChart(this.value)"
+                            class="bg-slate-900 text-xs text-slate-200 border border-slate-700 rounded-xl px-3 py-2 focus:outline-none focus:border-sky-500"
+                        >
+                            <option value="day">1 วัน</option>
+                            <option value="week">7 วัน</option>
+                            <option value="month">1 เดือน</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="sub-chart-container mt-4">
+                    <canvas id="subcircuitChart"></canvas>
+                </div>
+            </article>
+        </section>
+
+        <!-- Tariff -->
+        <section
+            id="tab-tariff"
+            class="tab-content hidden space-y-5"
+        >
+            <article class="glass-card rounded-2xl p-4 sm:p-5">
+                <h2 class="text-lg font-bold">
+                    <i
+                        class="fa-solid fa-calculator text-emerald-400 mr-2"
+                    ></i>
+                    ประมาณการค่าไฟฟ้า
+                </h2>
+
+                <p class="text-xs text-slate-400 mt-1">
+                    ตัวเลขตัวอย่างสำหรับนำเสนอโครงการ สามารถแก้อัตราได้ในหน้าตั้งค่า
+                </p>
+            </article>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                <article class="glass-card rounded-2xl p-4 sm:p-5">
+                    <h3
+                        class="font-semibold pb-3 border-b border-slate-800"
+                    >
+                        รายละเอียดการคำนวณ
+                    </h3>
+
+                    <div class="space-y-3 mt-4">
+                        <div
+                            class="flex justify-between p-3 bg-slate-900/70 border border-slate-800 rounded-xl"
+                        >
+                            <div>
+                                <div class="text-sm">ขั้นที่ 1: 0–200 หน่วย</div>
+                                <div
+                                    id="tier1-detail"
+                                    class="text-[10px] text-slate-400"
+                                ></div>
+                            </div>
+
+                            <div
+                                id="tier1-cost"
+                                class="font-mono text-emerald-400"
+                            ></div>
+                        </div>
+
+                        <div
+                            class="flex justify-between p-3 bg-slate-900/70 border border-slate-800 rounded-xl"
+                        >
+                            <div>
+                                <div class="text-sm">
+                                    ขั้นที่ 2: 201–400 หน่วย
+                                </div>
+
+                                <div
+                                    id="tier2-detail"
+                                    class="text-[10px] text-slate-400"
+                                ></div>
+                            </div>
+
+                            <div
+                                id="tier2-cost"
+                                class="font-mono text-emerald-400"
+                            ></div>
+                        </div>
+
+                        <div
+                            class="flex justify-between p-3 bg-slate-900/70 border border-slate-800 rounded-xl"
+                        >
+                            <div>
+                                <div class="text-sm">
+                                    ขั้นที่ 3: มากกว่า 400 หน่วย
+                                </div>
+
+                                <div
+                                    id="tier3-detail"
+                                    class="text-[10px] text-slate-400"
+                                ></div>
+                            </div>
+
+                            <div
+                                id="tier3-cost"
+                                class="font-mono text-emerald-400"
+                            ></div>
+                        </div>
+
+                        <div
+                            class="flex justify-between p-4 bg-gradient-to-r from-rose-950/60 to-slate-900 border border-rose-500/30 rounded-xl"
+                        >
+                            <div>
+                                <div class="text-xs text-rose-300">
+                                    ค่าไฟรวมโดยประมาณ
+                                </div>
+
+                                <div class="text-[10px] text-slate-400">
+                                    รวมค่าบริการ FT และ VAT 7%
+                                </div>
+                            </div>
+
+                            <div
+                                id="grand-total"
+                                class="text-xl font-bold font-mono text-rose-400"
+                            ></div>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="glass-card rounded-2xl p-4 sm:p-5">
+                    <h3 class="font-semibold">
+                        สัดส่วนกำลังไฟฟ้าของแต่ละ CT
+                    </h3>
+
+                    <div class="chart-container mt-3">
+                        <canvas id="distributionChart"></canvas>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- Settings -->
+        <section
+            id="tab-settings"
+            class="tab-content hidden space-y-5"
+        >
+            <article class="glass-card rounded-2xl p-4 sm:p-5">
+                <h2 class="text-lg font-bold">
+                    <i class="fa-solid fa-gear text-amber-400 mr-2"></i>
+                    ตั้งค่าระบบจำลอง
+                </h2>
+
+                <p class="text-xs text-slate-400 mt-1">
+                    เปลี่ยนชื่อวงจรและอัตราค่าไฟสำหรับใช้ในการนำเสนอ
+                </p>
+            </article>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                <article class="glass-card rounded-2xl p-4 sm:p-5">
+                    <h3
+                        class="font-semibold text-purple-400 pb-3 border-b border-slate-800"
+                    >
+                        ชื่อวงจรย่อย
+                    </h3>
+
+                    <div
+                        id="ct-name-settings"
+                        class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4"
+                    ></div>
+                </article>
+
+                <article class="glass-card rounded-2xl p-4 sm:p-5">
+                    <h3
+                        class="font-semibold text-rose-400 pb-3 border-b border-slate-800"
+                    >
+                        อัตราค่าไฟ
+                    </h3>
+
+                    <div class="space-y-3 mt-4 text-sm">
+                        <label class="flex items-center justify-between gap-3">
+                            <span>ขั้นที่ 1</span>
+
+                            <input
+                                id="rate-tier1"
+                                type="number"
+                                step="0.0001"
+                                value="3.2484"
+                                class="w-36 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-right font-mono"
+                            >
+                        </label>
+
+                        <label class="flex items-center justify-between gap-3">
+                            <span>ขั้นที่ 2</span>
+
+                            <input
+                                id="rate-tier2"
+                                type="number"
+                                step="0.0001"
+                                value="4.2218"
+                                class="w-36 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-right font-mono"
+                            >
+                        </label>
+
+                        <label class="flex items-center justify-between gap-3">
+                            <span>ขั้นที่ 3</span>
+
+                            <input
+                                id="rate-tier3"
+                                type="number"
+                                step="0.0001"
+                                value="4.4217"
+                                class="w-36 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-right font-mono"
+                            >
+                        </label>
+                    </div>
+                </article>
+            </div>
+
+            <button
+                onclick="saveSettings()"
+                class="w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-bold text-sm"
+            >
+                <i class="fa-solid fa-floppy-disk mr-1"></i>
+                บันทึกการตั้งค่า
+            </button>
+        </section>
+    </main>
+
+    <div
+        id="toast-container"
+        class="fixed right-4 bottom-4 z-50 space-y-2"
+    ></div>
+
+    <footer
+        class="border-t border-slate-800 py-4 text-center text-[10px] sm:text-xs text-slate-500"
+    >
+        Smart Energy Monitor Demo | ESP32 + PZEM-004T + CT Sensor 6 ช่อง
+    </footer>
+
+    <script>
+        const chartColors = [
+            '#0ea5e9',
+            '#38bdf8',
+            '#2dd4bf',
+            '#f59e0b',
+            '#fbbf24',
+            '#f43f5e'
+        ];
+
+        const systemConfig = {
+            rates: {
+                tier1: 3.2484,
+                tier2: 4.2218,
+                tier3: 4.4217
+            },
+            ctNames: [
+                'ปลั๊ก ชั้น 1',
+                'ปลั๊ก ชั้น 2',
+                'แสงสว่างรวม',
+                'แอร์ 1',
+                'แอร์ 2',
+                'เครื่องทำน้ำอุ่น 1'
+            ]
+        };
+
+        const energyData = {
+            voltage: 231.5,
+            powerFactor: 0.98,
+            frequency: 50.0,
+            energyKwh: 284.50,
+            ct: [
+                { id: 1, gpio: 36, current: 2.45, power: 566 },
+                { id: 2, gpio: 39, current: 1.80, power: 416 },
+                { id: 3, gpio: 34, current: 0.95, power: 220 },
+                { id: 4, gpio: 35, current: 5.60, power: 1296 },
+                { id: 5, gpio: 32, current: 4.20, power: 972 },
+                { id: 6, gpio: 33, current: 3.42, power: 792 }
+            ]
+        };
+
+        let mainPowerChart = null;
+        let subcircuitChart = null;
+        let distributionChart = null;
+
+        let mainChartRange = 'today';
+        let subChartRange = 'day';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setHistoryDateLimits();
+            renderSettings();
+            renderDashboard();
+            initializeCharts();
+            updateMainChart();
+            updateSubcircuitChart('day');
+            startSimulation();
+        });
+
+        function getLocalDateString(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+
+            return `${year}-${month}-${day}`;
+        }
+
+        function createDateFromInput(value) {
+            const parts = value.split('-').map(Number);
+
+            return new Date(
+                parts[0],
+                parts[1] - 1,
+                parts[2],
+                0,
+                0,
+                0,
+                0
+            );
+        }
+
+        function setHistoryDateLimits() {
+            const dateInput =
+                document.getElementById('chart-history-date');
+
+            if (!dateInput) {
+                return;
+            }
+
+            const today = new Date();
+            const earliestDate = new Date(today);
+
+            earliestDate.setDate(today.getDate() - 29);
+
+            dateInput.min = getLocalDateString(earliestDate);
+            dateInput.max = getLocalDateString(today);
+            dateInput.value = getLocalDateString(today);
+        }
+
+        function seededRandom(seed) {
+            const value =
+                Math.sin(seed * 12.9898 + 78.233) * 43758.5453;
+
+            return value - Math.floor(value);
+        }
+
+        function getDateSeed(date) {
+            return (
+                date.getFullYear() * 10000 +
+                (date.getMonth() + 1) * 100 +
+                date.getDate()
+            );
+        }
+
+        function formatThaiShortDate(date) {
+            return date.toLocaleDateString('th-TH', {
+                day: '2-digit',
+                month: 'short'
+            });
+        }
+
+        function formatThaiFullDate(date) {
+            return date.toLocaleDateString('th-TH', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+            });
+        }
+
+        function createHourlyPower(hour, dateSeed) {
+            const nightLoad = 760;
+
+            const morningPeak =
+                Math.exp(
+                    -Math.pow((hour - 8.5) / 2.8, 2)
+                ) * 1450;
+
+            const afternoonPeak =
+                Math.exp(
+                    -Math.pow((hour - 14) / 4.2, 2)
+                ) * 2250;
+
+            const eveningPeak =
+                Math.exp(
+                    -Math.pow((hour - 19) / 2.8, 2)
+                ) * 2800;
+
+            const randomVariation =
+                (seededRandom(dateSeed + hour * 31) - 0.5) * 300;
+
+            return Math.max(
+                500,
+                Math.round(
+                    nightLoad +
+                    morningPeak +
+                    afternoonPeak +
+                    eveningPeak +
+                    randomVariation
+                )
+            );
+        }
+
+        function createDailyAverage(date) {
+            const seed = getDateSeed(date);
+
+            const weeklyPattern =
+                2800 +
+                Math.sin(seed * 0.07) * 520 +
+                Math.cos(seed * 0.031) * 280;
+
+            const variation =
+                (seededRandom(seed) - 0.5) * 520;
+
+            return Math.max(
+                1200,
+                Math.round(weeklyPattern + variation)
+            );
+        }
+
+        function getTotalPower() {
+            return energyData.ct.reduce(
+                (sum, item) => sum + item.power,
+                0
+            );
+        }
+
+        function getTotalCurrent() {
+            return energyData.ct.reduce(
+                (sum, item) => sum + item.current,
+                0
+            );
+        }
+
+        function renderDashboard() {
+            const totalPower = getTotalPower();
+            const totalCurrent = getTotalCurrent();
+            const estimatedBill = calculateElectricityBill();
+
+            setText('value-voltage', energyData.voltage.toFixed(1));
+            setText('value-current', totalCurrent.toFixed(2));
+
+            setText(
+                'value-power',
+                totalPower.toLocaleString('th-TH')
+            );
+
+            setText(
+                'value-power-kw',
+                `${(totalPower / 1000).toFixed(2)} kW`
+            );
+
+            setText(
+                'value-pf',
+                energyData.powerFactor.toFixed(2)
+            );
+
+            setText(
+                'value-frequency',
+                `${energyData.frequency.toFixed(1)} Hz`
+            );
+
+            setText(
+                'value-energy',
+                energyData.energyKwh.toFixed(2)
+            );
+
+            setText(
+                'value-cost',
+                estimatedBill.total.toLocaleString('th-TH', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                })
+            );
+
+            setText(
+                'subcircuit-total',
+                `${totalPower.toLocaleString('th-TH')} W`
+            );
+
+            renderCtSummary();
+            renderGpioCards();
+            renderSubcircuitCards();
+            renderTariff();
+            updateDistributionChart();
+        }
+
+        function renderCtSummary() {
+            const container =
+                document.getElementById('ct-summary-list');
+
+            if (!container) {
+                return;
+            }
+
+            container.innerHTML = energyData.ct.map(
+                (item, index) => `
+                    <div
+                        class="flex items-center justify-between gap-3 bg-slate-900/70 border border-slate-800 rounded-xl p-2.5"
+                    >
+                        <div class="flex items-center gap-2 min-w-0">
+                            <span
+                                class="w-8 h-8 rounded-lg flex items-center justify-center text-[10px] font-bold shrink-0"
+                                style="
+                                    color: ${chartColors[index]};
+                                    background: ${chartColors[index]}18;
+                                    border: 1px solid ${chartColors[index]}55;
+                                "
+                            >
+                                CT${item.id}
+                            </span>
+
+                            <div class="min-w-0">
+                                <div
+                                    class="text-xs font-medium text-slate-200 truncate"
+                                >
+                                    ${systemConfig.ctNames[index]}
+                                </div>
+
+                                <div class="text-[9px] text-slate-500">
+                                    GPIO ${item.gpio}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-right shrink-0">
+                            <div
+                                class="text-xs font-bold font-mono text-emerald-400"
+                            >
+                                ${item.current.toFixed(2)} A
+                            </div>
+
+                            <div class="text-[9px] text-slate-400">
+                                ${item.power.toLocaleString('th-TH')} W
+                            </div>
+                        </div>
+                    </div>
+                `
+            ).join('');
+        }
+
+        function renderGpioCards() {
+            const container =
+                document.getElementById('gpio-list');
+
+            if (!container) {
+                return;
+            }
+
+            container.innerHTML = energyData.ct.map(
+                (item, index) => `
+                    <div
+                        class="bg-slate-900/70 border border-slate-800 rounded-xl p-3 text-center"
+                    >
+                        <div class="text-[9px] text-slate-500">
+                            CT${item.id} / GPIO ${item.gpio}
+                        </div>
+
+                        <div
+                            class="text-xs font-semibold text-slate-200 truncate mt-1"
+                        >
+                            ${systemConfig.ctNames[index]}
+                        </div>
+
+                        <div
+                            class="text-xs font-mono text-emerald-400 mt-1"
+                        >
+                            ${item.current.toFixed(2)} A
+                        </div>
+                    </div>
+                `
+            ).join('');
+        }
+
+        function renderSubcircuitCards() {
+            const container =
+                document.getElementById('subcircuit-card-grid');
+
+            if (!container) {
+                return;
+            }
+
+            const totalPower = getTotalPower();
+
+            container.innerHTML = energyData.ct.map(
+                (item, index) => {
+                    const percentage =
+                        totalPower > 0
+                            ? item.power / totalPower * 100
+                            : 0;
+
+                    return `
+                        <article
+                            class="glass-card rounded-2xl p-4 border-l-4"
+                            style="border-left-color:${chartColors[index]}"
+                        >
+                            <div
+                                class="flex items-start justify-between gap-3"
+                            >
+                                <div class="min-w-0">
+                                    <div class="text-[9px] text-slate-500">
+                                        CT${item.id} / GPIO ${item.gpio}
+                                    </div>
+
+                                    <h3
+                                        class="font-semibold text-slate-100 truncate"
+                                    >
+                                        ${systemConfig.ctNames[index]}
+                                    </h3>
+                                </div>
+
+                                <span
+                                    class="text-[9px] bg-slate-900 border border-slate-700 rounded-full px-2 py-1"
+                                >
+                                    Max 30A
+                                </span>
+                            </div>
+
+                            <div
+                                class="grid grid-cols-2 gap-3 mt-4 pt-3 border-t border-slate-800"
+                            >
+                                <div>
+                                    <div class="text-[9px] text-slate-500">
+                                        กระแสไฟฟ้า
+                                    </div>
+
+                                    <div
+                                        class="text-xl font-bold font-mono text-emerald-400"
+                                    >
+                                        ${item.current.toFixed(2)}
+                                        <span class="text-xs">A</span>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="text-[9px] text-slate-500">
+                                        กำลังไฟฟ้า
+                                    </div>
+
+                                    <div
+                                        class="text-xl font-bold font-mono text-sky-400"
+                                    >
+                                        ${item.power.toLocaleString('th-TH')}
+                                        <span class="text-xs">W</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-3">
+                                <div
+                                    class="flex justify-between text-[9px] text-slate-400 mb-1"
+                                >
+                                    <span>สัดส่วนโหลด</span>
+                                    <span>${percentage.toFixed(1)}%</span>
+                                </div>
+
+                                <div
+                                    class="h-1.5 bg-slate-900 rounded-full overflow-hidden"
+                                >
+                                    <div
+                                        class="h-full rounded-full"
+                                        style="
+                                            width:${percentage}%;
+                                            background:${chartColors[index]};
+                                        "
+                                    ></div>
+                                </div>
+                            </div>
+                        </article>
+                    `;
+                }
+            ).join('');
+        }
+
+        function initializeCharts() {
+            initializeMainPowerChart();
+            initializeDistributionChart();
+        }
+
+        function initializeMainPowerChart() {
+            const canvas =
+                document.getElementById('mainPowerChart');
+
+            if (!canvas) {
+                return;
+            }
+
+            mainPowerChart = new Chart(
+                canvas.getContext('2d'),
+                {
+                    type: 'line',
+                    data: {
+                        labels: [],
+                        datasets: [
+                            {
+                                label: 'กำลังไฟฟ้ารวม Main (W)',
+                                data: [],
+                                borderColor: '#0ea5e9',
+                                backgroundColor: 'rgba(14,165,233,0.14)',
+                                borderWidth: 2.5,
+                                pointRadius: 3,
+                                pointHoverRadius: 6,
+                                pointBackgroundColor: '#0ea5e9',
+                                pointBorderColor: '#1e293b',
+                                pointBorderWidth: 1,
+                                fill: true,
+                                tension: 0.35
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: {
+                            mode: 'index',
+                            intersect: false
+                        },
+                        animation: {
+                            duration: 450
+                        },
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                                labels: {
+                                    color: '#94a3b8',
+                                    usePointStyle: true,
+                                    font: {
+                                        family: 'Prompt',
+                                        size: 10
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                backgroundColor:
+                                    'rgba(15,23,42,0.97)',
+                                borderColor: '#475569',
+                                borderWidth: 1,
+                                titleColor: '#f8fafc',
+                                bodyColor: '#cbd5e1',
+                                padding: 12,
+                                callbacks: {
+                                    label(context) {
+                                        return (
+                                            `${context.dataset.label}: ` +
+                                            `${Number(context.parsed.y)
+                                                .toLocaleString('th-TH')} W`
+                                        );
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                grid: {
+                                    color:
+                                        'rgba(51,65,85,0.30)'
+                                },
+                                ticks: {
+                                    color: '#94a3b8',
+                                    maxRotation: 0,
+                                    autoSkip: true,
+                                    font: {
+                                        family: 'Prompt',
+                                        size: 10
+                                    }
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'เวลา',
+                                    color: '#94a3b8',
+                                    font: {
+                                        family: 'Prompt',
+                                        size: 11
+                                    }
+                                }
+                            },
+                            y: {
+                                beginAtZero: false,
+                                suggestedMin: 0,
+                                grid: {
+                                    color:
+                                        'rgba(51,65,85,0.30)'
+                                },
+                                ticks: {
+                                    color: '#94a3b8',
+                                    callback(value) {
+                                        return Number(value)
+                                            .toLocaleString('th-TH');
+                                    },
+                                    font: {
+                                        family: 'Prompt',
+                                        size: 10
+                                    }
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'กำลังไฟฟ้า (Watt)',
+                                    color: '#94a3b8',
+                                    font: {
+                                        family: 'Prompt',
+                                        size: 11
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            );
+        }
+
+        function handleMainChartRangeChange(range) {
+            mainChartRange = range;
+
+            const dateInput =
+                document.getElementById('chart-history-date');
+
+            const dateHelp =
+                document.getElementById('history-date-help');
+
+            if (range === 'custom') {
+                dateInput?.classList.remove('hidden');
+                dateHelp?.classList.remove('hidden');
+            } else {
+                dateInput?.classList.add('hidden');
+                dateHelp?.classList.add('hidden');
+            }
+
+            updateMainChart();
+        }
+
+        function updateMainChart() {
+            if (!mainPowerChart) {
+                return;
+            }
+
+            mainChartRange =
+                document.getElementById('chart-time-range')?.value ||
+                'today';
+
+            const labels = [];
+            const values = [];
+
+            let datasetLabel = 'กำลังไฟฟ้ารวม Main (W)';
+            let description =
+                'แนวโน้มกำลังไฟฟ้ารวม Main PZEM-004T';
+            let xAxisTitle = 'เวลา';
+            let maxTicksLimit = 12;
+
+            if (mainChartRange === 'realtime') {
+                const now = new Date();
+                const totalPower = getTotalPower();
+
+                for (let index = 10; index >= 0; index--) {
+                    const time = new Date(
+                        now.getTime() - index * 3000
+                    );
+
+                    labels.push(
+                        time.toLocaleTimeString('th-TH', {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            second: '2-digit'
+                        })
+                    );
+
+                    values.push(
+                        Math.max(
+                            0,
+                            Math.round(
+                                totalPower +
+                                (seededRandom(
+                                    now.getTime() / 1000 + index
+                                ) - 0.5) * 260
+                            )
+                        )
+                    );
+                }
+
+                datasetLabel =
+                    'กำลังไฟฟ้ารวม Main แบบ Real-time (W)';
+
+                description =
+                    'ข้อมูลจำลองแบบ Real-time ช่วง 30 วินาทีล่าสุด';
+
+                xAxisTitle = 'เวลา';
+                maxTicksLimit = 11;
+            }
+
+            if (mainChartRange === 'today') {
+                const today = new Date();
+                const dateSeed = getDateSeed(today);
+
+                for (let hour = 0; hour < 24; hour += 3) {
+                    labels.push(
+                        `${String(hour).padStart(2, '0')}:00`
+                    );
+
+                    values.push(
+                        createHourlyPower(hour, dateSeed)
+                    );
+                }
+
+                datasetLabel =
+                    'กำลังไฟฟ้ารวม Main วันนี้ (W)';
+
+                description =
+                    `ข้อมูลกำลังไฟฟ้าจำลองวันนี้ ` +
+                    `${formatThaiFullDate(today)}`;
+
+                xAxisTitle = 'เวลา';
+                maxTicksLimit = 8;
+            }
+
+            if (mainChartRange === 'week') {
+                const today = new Date();
+
+                for (let index = 6; index >= 0; index--) {
+                    const date = new Date(today);
+
+                    date.setDate(today.getDate() - index);
+
+                    labels.push(formatThaiShortDate(date));
+                    values.push(createDailyAverage(date));
+                }
+
+                datasetLabel =
+                    'กำลังไฟฟ้าเฉลี่ยย้อนหลัง 1 สัปดาห์ (W)';
+
+                description =
+                    'ข้อมูลกำลังไฟฟ้าเฉลี่ยรายวันย้อนหลัง 7 วัน';
+
+                xAxisTitle = 'วันที่';
+                maxTicksLimit = 7;
+            }
+
+            if (mainChartRange === 'month') {
+                const today = new Date();
+
+                for (let index = 29; index >= 0; index--) {
+                    const date = new Date(today);
+
+                    date.setDate(today.getDate() - index);
+
+                    labels.push(formatThaiShortDate(date));
+                    values.push(createDailyAverage(date));
+                }
+
+                datasetLabel =
+                    'กำลังไฟฟ้าเฉลี่ยย้อนหลัง 1 เดือน (W)';
+
+                description =
+                    'ข้อมูลกำลังไฟฟ้าเฉลี่ยรายวันย้อนหลัง 30 วัน';
+
+                xAxisTitle = 'วันที่';
+                maxTicksLimit = 10;
+            }
+
+            if (mainChartRange === 'custom') {
+                const input =
+                    document.getElementById(
+                        'chart-history-date'
+                    );
+
+                if (!input?.value) {
+                    return;
+                }
+
+                const selectedDate =
+                    createDateFromInput(input.value);
+
+                const dateSeed =
+                    getDateSeed(selectedDate);
+
+                for (let hour = 0; hour < 24; hour++) {
+                    labels.push(
+                        `${String(hour).padStart(2, '0')}:00`
+                    );
+
+                    values.push(
+                        createHourlyPower(hour, dateSeed)
+                    );
+                }
+
+                datasetLabel =
+                    `กำลังไฟฟ้าวันที่ ` +
+                    `${formatThaiFullDate(selectedDate)} (W)`;
+
+                description =
+                    `ข้อมูลจำลองย้อนหลังวันที่ ` +
+                    `${formatThaiFullDate(selectedDate)}`;
+
+                xAxisTitle = 'เวลา';
+                maxTicksLimit = 12;
+            }
+
+            mainPowerChart.data.labels = labels;
+
+            mainPowerChart.data.datasets[0].label =
+                datasetLabel;
+
+            mainPowerChart.data.datasets[0].data =
+                values;
+
+            mainPowerChart.options.scales.x.title.text =
+                xAxisTitle;
+
+            mainPowerChart.options.scales.x.ticks.maxTicksLimit =
+                maxTicksLimit;
+
+            mainPowerChart.update();
+
+            setText(
+                'main-chart-description',
+                description
+            );
+        }
+
+        function createSubChartLabels(range) {
+            const labels = [];
+            const now = new Date();
+
+            if (range === 'day') {
+                for (let hour = 0; hour < 24; hour++) {
+                    labels.push(
+                        `${String(hour).padStart(2, '0')}:00`
+                    );
+                }
+
+                return labels;
+            }
+
+            if (range === 'week') {
+                for (let index = 27; index >= 0; index--) {
+                    const date = new Date(now);
+
+                    date.setHours(
+                        now.getHours() - index * 6
+                    );
+
+                    labels.push(
+                        `${formatThaiShortDate(date)} ` +
+                        `${String(date.getHours())
+                            .padStart(2, '0')}:00`
+                    );
+                }
+
+                return labels;
+            }
+
+            for (let index = 29; index >= 0; index--) {
+                const date = new Date(now);
+
+                date.setDate(now.getDate() - index);
+
+                labels.push(formatThaiShortDate(date));
+            }
+
+            return labels;
+        }
+
+        function createSubcircuitMockData(
+            item,
+            ctIndex,
+            pointCount,
+            range
+        ) {
+            const values = [];
+
+            for (
+                let index = 0;
+                index < pointCount;
+                index++
+            ) {
+                let loadFactor = 0.65;
+
+                if (range === 'day') {
+                    const hour = index;
+
+                    const morningPeak =
+                        Math.exp(
+                            -Math.pow((hour - 8) / 3, 2)
+                        ) * 0.30;
+
+                    const afternoonPeak =
+                        Math.exp(
+                            -Math.pow((hour - 14) / 4, 2)
+                        ) * 0.42;
+
+                    const eveningPeak =
+                        Math.exp(
+                            -Math.pow((hour - 20) / 3, 2)
+                        ) * 0.55;
+
+                    loadFactor =
+                        0.25 +
+                        morningPeak +
+                        afternoonPeak +
+                        eveningPeak;
+                }
+
+                if (range === 'week') {
+                    loadFactor =
+                        0.62 +
+                        Math.sin(index * 0.55 + ctIndex) *
+                            0.19;
+                }
+
+                if (range === 'month') {
+                    loadFactor =
+                        0.66 +
+                        Math.sin(index * 0.40 + ctIndex) *
+                            0.17 +
+                        Math.cos(index * 0.16) * 0.08;
+                }
+
+                const variation =
+                    0.90 +
+                    seededRandom(
+                        index +
+                        ctIndex * 100 +
+                        pointCount
+                    ) * 0.20;
+
+                values.push(
+                    Math.max(
+                        0,
+                        Math.round(
+                            item.power *
+                            loadFactor *
+                            variation
+                        )
+                    )
+                );
+            }
+
+            return values;
+        }
+
+        function updateSubcircuitChart(range = 'day') {
+            subChartRange = range;
+
+            const canvas =
+                document.getElementById('subcircuitChart');
+
+            if (!canvas) {
+                return;
+            }
+
+            const labels =
+                createSubChartLabels(range);
+
+            const datasets = energyData.ct.map(
+                (item, index) => ({
+                    label:
+                        `CT${item.id} ` +
+                        systemConfig.ctNames[index],
+
+                    data: createSubcircuitMockData(
+                        item,
+                        index,
+                        labels.length,
+                        range
+                    ),
+
+                    borderColor: chartColors[index],
+                    backgroundColor: chartColors[index],
+                    pointBackgroundColor: chartColors[index],
+                    pointBorderColor: '#0f172a',
+                    pointBorderWidth: 1,
+                    pointRadius:
+                        range === 'day' ? 2.5 : 1.5,
+                    pointHoverRadius: 6,
+                    borderWidth: 2.4,
+                    tension: 0.35,
+                    fill: false
+                })
+            );
+
+            if (subcircuitChart) {
+                subcircuitChart.destroy();
+            }
+
+            subcircuitChart = new Chart(
+                canvas.getContext('2d'),
+                {
+                    type: 'line',
+                    data: {
+                        labels,
+                        datasets
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: {
+                            mode: 'index',
+                            intersect: false
+                        },
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                                labels: {
+                                    color: '#cbd5e1',
+                                    usePointStyle: true,
+                                    pointStyle: 'circle',
+                                    boxWidth: 8,
+                                    padding: 14,
+                                    font: {
+                                        family: 'Prompt',
+                                        size: 10
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                backgroundColor:
+                                    'rgba(15,23,42,0.97)',
+                                borderColor: '#475569',
+                                borderWidth: 1,
+                                titleColor: '#f8fafc',
+                                bodyColor: '#cbd5e1',
+                                padding: 12,
+                                callbacks: {
+                                    label(context) {
+                                        return (
+                                            `${context.dataset.label}: ` +
+                                            `${Number(context.parsed.y)
+                                                .toLocaleString('th-TH')} W`
+                                        );
+                                    },
+                                    footer(items) {
+                                        const total =
+                                            items.reduce(
+                                                (sum, item) =>
+                                                    sum +
+                                                    Number(
+                                                        item.parsed.y
+                                                    ),
+                                                0
+                                            );
+
+                                        return (
+                                            `รวม: ` +
+                                            `${total.toLocaleString('th-TH')} W`
+                                        );
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                grid: {
+                                    color:
+                                        'rgba(51,65,85,0.25)'
+                                },
+                                ticks: {
+                                    color: '#94a3b8',
+                                    autoSkip: true,
+                                    maxRotation: 0,
+                                    maxTicksLimit:
+                                        range === 'day'
+                                            ? 12
+                                            : 10,
+                                    font: {
+                                        family: 'Prompt',
+                                        size: 10
+                                    }
+                                },
+                                title: {
+                                    display: true,
+                                    text:
+                                        range === 'day'
+                                            ? 'เวลา'
+                                            : 'วันที่',
+                                    color: '#94a3b8',
+                                    font: {
+                                        family: 'Prompt',
+                                        size: 11
+                                    }
+                                }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color:
+                                        'rgba(51,65,85,0.30)'
+                                },
+                                ticks: {
+                                    color: '#94a3b8',
+                                    callback(value) {
+                                        return Number(value)
+                                            .toLocaleString('th-TH');
+                                    },
+                                    font: {
+                                        family: 'Prompt',
+                                        size: 10
+                                    }
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'กำลังไฟฟ้า (Watt)',
+                                    color: '#94a3b8',
+                                    font: {
+                                        family: 'Prompt',
+                                        size: 11
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            );
+
+            const descriptions = {
+                day:
+                    'เปรียบเทียบ CT1–CT6 แบบกราฟเส้นซ้อนในช่วง 1 วัน',
+
+                week:
+                    'เปรียบเทียบ CT1–CT6 แบบกราฟเส้นซ้อนย้อนหลัง 7 วัน',
+
+                month:
+                    'เปรียบเทียบ CT1–CT6 แบบกราฟเส้นซ้อนย้อนหลัง 1 เดือน'
+            };
+
+            setText(
+                'sub-chart-description',
+                descriptions[range]
+            );
+        }
+
+        function initializeDistributionChart() {
+            const canvas =
+                document.getElementById(
+                    'distributionChart'
+                );
+
+            if (!canvas) {
+                return;
+            }
+
+            distributionChart = new Chart(
+                canvas.getContext('2d'),
+                {
+                    type: 'doughnut',
+                    data: {
+                        labels: energyData.ct.map(
+                            (item, index) =>
+                                `CT${item.id} ` +
+                                systemConfig.ctNames[index]
+                        ),
+                        datasets: [
+                            {
+                                data: energyData.ct.map(
+                                    item => item.power
+                                ),
+                                backgroundColor: chartColors,
+                                borderColor: '#1e293b',
+                                borderWidth: 3
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '60%',
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    color: '#94a3b8',
+                                    padding: 12,
+                                    usePointStyle: true,
+                                    font: {
+                                        family: 'Prompt',
+                                        size: 10
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label(context) {
+                                        return (
+                                            `${context.label}: ` +
+                                            `${Number(context.parsed)
+                                                .toLocaleString('th-TH')} W`
+                                        );
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            );
+        }
+
+        function updateDistributionChart() {
+            if (!distributionChart) {
+                return;
+            }
+
+            distributionChart.data.labels =
+                energyData.ct.map(
+                    (item, index) =>
+                        `CT${item.id} ` +
+                        systemConfig.ctNames[index]
+                );
+
+            distributionChart.data.datasets[0].data =
+                energyData.ct.map(item => item.power);
+
+            distributionChart.update('none');
+        }
+
+        function calculateElectricityBill() {
+            const units = energyData.energyKwh;
+
+            const tier1Units =
+                Math.min(units, 200);
+
+            const tier2Units =
+                Math.max(
+                    0,
+                    Math.min(units - 200, 200)
+                );
+
+            const tier3Units =
+                Math.max(0, units - 400);
+
+            const tier1Cost =
+                tier1Units * systemConfig.rates.tier1;
+
+            const tier2Cost =
+                tier2Units * systemConfig.rates.tier2;
+
+            const tier3Cost =
+                tier3Units * systemConfig.rates.tier3;
+
+            const serviceCharge = 38.22;
+            const ftCost = units * 0.3972;
+
+            const subtotal =
+                tier1Cost +
+                tier2Cost +
+                tier3Cost +
+                serviceCharge +
+                ftCost;
+
+            const vat = subtotal * 0.07;
+            const total = subtotal + vat;
+
+            return {
+                tier1Units,
+                tier2Units,
+                tier3Units,
+                tier1Cost,
+                tier2Cost,
+                tier3Cost,
+                serviceCharge,
+                ftCost,
+                vat,
+                total
+            };
+        }
+
+        function renderTariff() {
+            const bill =
+                calculateElectricityBill();
+
+            setText(
+                'tier1-detail',
+                `${bill.tier1Units.toFixed(2)} หน่วย × ` +
+                `${systemConfig.rates.tier1.toFixed(4)} บาท`
+            );
+
+            setText(
+                'tier2-detail',
+                `${bill.tier2Units.toFixed(2)} หน่วย × ` +
+                `${systemConfig.rates.tier2.toFixed(4)} บาท`
+            );
+
+            setText(
+                'tier3-detail',
+                `${bill.tier3Units.toFixed(2)} หน่วย × ` +
+                `${systemConfig.rates.tier3.toFixed(4)} บาท`
+            );
+
+            setText(
+                'tier1-cost',
+                `${bill.tier1Cost.toFixed(2)} บาท`
+            );
+
+            setText(
+                'tier2-cost',
+                `${bill.tier2Cost.toFixed(2)} บาท`
+            );
+
+            setText(
+                'tier3-cost',
+                `${bill.tier3Cost.toFixed(2)} บาท`
+            );
+
+            setText(
+                'grand-total',
+                `${bill.total.toLocaleString('th-TH', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                })} บาท`
+            );
+        }
+
+        function renderSettings() {
+            const container =
+                document.getElementById('ct-name-settings');
+
+            if (!container) {
+                return;
+            }
+
+            container.innerHTML =
+                energyData.ct.map(
+                    (item, index) => `
+                        <label class="text-xs">
+                            <span
+                                class="block text-slate-400 mb-1"
+                            >
+                                CT${item.id} / GPIO ${item.gpio}
+                            </span>
+
+                            <input
+                                id="ct-name-${index}"
+                                type="text"
+                                value="${systemConfig.ctNames[index]}"
+                                class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-slate-200 focus:outline-none focus:border-purple-500"
+                            >
+                        </label>
+                    `
+                ).join('');
+        }
+
+        function saveSettings() {
+            energyData.ct.forEach(
+                (item, index) => {
+                    const input =
+                        document.getElementById(
+                            `ct-name-${index}`
+                        );
+
+                    if (input?.value.trim()) {
+                        systemConfig.ctNames[index] =
+                            input.value.trim();
+                    }
+                }
+            );
+
+            systemConfig.rates.tier1 =
+                parseFloat(
+                    document.getElementById(
+                        'rate-tier1'
+                    )?.value
+                ) || 3.2484;
+
+            systemConfig.rates.tier2 =
+                parseFloat(
+                    document.getElementById(
+                        'rate-tier2'
+                    )?.value
+                ) || 4.2218;
+
+            systemConfig.rates.tier3 =
+                parseFloat(
+                    document.getElementById(
+                        'rate-tier3'
+                    )?.value
+                ) || 4.4217;
+
+            renderDashboard();
+            updateSubcircuitChart(subChartRange);
+
+            showToast(
+                'บันทึกการตั้งค่าเรียบร้อยแล้ว',
+                'success'
+            );
+        }
+
+        function startSimulation() {
+            setInterval(() => {
+                energyData.voltage =
+                    231.5 +
+                    (Math.random() - 0.5) * 1.4;
+
+                energyData.ct.forEach(item => {
+                    const variation =
+                        (Math.random() - 0.5) * 0.10;
+
+                    item.current = Math.max(
+                        0.1,
+                        item.current + variation
+                    );
+
+                    item.power = Math.round(
+                        item.current *
+                        energyData.voltage *
+                        energyData.powerFactor
+                    );
+                });
+
+                energyData.energyKwh +=
+                    getTotalPower() / 3600000 * 2;
+
+                /*
+                 * อัปเดตกราฟหลักเฉพาะโหมด Real-time
+                 * เพื่อไม่ให้ข้อมูลย้อนหลังเปลี่ยนทุก 2 วินาที
+                 */
+                if (mainChartRange === 'realtime') {
+                    updateRealtimeMainChartPoint();
+                }
+
+                /*
+                 * กราฟ CT ช่วง 1 วันจะอัปเดตค่าชั่วโมงปัจจุบัน
+                 */
+                updateCurrentSubcircuitPoint();
+                renderDashboard();
+            }, 2000);
+        }
+
+        function updateRealtimeMainChartPoint() {
+            if (!mainPowerChart) {
+                return;
+            }
+
+            const label =
+                new Date().toLocaleTimeString('th-TH', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+
+            const labels =
+                mainPowerChart.data.labels;
+
+            const values =
+                mainPowerChart.data.datasets[0].data;
+
+            if (labels.length >= 11) {
+                labels.shift();
+                values.shift();
+            }
+
+            labels.push(label);
+            values.push(getTotalPower());
+
+            mainPowerChart.update('none');
+        }
+
+        function updateCurrentSubcircuitPoint() {
+            if (
+                !subcircuitChart ||
+                subChartRange !== 'day'
+            ) {
+                return;
+            }
+
+            const currentHour =
+                new Date().getHours();
+
+            subcircuitChart.data.datasets.forEach(
+                (dataset, index) => {
+                    if (
+                        dataset.data[currentHour] !== undefined &&
+                        energyData.ct[index]
+                    ) {
+                        dataset.data[currentHour] =
+                            energyData.ct[index].power;
+                    }
+                }
+            );
+
+            subcircuitChart.update('none');
+        }
+
+        function switchTab(tabName) {
+            document
+                .querySelectorAll('.tab-content')
+                .forEach(section => {
+                    section.classList.add('hidden');
+                });
+
+            document
+                .getElementById(`tab-${tabName}`)
+                ?.classList.remove('hidden');
+
+            document
+                .querySelectorAll('.nav-button')
+                .forEach(button => {
+                    button.classList.remove(
+                        'bg-sky-500',
+                        'text-white'
+                    );
+
+                    button.classList.add(
+                        'text-slate-400'
+                    );
+                });
+
+            const activeButton =
+                document.getElementById(
+                    `nav-${tabName}`
+                );
+
+            activeButton?.classList.remove(
+                'text-slate-400'
+            );
+
+            activeButton?.classList.add(
+                'bg-sky-500',
+                'text-white'
+            );
+
+            document
+                .querySelectorAll('.mobile-nav-button')
+                .forEach(button => {
+                    button.classList.remove(
+                        'text-sky-400',
+                        'font-semibold'
+                    );
+
+                    button.classList.add(
+                        'text-slate-400'
+                    );
+                });
+
+            const activeMobileButton =
+                document.getElementById(
+                    `mobile-nav-${tabName}`
+                );
+
+            activeMobileButton?.classList.remove(
+                'text-slate-400'
+            );
+
+            activeMobileButton?.classList.add(
+                'text-sky-400',
+                'font-semibold'
+            );
+
+            setTimeout(() => {
+                if (tabName === 'dashboard') {
+                    mainPowerChart?.resize();
+                }
+
+                if (tabName === 'subcircuits') {
+                    subcircuitChart?.resize();
+                }
+
+                if (tabName === 'tariff') {
+                    distributionChart?.resize();
+                }
+            }, 80);
+        }
+
+        function setText(elementId, value) {
+            const element =
+                document.getElementById(elementId);
+
+            if (element) {
+                element.textContent = value;
+            }
+        }
+
+        function showToast(message, type = 'info') {
+            const container =
+                document.getElementById(
+                    'toast-container'
+                );
+
+            if (!container) {
+                return;
+            }
+
+            const toast =
+                document.createElement('div');
+
+            toast.className =
+                type === 'success'
+                    ? 'bg-emerald-950/95 border border-emerald-500/50 text-emerald-200 rounded-xl px-4 py-3 text-xs shadow-2xl'
+                    : 'bg-slate-900/95 border border-sky-500/50 text-sky-200 rounded-xl px-4 py-3 text-xs shadow-2xl';
+
+            toast.innerHTML = `
+                <i class="fa-solid fa-circle-check mr-2"></i>
+                ${message}
+            `;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
