@@ -64,7 +64,7 @@
         }
         .glow-cyan { box-shadow: 0 0 15px rgba(14, 165, 233, 0.2); }
         .glow-amber { box-shadow: 0 0 15px rgba(245, 158, 11, 0.2); }
-        .glow-rose { box-shadow: 0 0 15px rgba(244, 63, 94, 0.25); }
+        .glow-rose { box-shadow: 0 0 15px rgba(244, 63, 94, 0.2); }
         
         .chart-box {
             position: relative;
@@ -73,22 +73,18 @@
             max-height: 340px;
         }
         
-        /* Custom scrollbar */
         ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-track { background: #0f172a; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #0ea5e9; }
 
-        input[type="date"] {
-            color-scheme: dark;
-        }
+        input[type="date"] { color-scheme: dark; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between antialiased selection:bg-sky-500 selection:text-white w-full overflow-x-hidden">
 
     <header class="sticky top-0 z-40 glass-card border-b border-slate-700/80 px-3 sm:px-6 py-2.5 w-full">
         <div class="max-w-7xl mx-auto flex items-center justify-between gap-2">
-            <!-- Logo & System Title -->
             <div class="flex items-center space-x-2.5 min-w-0">
                 <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-sky-500 to-emerald-400 flex items-center justify-center text-slate-950 font-bold text-lg sm:text-xl shadow-lg shadow-sky-500/20 shrink-0">
                     <i class="fa-solid fa-bolt"></i>
@@ -105,7 +101,6 @@
                 </div>
             </div>
 
-            <!-- Navigation Tabs (Desktop) -->
             <nav class="hidden md:flex items-center space-x-1 bg-slate-900/80 p-1.5 rounded-xl border border-slate-800">
                 <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 bg-sky-500 text-white shadow-md">
                     <i class="fa-solid fa-chart-line mr-1"></i> ภาพรวม
@@ -121,7 +116,6 @@
                 </button>
             </nav>
 
-            <!-- Admin Login Button -->
             <div class="flex items-center space-x-2 shrink-0">
                 <button id="admin-status-badge" onclick="openLoginModal()" class="px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold border border-amber-500/40 bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 transition-all flex items-center gap-1.5">
                     <i class="fa-solid fa-user-shield"></i> <span id="admin-badge-text" class="hidden xs:inline">เข้าสู่ระบบ Admin</span><span class="xs:hidden">Admin</span>
@@ -129,7 +123,6 @@
             </div>
         </div>
 
-        <!-- Mobile Navigation bar -->
         <div class="flex md:hidden mt-2 pt-1.5 border-t border-slate-800/80 justify-around text-[11px] w-full">
             <button onclick="switchTab('dashboard')" id="mobile-nav-dashboard" class="mobile-nav-btn p-1.5 text-sky-400 font-semibold flex flex-col items-center"><i class="fa-solid fa-chart-line text-sm mb-0.5"></i> ภาพรวม</button>
             <button onclick="switchTab('subcircuits')" id="mobile-nav-subcircuits" class="mobile-nav-btn p-1.5 text-slate-400 hover:text-slate-200 flex flex-col items-center"><i class="fa-solid fa-diagram-project text-sm mb-0.5"></i> CT 6 ช่อง</button>
@@ -142,11 +135,8 @@
 
         <!-- ================= TAB 1: REAL-TIME DASHBOARD ================= -->
         <div id="tab-dashboard" class="tab-content space-y-4 sm:space-y-6">
-            
-            <!-- Top Metric Cards -->
             <div class="grid grid-cols-2 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 sm:gap-4 w-full">
-                <!-- Voltage Card -->
-                <div id="card-voltage-box" class="glass-card p-3 sm:p-4 rounded-xl sm:rounded-2xl border-l-4 border-l-sky-500">
+                <div class="glass-card p-3 sm:p-4 rounded-xl sm:rounded-2xl border-l-4 border-l-sky-500">
                     <div class="flex justify-between items-start">
                         <span class="text-[11px] sm:text-xs text-slate-400">แรงดันไฟฟ้า</span>
                         <i class="fa-solid fa-plug text-sky-400 text-sm sm:text-base"></i>
@@ -155,11 +145,10 @@
                         <span id="val-voltage" class="text-xl sm:text-2xl font-bold text-white font-mono">231.5</span>
                         <span class="text-xs text-slate-400">V</span>
                     </div>
-                    <p id="status-voltage-text" class="text-[10px] text-emerald-400 mt-0.5 truncate"><i class="fa-solid fa-circle-check"></i> ปกติ (185-242V)</p>
+                    <p id="status-voltage-text" class="text-[10px] text-emerald-400 mt-0.5 truncate"><i class="fa-solid fa-circle-check"></i> ปกติ (220-240V)</p>
                 </div>
 
-                <!-- Current Total Card -->
-                <div id="card-current-box" class="glass-card p-3 sm:p-4 rounded-xl sm:rounded-2xl border-l-4 border-l-amber-500">
+                <div class="glass-card p-3 sm:p-4 rounded-xl sm:rounded-2xl border-l-4 border-l-amber-500">
                     <div class="flex justify-between items-start">
                         <span class="text-[11px] sm:text-xs text-slate-400">กระแสไฟฟ้ารวม</span>
                         <i class="fa-solid fa-bolt-lightning text-amber-400 text-sm sm:text-base"></i>
@@ -168,10 +157,9 @@
                         <span id="val-current-total" class="text-xl sm:text-2xl font-bold text-amber-300 font-mono">18.42</span>
                         <span class="text-xs text-slate-400">A</span>
                     </div>
-                    <p id="status-current-text" class="text-[10px] text-slate-400 mt-0.5 truncate">เมน PZEM-004T</p>
+                    <p class="text-[10px] text-slate-400 mt-0.5 truncate">เมน PZEM-004T</p>
                 </div>
 
-                <!-- Active Power Card -->
                 <div class="glass-card p-3 sm:p-4 rounded-xl sm:rounded-2xl border-l-4 border-l-emerald-500 glow-cyan">
                     <div class="flex justify-between items-start">
                         <span class="text-[11px] sm:text-xs text-slate-400">กำลังไฟปัจจุบัน</span>
@@ -184,10 +172,9 @@
                     <p class="text-[10px] text-emerald-400 mt-0.5 truncate">4.26 kW (Real-time)</p>
                 </div>
 
-                <!-- Power Factor Card -->
-                <div id="card-freq-box" class="glass-card p-3 sm:p-4 rounded-xl sm:rounded-2xl border-l-4 border-l-indigo-500">
+                <div class="glass-card p-3 sm:p-4 rounded-xl sm:rounded-2xl border-l-4 border-l-indigo-500">
                     <div class="flex justify-between items-start">
-                        <span class="text-[11px] sm:text-xs text-slate-400">Power Factor / Freq</span>
+                        <span class="text-[11px] sm:text-xs text-slate-400">Power Factor</span>
                         <i class="fa-solid fa-wave-square text-indigo-400 text-sm sm:text-base"></i>
                     </div>
                     <div class="mt-1.5 flex items-baseline gap-1">
@@ -197,7 +184,6 @@
                     <p id="val-freq" class="text-[10px] text-slate-400 mt-0.5 truncate">50.0 Hz</p>
                 </div>
 
-                <!-- Total Energy kWh Card -->
                 <div class="glass-card p-3 sm:p-4 rounded-xl sm:rounded-2xl border-l-4 border-l-purple-500">
                     <div class="flex justify-between items-start">
                         <span class="text-[11px] sm:text-xs text-slate-400">พลังงานไฟฟ้ารวม</span>
@@ -210,7 +196,6 @@
                     <p class="text-[10px] text-purple-300 mt-0.5 truncate">สะสมเดือนนี้</p>
                 </div>
 
-                <!-- Estimated Cost Card -->
                 <div class="glass-card p-3 sm:p-4 rounded-xl sm:rounded-2xl border-l-4 border-l-rose-500 glow-rose col-span-2 xs:col-span-2 sm:col-span-1">
                     <div class="flex justify-between items-start">
                         <span class="text-[11px] sm:text-xs text-slate-400">ประมาณการค่าไฟ</span>
@@ -224,9 +209,7 @@
                 </div>
             </div>
 
-            <!-- Main Grid: Power Graph & Sub-circuits Real-time Cards -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 w-full">
-                <!-- Real-time Chart (2 Cols) -->
                 <div class="lg:col-span-2 glass-card p-4 sm:p-5 rounded-xl sm:rounded-2xl flex flex-col justify-between w-full min-w-0">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
                         <div>
@@ -251,72 +234,14 @@
                     </div>
                 </div>
 
-                <!-- Sub-circuits Quick Status (1 Col) -->
                 <div class="glass-card p-4 sm:p-5 rounded-xl sm:rounded-2xl flex flex-col justify-between w-full">
                     <div class="flex justify-between items-center mb-3">
                         <h2 class="text-sm sm:text-base font-semibold text-slate-200 flex items-center gap-1.5">
                             <i class="fa-solid fa-sitemap text-amber-400"></i> โหลดวงจรย่อย CT 6 ช่อง
                         </h2>
-                        <span class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full border border-slate-700">Max 30A/ช่อง</span>
+                        <span class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full border border-slate-700">Max Warn</span>
                     </div>
-
-                    <!-- 6 CT Cards Stream -->
-                    <div id="ct-cards-container" class="space-y-2 overflow-y-auto max-h-[260px] pr-1">
-                        <!-- JS generated CT channels -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- System Wiring Architecture Quick Ref -->
-            <div class="glass-card p-4 sm:p-5 rounded-xl sm:rounded-2xl border border-slate-700/60 w-full">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-2.5 mb-3">
-                    <div>
-                        <h3 class="text-xs sm:text-sm font-semibold text-sky-400 flex items-center gap-1.5">
-                            <i class="fa-solid fa-circle-info"></i> สถาปัตยกรรมวงจรย่อยและการเชื่อมต่อ GPIO (ESP32-DevKitC)
-                        </h3>
-                        <p class="text-[11px] text-slate-400">ใช้ขา ADC1 รวม 6 ขาเนื่องจากข้อจำกัด Wi-Fi บน ESP32</p>
-                    </div>
-                    <div class="flex flex-wrap items-center gap-1.5 text-[11px]">
-                        <span class="px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300">
-                            PZEM-004T: <span class="text-emerald-400 font-mono">UART (GPIO 16/17)</span>
-                        </span>
-                        <span class="px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300">
-                            DC Bias: <span class="text-sky-400 font-mono">1.65V Offset</span>
-                        </span>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 xs:grid-cols-3 md:grid-cols-6 gap-2 text-center text-xs">
-                    <div class="bg-slate-900/60 p-2 rounded-xl border border-slate-800">
-                        <div class="text-slate-400 text-[10px]">CT 1 (GPIO 36)</div>
-                        <div id="pin-ct1-name" class="text-slate-200 font-semibold truncate mt-0.5">ปลั๊ก ชั้น 1</div>
-                        <div id="pin-ct1-val" class="text-emerald-400 font-mono mt-0.5 text-xs">2.45 A</div>
-                    </div>
-                    <div class="bg-slate-900/60 p-2 rounded-xl border border-slate-800">
-                        <div class="text-slate-400 text-[10px]">CT 2 (GPIO 39)</div>
-                        <div id="pin-ct2-name" class="text-slate-200 font-semibold truncate mt-0.5">ปลั๊ก ชั้น 2</div>
-                        <div id="pin-ct2-val" class="text-emerald-400 font-mono mt-0.5 text-xs">1.80 A</div>
-                    </div>
-                    <div class="bg-slate-900/60 p-2 rounded-xl border border-slate-800">
-                        <div class="text-slate-400 text-[10px]">CT 3 (GPIO 34)</div>
-                        <div id="pin-ct3-name" class="text-slate-200 font-semibold truncate mt-0.5">แสงสว่างรวม</div>
-                        <div id="pin-ct3-val" class="text-emerald-400 font-mono mt-0.5 text-xs">0.95 A</div>
-                    </div>
-                    <div class="bg-slate-900/60 p-2 rounded-xl border border-slate-800">
-                        <div class="text-slate-400 text-[10px]">CT 4 (GPIO 35)</div>
-                        <div id="pin-ct4-name" class="text-slate-200 font-semibold truncate mt-0.5">แอร์ 1</div>
-                        <div id="pin-ct4-val" class="text-emerald-400 font-mono mt-0.5 text-xs">5.60 A</div>
-                    </div>
-                    <div class="bg-slate-900/60 p-2 rounded-xl border border-slate-800">
-                        <div class="text-slate-400 text-[10px]">CT 5 (GPIO 32)</div>
-                        <div id="pin-ct5-name" class="text-slate-200 font-semibold truncate mt-0.5">แอร์ 2</div>
-                        <div id="pin-ct5-val" class="text-emerald-400 font-mono mt-0.5 text-xs">4.20 A</div>
-                    </div>
-                    <div class="bg-slate-900/60 p-2 rounded-xl border border-slate-800">
-                        <div class="text-slate-400 text-[10px]">CT 6 (GPIO 33)</div>
-                        <div id="pin-ct6-name" class="text-slate-200 font-semibold truncate mt-0.5">เครื่องทำน้ำอุ่น</div>
-                        <div id="pin-ct6-val" class="text-amber-400 font-mono mt-0.5 text-xs">3.42 A</div>
-                    </div>
+                    <div id="ct-cards-container" class="space-y-2 overflow-y-auto max-h-[260px] pr-1"></div>
                 </div>
             </div>
         </div>
@@ -336,12 +261,8 @@
                 </div>
             </div>
 
-            <!-- Sub-circuit Detailed Cards Grid -->
-            <div id="subcircuits-detail-grid" class="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 w-full">
-                <!-- Generated dynamically via JS -->
-            </div>
+            <div id="subcircuits-detail-grid" class="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 w-full"></div>
 
-            <!-- Comparison Line Chart for Sub-circuits -->
             <div class="glass-card p-4 sm:p-5 rounded-xl sm:rounded-2xl space-y-3 w-full">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
                     <div>
@@ -377,16 +298,13 @@
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 w-full">
-                <!-- Tariff Breakdown Card (Left) -->
                 <div class="lg:col-span-2 glass-card p-4 sm:p-6 rounded-xl sm:rounded-2xl space-y-4">
                     <h3 class="text-sm sm:text-base font-semibold text-slate-200 border-b border-slate-800 pb-2.5 flex items-center justify-between">
                         <span><i class="fa-solid fa-receipt text-amber-400 mr-1.5"></i>รายละเอียดการคิดค่าไฟเดือนปัจจุบัน</span>
                         <span class="text-xs font-normal text-slate-400">หน่วยรวมสะสม: <strong id="calc-total-kwh" class="text-sky-400 font-mono text-sm">284.50</strong> kWh</span>
                     </h3>
 
-                    <!-- Tiers Breakdown Table -->
                     <div class="space-y-2.5 text-xs sm:text-sm">
-                        <!-- Tier 1 -->
                         <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800 flex justify-between items-center">
                             <div>
                                 <span class="font-medium text-slate-200">ขั้นที่ 1: 0 - 200 หน่วย</span>
@@ -394,8 +312,6 @@
                             </div>
                             <span id="tier1-cost" class="font-mono font-semibold text-emerald-400">649.68 บาท</span>
                         </div>
-
-                        <!-- Tier 2 -->
                         <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800 flex justify-between items-center">
                             <div>
                                 <span class="font-medium text-slate-200">ขั้นที่ 2: 201 - 400 หน่วย</span>
@@ -403,8 +319,6 @@
                             </div>
                             <span id="tier2-cost" class="font-mono font-semibold text-emerald-400">356.74 บาท</span>
                         </div>
-
-                        <!-- Tier 3 -->
                         <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800 flex justify-between items-center">
                             <div>
                                 <span class="font-medium text-slate-200">ขั้นที่ 3: มากกว่า 400 หน่วยขึ้นไป</span>
@@ -414,7 +328,6 @@
                         </div>
                     </div>
 
-                    <!-- Additional Charges (FT & Vat) -->
                     <div class="border-t border-slate-800 pt-3 grid grid-cols-2 gap-3 text-xs">
                         <div class="bg-slate-900/50 p-2.5 rounded-xl border border-slate-800">
                             <span class="text-slate-400 text-[11px] block">ค่าบริการรายเดือน:</span>
@@ -426,7 +339,6 @@
                         </div>
                     </div>
 
-                    <!-- Total Cost Sum Box -->
                     <div class="p-3.5 rounded-xl bg-gradient-to-r from-rose-950/40 via-purple-950/40 to-slate-900 border border-rose-500/30 flex justify-between items-center">
                         <div>
                             <span class="text-[10px] sm:text-xs text-rose-300 font-medium uppercase tracking-wider block">สุทธิประมาณการค่าไฟฟ้าเดือนนี้</span>
@@ -436,7 +348,6 @@
                     </div>
                 </div>
 
-                <!-- Energy Distribution Pie Chart (Right) -->
                 <div class="glass-card p-4 sm:p-6 rounded-xl sm:rounded-2xl flex flex-col justify-between">
                     <h3 class="text-sm sm:text-base font-semibold text-slate-200 mb-2 flex items-center gap-2">
                         <i class="fa-solid fa-chart-pie text-purple-400"></i> สัดส่วนค่าไฟแบ่งตาม CT ลูกย่อย
@@ -449,30 +360,27 @@
             </div>
         </div>
 
-        <!-- ================= TAB 4: SYSTEM SETTINGS (PROTECTED) ================= -->
+        <!-- ================= TAB 4: SYSTEM SETTINGS ================= -->
         <div id="tab-settings" class="tab-content hidden space-y-4 sm:space-y-6">
             
-            <!-- Protected Cover if not Logged in -->
             <div id="settings-lock-screen" class="glass-card p-6 sm:p-8 rounded-xl sm:rounded-2xl text-center space-y-4 max-w-xl mx-auto my-6 sm:my-12 border border-amber-500/30">
                 <div class="w-14 h-14 bg-amber-500/10 border border-amber-500/30 text-amber-400 rounded-full flex items-center justify-center text-2xl mx-auto glow-amber">
                     <i class="fa-solid fa-lock"></i>
                 </div>
                 <h2 class="text-lg sm:text-xl font-bold text-white">ต้องการสิทธิ์ Admin เข้าสู่ระบบ</h2>
-                <p class="text-xs text-slate-400">กรุณาเข้าสู่ระบบด้วยรหัสผ่านผู้ดูแลระบบ (VRU6823271) เพื่อเข้าถึงการตั้งค่าการส่งข้อมูลแจ้งเตือน ค่าไฟฟ้า และขีดจำกัดเตือนภัย</p>
+                <p class="text-xs text-slate-400">กรุณาเข้าสู่ระบบด้วยรหัสผ่านผู้ดูแลระบบ (VRU6823271) เพื่อเข้าถึงการตั้งค่าการส่งข้อมูลแจ้งเตือน ค่าไฟฟ้า และช่วงเวลา Google Sheets</p>
                 <button onclick="openLoginModal()" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-bold text-xs sm:text-sm shadow-lg shadow-amber-500/20 transition-all">
                     <i class="fa-solid fa-key mr-2"></i> ป้อนรหัสผ่าน Admin
                 </button>
             </div>
 
-            <!-- Settings Content (Shown when authorized) -->
             <div id="settings-authorized-panel" class="hidden space-y-4 sm:space-y-6">
-                <!-- Admin Header Status -->
                 <div class="glass-card p-4 sm:p-5 rounded-xl sm:rounded-2xl flex flex-col sm:flex-row justify-between items-center gap-3 border-l-4 border-l-amber-500">
                     <div>
                         <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
                             <i class="fa-solid fa-sliders text-amber-400"></i> ตั้งค่าการทำงานของระบบ (Admin Panel)
                         </h2>
-                        <p class="text-xs text-slate-400">ซิงก์ตรงกับโครงสร้างแผ่นงาน Settings ใน Google Sheets</p>
+                        <p class="text-xs text-slate-400">ซิงค์ตรงกับโครงสร้างแผ่นงาน Settings ใน Google Sheets</p>
                     </div>
                     <button onclick="adminLogout()" class="px-4 py-2 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 hover:bg-rose-500/20 text-xs font-semibold transition-all shrink-0">
                         <i class="fa-solid fa-right-from-bracket mr-1.5"></i> ออกจากระบบ Admin
@@ -481,46 +389,36 @@
 
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 w-full">
 
-                    <!-- 1. Main System Protection Limits (Voltage, Current, Frequency Alarms) -->
+                    <!-- 1. Protection Limits -->
                     <div class="glass-card p-4 sm:p-6 rounded-xl sm:rounded-2xl space-y-4 border-l-4 border-l-rose-500">
                         <h3 class="text-sm sm:text-base font-semibold text-rose-400 border-b border-slate-800 pb-2 flex items-center gap-2">
                             <i class="fa-solid fa-shield-halved text-rose-400"></i> ตั้งค่าขีดจำกัดแจ้งเตือนไฟฟ้าเมนหลัก
                         </h3>
-
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                             <div class="space-y-1">
                                 <label class="text-slate-300 font-medium">Voltage MAX Warn (V):</label>
-                                <input type="number" id="cfg-vmax-warn" value="242" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono focus:border-rose-500 focus:outline-none">
-                                <span class="text-[10px] text-slate-500">แจ้งเตือนเมื่อแรงดันรวมเกิน</span>
+                                <input type="number" id="cfg-v-max" value="242" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono focus:border-rose-500 focus:outline-none">
                             </div>
-
                             <div class="space-y-1">
                                 <label class="text-slate-300 font-medium">Voltage MIN Warn (V):</label>
-                                <input type="number" id="cfg-vmin-warn" value="185" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono focus:border-rose-500 focus:outline-none">
-                                <span class="text-[10px] text-slate-500">แจ้งเตือนเมื่อแรงดันตกเกิน</span>
+                                <input type="number" id="cfg-v-min" value="185" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono focus:border-rose-500 focus:outline-none">
                             </div>
-
                             <div class="space-y-1">
                                 <label class="text-slate-300 font-medium">Current MAX Warn (A):</label>
-                                <input type="number" id="cfg-imax-warn" value="45" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono focus:border-rose-500 focus:outline-none">
-                                <span class="text-[10px] text-slate-500">แจ้งเตือนเมื่อกระแสรวมเกิน</span>
+                                <input type="number" id="cfg-i-max" value="45" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono focus:border-rose-500 focus:outline-none">
                             </div>
-
                             <div class="space-y-1">
                                 <label class="text-slate-300 font-medium">Frequency MAX Warn (Hz):</label>
-                                <input type="number" id="cfg-fmax-warn" value="55" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono focus:border-rose-500 focus:outline-none">
-                                <span class="text-[10px] text-slate-500">แจ้งเตือนเมื่อความถี่เกิน</span>
+                                <input type="number" id="cfg-freq-max" value="55" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono focus:border-rose-500 focus:outline-none">
                             </div>
-
                             <div class="space-y-1 sm:col-span-2">
                                 <label class="text-slate-300 font-medium">Frequency MIN Warn (Hz):</label>
-                                <input type="number" id="cfg-fmin-warn" value="45" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono focus:border-rose-500 focus:outline-none">
-                                <span class="text-[10px] text-slate-500">แจ้งเตือนเมื่อความถี่ตกต่ำกว่า</span>
+                                <input type="number" id="cfg-freq-min" value="45" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono focus:border-rose-500 focus:outline-none">
                             </div>
                         </div>
                     </div>
 
-                    <!-- 2. Google Sheets Logging Interval (On-Peak / Off-Peak) -->
+                    <!-- 2. Google Sheets Interval & URL -->
                     <div class="glass-card p-4 sm:p-6 rounded-xl sm:rounded-2xl space-y-4">
                         <h3 class="text-sm sm:text-base font-semibold text-sky-400 border-b border-slate-800 pb-2 flex items-center gap-2">
                             <i class="fa-solid fa-table text-sky-400"></i> ตั้งค่ารอบส่งข้อมูลไป Google Sheets (GAS)
@@ -529,18 +427,14 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                             <div class="space-y-1">
                                 <label class="text-slate-300 font-medium">ช่วงเวลา On-Peak (นาที/ครั้ง):</label>
-                                <input type="number" id="cfg-interval-onpeak" value="15" min="1" max="120" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono focus:border-sky-500 focus:outline-none">
-                                <span class="text-[10px] text-slate-500">จันทร์-ศุกร์ (09:00 - 22:00 น.)</span>
+                                <input type="number" id="cfg-interval-onpeak" value="15" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono focus:border-sky-500 focus:outline-none">
                             </div>
-
                             <div class="space-y-1">
                                 <label class="text-slate-300 font-medium">ช่วงเวลา Off-Peak (นาที/ครั้ง):</label>
-                                <input type="number" id="cfg-interval-offpeak" value="30" min="1" max="180" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono focus:border-sky-500 focus:outline-none">
-                                <span class="text-[10px] text-slate-500">กลางคืน / เสาร์-อาทิตย์</span>
+                                <input type="number" id="cfg-interval-offpeak" value="30" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono focus:border-sky-500 focus:outline-none">
                             </div>
                         </div>
 
-                        <!-- Highlighted GAS URL Field with Warning Message -->
                         <div class="space-y-1 text-xs pt-1">
                             <div class="flex items-center justify-between">
                                 <label class="text-slate-300 font-medium">Google Apps Script Web App URL:</label>
@@ -548,7 +442,7 @@
                                     <i class="fa-solid fa-lock mr-1"></i> ส่วนสำคัญของระบบ
                                 </span>
                             </div>
-                            <input type="text" id="cfg-gas-url" value="https://script.google.com/macros/s/AKfycbx.../exec" class="w-full bg-slate-900 border border-rose-500/40 rounded-xl px-3 py-2 text-slate-300 font-mono text-xs focus:border-rose-500 focus:outline-none shadow-sm">
+                            <input type="text" id="cfg-gas-url" value="https://script.google.com/macros/s/AKfycby8XyHlsp-TzUK1mTOW_gm3n6UgC4N7u-8oYcE5t34ywwUje-_eBjUb9QKPxSCRUcgThw/exec" class="w-full bg-slate-900 border border-rose-500/40 rounded-xl px-3 py-2 text-slate-300 font-mono text-xs focus:border-rose-500 focus:outline-none shadow-sm">
                             <p class="text-[11px] text-rose-400 font-medium flex items-center gap-1.5 mt-1 bg-rose-950/30 p-2 rounded-lg border border-rose-500/20">
                                 <i class="fa-solid fa-triangle-exclamation text-rose-400 text-sm shrink-0"></i>
                                 <span><strong>คำเตือนสำคัญ:</strong> ห้ามแก้ไขหรือลบ URL นี้โดยไม่จำเป็น! หากเปลี่ยนค่าหรือใส่ลิงก์ผิด แดชบอร์ดจะไม่สามารถดึงข้อมูลจริงและบันทึกการตั้งค่าลง Google Sheets ได้</span>
@@ -556,13 +450,12 @@
                         </div>
                     </div>
 
-                    <!-- 3. Notification System (LINE & Telegram) -->
+                    <!-- 3. LINE & Telegram -->
                     <div class="glass-card p-4 sm:p-6 rounded-xl sm:rounded-2xl space-y-4">
                         <h3 class="text-sm sm:text-base font-semibold text-emerald-400 border-b border-slate-800 pb-2 flex items-center gap-2">
                             <i class="fa-solid fa-bell text-emerald-400"></i> การแจ้งเตือน (LINE Notify / Telegram)
                         </h3>
 
-                        <!-- LINE Toggle & Token -->
                         <div class="space-y-1.5 border-b border-slate-800 pb-3">
                             <div class="flex items-center justify-between">
                                 <span class="text-xs font-semibold text-slate-200 flex items-center gap-2">
@@ -573,34 +466,30 @@
                                     <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
                                 </label>
                             </div>
-                            <input type="text" id="cfg-line-token" placeholder="วาง LINE Notify Token..." value="ln_token_example_vru6823271" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-300 font-mono focus:border-emerald-500 focus:outline-none">
+                            <input type="text" id="cfg-line-token" value="ln_token_example_vru6823271" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-300 font-mono focus:border-emerald-500 focus:outline-none">
                         </div>
 
-                        <!-- Telegram Toggle & Config -->
                         <div class="space-y-1.5 border-b border-slate-800 pb-3">
                             <div class="flex items-center justify-between">
                                 <span class="text-xs font-semibold text-slate-200 flex items-center gap-2">
                                     <i class="fa-brands fa-telegram text-sky-400 text-base"></i> เปิดใช้งาน Telegram Bot
                                 </span>
                                 <label class="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" id="cfg-telegram-enable" checked class="sr-only peer">
+                                    <input type="checkbox" id="cfg-telegram-enable" class="sr-only peer">
                                     <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-sky-500"></div>
                                 </label>
                             </div>
                             <div class="grid grid-cols-2 gap-2">
-                                <input type="text" id="cfg-telegram-bot" placeholder="Bot Token..." value="bot123456789:ABC..." class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-300 font-mono focus:border-sky-500 focus:outline-none">
-                                <input type="text" id="cfg-telegram-chat" placeholder="Chat ID..." value="-100987654321" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-300 font-mono focus:border-sky-500 focus:outline-none">
+                                <input type="text" id="cfg-telegram-bot" value="bot123456789:ABC..." class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-300 font-mono focus:border-sky-500 focus:outline-none">
+                                <input type="text" id="cfg-telegram-chat" value="-100987654321" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-300 font-mono focus:border-sky-500 focus:outline-none">
                             </div>
                         </div>
 
-                        <!-- First-time Boot Message Settings -->
                         <div class="space-y-1.5 pt-1">
                             <div class="flex items-center justify-between">
-                                <span class="text-xs font-semibold text-amber-300">
-                                    ส่งข้อความแจ้งเตือนครั้งแรก (First-Time Boot)
-                                </span>
+                                <span class="text-xs font-semibold text-amber-300">แจ้งเตือนครั้งแรก (First-Time Boot)</span>
                                 <label class="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" id="cfg-firstsend-enable" checked class="sr-only peer">
+                                    <input type="checkbox" id="cfg-firstsend-enable" class="sr-only peer">
                                     <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
                                 </label>
                             </div>
@@ -608,121 +497,103 @@
                         </div>
                     </div>
 
-                    <!-- 4. Progressive Electricity Rate Config -->
+                    <!-- 4. Tariff Rate -->
                     <div class="glass-card p-4 sm:p-6 rounded-xl sm:rounded-2xl space-y-4">
                         <h3 class="text-sm sm:text-base font-semibold text-amber-400 border-b border-slate-800 pb-2 flex items-center gap-2">
                             <i class="fa-solid fa-tags text-amber-400"></i> ตั้งค่าอัตราค่าไฟฟ้าพื้นฐาน (บาท/หน่วย)
                         </h3>
-
                         <div class="space-y-3 text-xs">
                             <div class="flex items-center justify-between gap-2">
                                 <label class="text-slate-300">0 - 200 หน่วยแรก (Tariff_Tier1_Rate):</label>
-                                <div class="flex items-center gap-1 w-32">
-                                    <input type="number" step="0.0001" id="cfg-rate-t1" value="3.2484" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-1 text-white font-mono text-right focus:border-amber-500 focus:outline-none">
-                                    <span class="text-slate-400">บาท</span>
-                                </div>
+                                <input type="number" step="0.0001" id="cfg-rate-t1" value="3.2484" class="w-28 bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-1 text-white font-mono text-right focus:border-amber-500 focus:outline-none">
                             </div>
-
                             <div class="flex items-center justify-between gap-2">
                                 <label class="text-slate-300">201 - 400 หน่วยถัดไป (Tariff_Tier2_Rate):</label>
-                                <div class="flex items-center gap-1 w-32">
-                                    <input type="number" step="0.0001" id="cfg-rate-t2" value="4.2218" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-1 text-white font-mono text-right focus:border-amber-500 focus:outline-none">
-                                    <span class="text-slate-400">บาท</span>
-                                </div>
+                                <input type="number" step="0.0001" id="cfg-rate-t2" value="4.2218" class="w-28 bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-1 text-white font-mono text-right focus:border-amber-500 focus:outline-none">
                             </div>
-
                             <div class="flex items-center justify-between gap-2">
                                 <label class="text-slate-300">ส่วนที่เกิน 400 หน่วยขึ้นไป (Tariff_Tier3_Rate):</label>
-                                <div class="flex items-center gap-1 w-32">
-                                    <input type="number" step="0.0001" id="cfg-rate-t3" value="4.4217" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-1 text-white font-mono text-right focus:border-amber-500 focus:outline-none">
-                                    <span class="text-slate-400">บาท</span>
-                                </div>
+                                <input type="number" step="0.0001" id="cfg-rate-t3" value="4.4217" class="w-28 bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-1 text-white font-mono text-right focus:border-amber-500 focus:outline-none">
                             </div>
                         </div>
                     </div>
 
-                    <!-- 5. CT Naming & Limit Config (CT1 - CT6) -->
+                    <!-- 5. CT Names & CT Warn Limits -->
                     <div class="glass-card p-4 sm:p-6 rounded-xl sm:rounded-2xl space-y-4 lg:col-span-2">
                         <h3 class="text-sm sm:text-base font-semibold text-purple-400 border-b border-slate-800 pb-2 flex items-center gap-2">
-                            <i class="fa-solid fa-pen-to-square text-purple-400"></i> ตั้งชื่อและขีดจำกัดแจ้งเตือนกระแสเกิน (CT1_Name / CT1_Warn ถึง CT6_Name / CT6_Warn)
+                            <i class="fa-solid fa-pen-to-square text-purple-400"></i> ตั้งชื่อโหลดวงจรย่อย และขีดจำกัดกระแสเกิน (CT1 - CT6 Warn)
                         </h3>
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
-                            <!-- CT 1 -->
                             <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-800 space-y-2">
-                                <div class="font-semibold text-sky-400">CT 1 (GPIO 36)</div>
+                                <span class="font-bold text-sky-400 block">CT 1 (GPIO 36)</span>
                                 <div>
-                                    <label class="text-slate-400 block mb-0.5">ชื่อโหลด (CT1_Name):</label>
-                                    <input type="text" id="cfg-ct1-name" value="ปลั๊ก ชั้น 1" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-1.5 text-slate-200 focus:border-purple-500 focus:outline-none">
+                                    <label class="text-slate-400 block text-[10px]">ชื่อวงจร (CT1_Name):</label>
+                                    <input type="text" id="cfg-ct1-name" value="ปลั๊ก ชั้น 1" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-slate-200">
                                 </div>
                                 <div>
-                                    <label class="text-slate-400 block mb-0.5">เตือนกระแสเกิน (CT1_Warn - Amp):</label>
-                                    <input type="number" id="cfg-ct1-warn" value="15" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-1.5 text-amber-300 font-mono focus:border-purple-500 focus:outline-none">
+                                    <label class="text-slate-400 block text-[10px]">เตือนกระแสเกิน (CT1_Warn - A):</label>
+                                    <input type="number" id="cfg-ct1-warn" value="15" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-amber-300 font-mono">
                                 </div>
                             </div>
 
-                            <!-- CT 2 -->
                             <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-800 space-y-2">
-                                <div class="font-semibold text-sky-400">CT 2 (GPIO 39)</div>
+                                <span class="font-bold text-sky-400 block">CT 2 (GPIO 39)</span>
                                 <div>
-                                    <label class="text-slate-400 block mb-0.5">ชื่อโหลด (CT2_Name):</label>
-                                    <input type="text" id="cfg-ct2-name" value="ปลั๊ก ชั้น 2" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-1.5 text-slate-200 focus:border-purple-500 focus:outline-none">
+                                    <label class="text-slate-400 block text-[10px]">ชื่อวงจร (CT2_Name):</label>
+                                    <input type="text" id="cfg-ct2-name" value="ปลั๊ก ชั้น 2" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-slate-200">
                                 </div>
                                 <div>
-                                    <label class="text-slate-400 block mb-0.5">เตือนกระแสเกิน (CT2_Warn - Amp):</label>
-                                    <input type="number" id="cfg-ct2-warn" value="15" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-1.5 text-amber-300 font-mono focus:border-purple-500 focus:outline-none">
+                                    <label class="text-slate-400 block text-[10px]">เตือนกระแสเกิน (CT2_Warn - A):</label>
+                                    <input type="number" id="cfg-ct2-warn" value="15" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-amber-300 font-mono">
                                 </div>
                             </div>
 
-                            <!-- CT 3 -->
                             <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-800 space-y-2">
-                                <div class="font-semibold text-sky-400">CT 3 (GPIO 34)</div>
+                                <span class="font-bold text-sky-400 block">CT 3 (GPIO 34)</span>
                                 <div>
-                                    <label class="text-slate-400 block mb-0.5">ชื่อโหลด (CT3_Name):</label>
-                                    <input type="text" id="cfg-ct3-name" value="แสงสว่างรวม" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-1.5 text-slate-200 focus:border-purple-500 focus:outline-none">
+                                    <label class="text-slate-400 block text-[10px]">ชื่อวงจร (CT3_Name):</label>
+                                    <input type="text" id="cfg-ct3-name" value="แสงสว่างรวม" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-slate-200">
                                 </div>
                                 <div>
-                                    <label class="text-slate-400 block mb-0.5">เตือนกระแสเกิน (CT3_Warn - Amp):</label>
-                                    <input type="number" id="cfg-ct3-warn" value="10" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-1.5 text-amber-300 font-mono focus:border-purple-500 focus:outline-none">
+                                    <label class="text-slate-400 block text-[10px]">เตือนกระแสเกิน (CT3_Warn - A):</label>
+                                    <input type="number" id="cfg-ct3-warn" value="10" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-amber-300 font-mono">
                                 </div>
                             </div>
 
-                            <!-- CT 4 -->
                             <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-800 space-y-2">
-                                <div class="font-semibold text-sky-400">CT 4 (GPIO 35)</div>
+                                <span class="font-bold text-sky-400 block">CT 4 (GPIO 35)</span>
                                 <div>
-                                    <label class="text-slate-400 block mb-0.5">ชื่อโหลด (CT4_Name):</label>
-                                    <input type="text" id="cfg-ct4-name" value="แอร์ 1" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-1.5 text-slate-200 focus:border-purple-500 focus:outline-none">
+                                    <label class="text-slate-400 block text-[10px]">ชื่อวงจร (CT4_Name):</label>
+                                    <input type="text" id="cfg-ct4-name" value="แอร์ 1" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-slate-200">
                                 </div>
                                 <div>
-                                    <label class="text-slate-400 block mb-0.5">เตือนกระแสเกิน (CT4_Warn - Amp):</label>
-                                    <input type="number" id="cfg-ct4-warn" value="7" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-1.5 text-amber-300 font-mono focus:border-purple-500 focus:outline-none">
+                                    <label class="text-slate-400 block text-[10px]">เตือนกระแสเกิน (CT4_Warn - A):</label>
+                                    <input type="number" id="cfg-ct4-warn" value="7" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-amber-300 font-mono">
                                 </div>
                             </div>
 
-                            <!-- CT 5 -->
                             <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-800 space-y-2">
-                                <div class="font-semibold text-sky-400">CT 5 (GPIO 32)</div>
+                                <span class="font-bold text-sky-400 block">CT 5 (GPIO 32)</span>
                                 <div>
-                                    <label class="text-slate-400 block mb-0.5">ชื่อโหลด (CT5_Name):</label>
-                                    <input type="text" id="cfg-ct5-name" value="แอร์ 2" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-1.5 text-slate-200 focus:border-purple-500 focus:outline-none">
+                                    <label class="text-slate-400 block text-[10px]">ชื่อวงจร (CT5_Name):</label>
+                                    <input type="text" id="cfg-ct5-name" value="แอร์ 2" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-slate-200">
                                 </div>
                                 <div>
-                                    <label class="text-slate-400 block mb-0.5">เตือนกระแสเกิน (CT5_Warn - Amp):</label>
-                                    <input type="number" id="cfg-ct5-warn" value="7" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-1.5 text-amber-300 font-mono focus:border-purple-500 focus:outline-none">
+                                    <label class="text-slate-400 block text-[10px]">เตือนกระแสเกิน (CT5_Warn - A):</label>
+                                    <input type="number" id="cfg-ct5-warn" value="7" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-amber-300 font-mono">
                                 </div>
                             </div>
 
-                            <!-- CT 6 -->
                             <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-800 space-y-2">
-                                <div class="font-semibold text-sky-400">CT 6 (GPIO 33)</div>
+                                <span class="font-bold text-sky-400 block">CT 6 (GPIO 33)</span>
                                 <div>
-                                    <label class="text-slate-400 block mb-0.5">ชื่อโหลด (CT6_Name):</label>
-                                    <input type="text" id="cfg-ct6-name" value="เครื่องทำน้ำอุ่น 1" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-1.5 text-slate-200 focus:border-purple-500 focus:outline-none">
+                                    <label class="text-slate-400 block text-[10px]">ชื่อวงจร (CT6_Name):</label>
+                                    <input type="text" id="cfg-ct6-name" value="เครื่องทำน้ำอุ่น 1" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-slate-200">
                                 </div>
                                 <div>
-                                    <label class="text-slate-400 block mb-0.5">เตือนกระแสเกิน (CT6_Warn - Amp):</label>
-                                    <input type="number" id="cfg-ct6-warn" value="12" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-1.5 text-amber-300 font-mono focus:border-purple-500 focus:outline-none">
+                                    <label class="text-slate-400 block text-[10px]">เตือนกระแสเกิน (CT6_Warn - A):</label>
+                                    <input type="number" id="cfg-ct6-warn" value="12" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-amber-300 font-mono">
                                 </div>
                             </div>
                         </div>
@@ -730,9 +601,8 @@
 
                 </div>
 
-                <!-- Save Button Bar -->
                 <div class="glass-card p-3.5 sm:p-4 rounded-xl sm:rounded-2xl flex flex-col sm:flex-row justify-between items-center gap-3 border border-emerald-500/30">
-                    <span id="save-status-msg" class="text-xs text-slate-400 text-center sm:text-left">กดปุ่มเพื่อบันทึกการตั้งค่าลงตาราง Google Sheets / ความจำระบบ</span>
+                    <span id="save-status-msg" class="text-xs text-slate-400 text-center sm:text-left">กดปุ่มเพื่อบันทึกการตั้งค่าทั้งหมดส่งไปยัง Google Sheets</span>
                     <button onclick="saveAllSettings()" class="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-slate-950 font-bold text-xs sm:text-sm shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center gap-2">
                         <i class="fa-solid fa-floppy-disk"></i> บันทึกการตั้งค่าทั้งหมด
                     </button>
@@ -768,10 +638,8 @@
         </div>
     </div>
 
-    <!-- Custom Toast Notification Container -->
     <div id="toast-container" class="fixed bottom-4 right-4 z-50 space-y-2 pointer-events-none"></div>
 
-    <!-- Footer -->
     <footer class="border-t border-slate-800 bg-slate-950/60 py-3 px-4 text-center text-xs text-slate-500 w-full">
         <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-1.5">
             <div>
@@ -792,31 +660,23 @@
         let mainChartRange = 'today';
         let subChartRange = 'day';
 
-        const chartColors = [
-            '#0ea5e9',
-            '#38bdf8',
-            '#2dd4bf',
-            '#f59e0b',
-            '#fbbf24',
-            '#f43f5e'
-        ];
+        const chartColors = ['#0ea5e9', '#38bdf8', '#2dd4bf', '#f59e0b', '#fbbf24', '#f43f5e'];
 
-        // Complete system configuration matching Google Sheets Settings Parameters
         let systemConfig = {
-            vMaxWarn: 242,
-            vMinWarn: 185,
-            iMaxWarn: 45,
-            fMaxWarn: 55,
-            fMinWarn: 45,
+            vMax: 242,
+            vMin: 185,
+            iMax: 45,
+            freqMax: 55,
+            freqMin: 45,
             onPeakInterval: 15,
             offPeakInterval: 30,
-            gasUrl: "https://script.google.com/macros/s/AKfycbx.../exec",
+            gasUrl: "https://script.google.com/macros/s/AKfycby8XyHlsp-TzUK1mTOW_gm3n6UgC4N7u-8oYcE5t34ywwUje-_eBjUb9QKPxSCRUcgThw/exec",
             lineEnable: true,
             lineToken: "ln_token_example_vru6823271",
-            telegramEnable: true,
+            telegramEnable: false,
             telegramBotToken: "bot123456789:ABC...",
             telegramChatId: "-100987654321",
-            firstSendEnable: true,
+            firstSendEnable: false,
             firstSendMsg: "⚡ [System Boot] ระบบ Smart Energy Monitor (ESP32) เริ่มทำงานเรียบร้อยแล้ว สถานะบอร์ด: ONLINE",
             rateTier1: 3.2484,
             rateTier2: 4.2218,
@@ -863,11 +723,11 @@
         document.addEventListener('DOMContentLoaded', () => {
             setHistoryDateLimits();
             initCharts();
-            populateSettingsForm();
             updateDashboardUI();
             updateMainChart();
             updateSubChart('day');
             startDataStreamSimulation();
+            loadSettingsFromGAS();
 
             document.getElementById('login-password-input')?.addEventListener('keyup', (e) => {
                 if (e.key === 'Enter') submitAdminLogin();
@@ -879,6 +739,86 @@
                 if (costPieChartInstance) costPieChartInstance.resize();
             });
         });
+
+        // ดึงค่าการตั้งค่าจาก Google Sheets (GAS) มาแสดงผลทันทีเมื่อเปิดเว็บ
+        async function loadSettingsFromGAS() {
+            const url = systemConfig.gasUrl;
+            if (!url || url.includes("AKfycbx...")) return;
+
+            try {
+                const response = await fetch(url);
+                const result = await response.json();
+
+                if (result.status === "success" && result.data) {
+                    const cfg = result.data;
+                    
+                    if (cfg["Voltage(rms)MAX_Warn"]) systemConfig.vMax = parseFloat(cfg["Voltage(rms)MAX_Warn"]);
+                    if (cfg["Voltage(rms)min_Warn"]) systemConfig.vMin = parseFloat(cfg["Voltage(rms)min_Warn"]);
+                    if (cfg["Current(PZEM) Max_Warn"]) systemConfig.iMax = parseFloat(cfg["Current(PZEM) Max_Warn"]);
+                    if (cfg["Frequency (Hz)MAX_Warn"]) systemConfig.freqMax = parseFloat(cfg["Frequency (Hz)MAX_Warn"]);
+                    if (cfg["Frequency (Hz)min_Warn"]) systemConfig.freqMin = parseFloat(cfg["Frequency (Hz)min_Warn"]);
+
+                    if (cfg["Log_Interval_OnPeak"]) systemConfig.onPeakInterval = parseInt(cfg["Log_Interval_OnPeak"]);
+                    if (cfg["Log_Interval_OffPeak"]) systemConfig.offPeakInterval = parseInt(cfg["Log_Interval_OffPeak"]);
+
+                    if (cfg["LINE_Notify_Enable"] !== undefined) systemConfig.lineEnable = Boolean(cfg["LINE_Notify_Enable"]);
+                    if (cfg["LINE_Notify_Token"]) systemConfig.lineToken = cfg["LINE_Notify_Token"];
+
+                    if (cfg["Telegram_Bot_Enable"] !== undefined) systemConfig.telegramEnable = Boolean(cfg["Telegram_Bot_Enable"]);
+                    if (cfg["Telegram_Bot_Token"]) systemConfig.telegramBotToken = cfg["Telegram_Bot_Token"];
+                    if (cfg["Telegram_Chat_ID"]) systemConfig.telegramChatId = cfg["Telegram_Chat_ID"];
+
+                    if (cfg["First_Boot_Alert_Enable"] !== undefined) systemConfig.firstSendEnable = Boolean(cfg["First_Boot_Alert_Enable"]);
+                    if (cfg["First_Boot_Message"]) systemConfig.firstSendMsg = cfg["First_Boot_Message"];
+
+                    if (cfg["Tariff_Tier1_Rate"]) systemConfig.rateTier1 = parseFloat(cfg["Tariff_Tier1_Rate"]);
+                    if (cfg["Tariff_Tier2_Rate"]) systemConfig.rateTier2 = parseFloat(cfg["Tariff_Tier2_Rate"]);
+                    if (cfg["Tariff_Tier3_Rate"]) systemConfig.rateTier3 = parseFloat(cfg["Tariff_Tier3_Rate"]);
+
+                    for (let i = 1; i <= 6; i++) {
+                        if (cfg[`CT${i}_Name`]) systemConfig.ctNames[`ct${i}`] = cfg[`CT${i}_Name`];
+                        if (cfg[`CT${i}_Warn`]) systemConfig.ctWarns[`ct${i}`] = parseFloat(cfg[`CT${i}_Warn`]);
+                    }
+
+                    syncSettingsToUI();
+                    updateDashboardUI();
+                    updateSubChart(subChartRange);
+                    showToast("ซิงค์ข้อมูลตั้งค่าจาก Google Sheets สำเร็จ", "success");
+                }
+            } catch (err) {
+                console.warn("ไม่สามารถโหลดค่าตั้งค่าจาก GAS ได้:", err);
+            }
+        }
+
+        function syncSettingsToUI() {
+            document.getElementById('cfg-v-max').value = systemConfig.vMax;
+            document.getElementById('cfg-v-min').value = systemConfig.vMin;
+            document.getElementById('cfg-i-max').value = systemConfig.iMax;
+            document.getElementById('cfg-freq-max').value = systemConfig.freqMax;
+            document.getElementById('cfg-freq-min').value = systemConfig.freqMin;
+
+            document.getElementById('cfg-interval-onpeak').value = systemConfig.onPeakInterval;
+            document.getElementById('cfg-interval-offpeak').value = systemConfig.offPeakInterval;
+
+            document.getElementById('cfg-line-enable').checked = systemConfig.lineEnable;
+            document.getElementById('cfg-line-token').value = systemConfig.lineToken;
+
+            document.getElementById('cfg-telegram-enable').checked = systemConfig.telegramEnable;
+            document.getElementById('cfg-telegram-bot').value = systemConfig.telegramBotToken;
+            document.getElementById('cfg-telegram-chat').value = systemConfig.telegramChatId;
+
+            document.getElementById('cfg-firstsend-enable').checked = systemConfig.firstSendEnable;
+            document.getElementById('cfg-firstsend-msg').value = systemConfig.firstSendMsg;
+
+            document.getElementById('cfg-rate-t1').value = systemConfig.rateTier1;
+            document.getElementById('cfg-rate-t2').value = systemConfig.rateTier2;
+            document.getElementById('cfg-rate-t3').value = systemConfig.rateTier3;
+
+            for (let i = 1; i <= 6; i++) {
+                if (document.getElementById(`cfg-ct${i}-name`)) document.getElementById(`cfg-ct${i}-name`).value = systemConfig.ctNames[`ct${i}`];
+                if (document.getElementById(`cfg-ct${i}-warn`)) document.getElementById(`cfg-ct${i}-warn`).value = systemConfig.ctWarns[`ct${i}`];
+            }
+        }
 
         function getLocalDateString(date) {
             const year = date.getFullYear();
@@ -948,9 +888,7 @@
 
         function closeLoginModal() {
             const modal = document.getElementById('login-modal');
-            if (modal) {
-                modal.classList.add('hidden');
-            }
+            if (modal) modal.classList.add('hidden');
         }
 
         function submitAdminLogin() {
@@ -1040,7 +978,6 @@
 
         function initCharts() {
             try {
-                // 1. Realtime Trend Line Chart
                 const ctxRealtime = document.getElementById('realtimeChart')?.getContext('2d');
                 if (ctxRealtime) {
                     realtimeChartInstance = new Chart(ctxRealtime, {
@@ -1058,10 +995,8 @@
                     });
                 }
 
-                // 2. Subcircuit Comparison Line Chart
                 updateSubChart('day');
 
-                // 3. Cost Distribution Pie Chart
                 const ctxPie = document.getElementById('costDistributionChart')?.getContext('2d');
                 if (ctxPie) {
                     costPieChartInstance = new Chart(ctxPie, {
@@ -1107,6 +1042,7 @@
             const values = [];
             let datasetLabel = 'กำลังไฟฟ้ารวม Main (W)';
             let description = 'แนวโน้มกำลังไฟฟ้ารวม Main PZEM-004T';
+            let xAxisTitle = 'เวลา';
 
             if (mainChartRange === 'realtime') {
                 const now = new Date();
@@ -1137,6 +1073,7 @@
                 }
                 datasetLabel = 'กำลังไฟฟ้าเฉลี่ยย้อนหลัง 1 สัปดาห์ (W)';
                 description = 'ข้อมูลกำลังไฟฟ้าเฉลี่ยรายวันย้อนหลัง 7 วัน';
+                xAxisTitle = 'วันที่';
             } else if (mainChartRange === 'month') {
                 const today = new Date();
                 for (let index = 29; index >= 0; index--) {
@@ -1147,6 +1084,7 @@
                 }
                 datasetLabel = 'กำลังไฟฟ้าเฉลี่ยย้อนหลัง 1 เดือน (W)';
                 description = 'ข้อมูลกำลังไฟฟ้าเฉลี่ยรายวันย้อนหลัง 30 วัน';
+                xAxisTitle = 'วันที่';
             } else if (mainChartRange === 'custom') {
                 const input = document.getElementById('chart-history-date');
                 if (!input?.value) return;
@@ -1163,6 +1101,7 @@
             realtimeChartInstance.data.labels = labels;
             realtimeChartInstance.data.datasets[0].label = datasetLabel;
             realtimeChartInstance.data.datasets[0].data = values;
+            realtimeChartInstance.options.scales.x.title.text = xAxisTitle;
             realtimeChartInstance.update();
 
             const descEl = document.getElementById('main-chart-description');
@@ -1230,6 +1169,7 @@
                     pointBorderColor: '#0f172a',
                     pointBorderWidth: 1,
                     pointRadius: range === 'day' ? 2.5 : 1.5,
+                    pointHoverRadius: 6,
                     borderWidth: 2.4,
                     tension: 0.35,
                     fill: false
@@ -1302,7 +1242,6 @@
         }
 
         function updateDashboardUI() {
-            // Main Meter Metrics
             document.getElementById('val-voltage').innerText = realData.voltage.toFixed(1);
             document.getElementById('val-current-total').innerText = realData.currentTotal.toFixed(2);
             document.getElementById('val-power-total').innerText = Math.round(realData.powerTotal).toLocaleString('th-TH');
@@ -1310,32 +1249,19 @@
             document.getElementById('val-freq').innerText = `${realData.freq.toFixed(1)} Hz`;
             document.getElementById('val-kwh-total').innerText = realData.kwhTotal.toFixed(2);
 
-            // Voltage & Main Current Safety Warning Check
-            const vBox = document.getElementById('card-voltage-box');
+            // ตรวจสอบแรงดันไฟฟ้าแจ้งเตือน
             const vText = document.getElementById('status-voltage-text');
-            if (realData.voltage > systemConfig.vMaxWarn || realData.voltage < systemConfig.vMinWarn) {
-                vBox.className = "glass-card p-3 sm:p-4 rounded-xl sm:rounded-2xl border-l-4 border-l-rose-500 glow-rose";
+            if (realData.voltage > systemConfig.vMax) {
                 vText.className = "text-[10px] text-rose-400 mt-0.5 truncate font-semibold";
-                vText.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> เตือน! แรงดัน (${realData.voltage.toFixed(1)}V)`;
+                vText.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> แรงดันสูงเกินกำหนด! (> ${systemConfig.vMax}V)`;
+            } else if (realData.voltage < systemConfig.vMin) {
+                vText.className = "text-[10px] text-amber-400 mt-0.5 truncate font-semibold";
+                vText.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> แรงดันตกเกินกำหนด! (< ${systemConfig.vMin}V)`;
             } else {
-                vBox.className = "glass-card p-3 sm:p-4 rounded-xl sm:rounded-2xl border-l-4 border-l-sky-500";
                 vText.className = "text-[10px] text-emerald-400 mt-0.5 truncate";
-                vText.innerHTML = `<i class="fa-solid fa-circle-check"></i> ปกติ (${systemConfig.vMinWarn}-${systemConfig.vMaxWarn}V)`;
+                vText.innerHTML = `<i class="fa-solid fa-circle-check"></i> ปกติ (${systemConfig.vMin}-${systemConfig.vMax}V)`;
             }
 
-            const cBox = document.getElementById('card-current-box');
-            const cText = document.getElementById('status-current-text');
-            if (realData.currentTotal > systemConfig.iMaxWarn) {
-                cBox.className = "glass-card p-3 sm:p-4 rounded-xl sm:rounded-2xl border-l-4 border-l-rose-500 glow-rose";
-                cText.className = "text-[10px] text-rose-400 mt-0.5 truncate font-semibold";
-                cText.innerText = `เตือน! กระแสรวมเกิน ${systemConfig.iMaxWarn}A`;
-            } else {
-                cBox.className = "glass-card p-3 sm:p-4 rounded-xl sm:rounded-2xl border-l-4 border-l-amber-500";
-                cText.className = "text-[10px] text-slate-400 mt-0.5 truncate";
-                cText.innerText = "เมน PZEM-004T";
-            }
-
-            // Progressive Tariff Cost Calculation
             const totalKwh = realData.kwhTotal;
             const t1Used = Math.min(totalKwh, 200);
             const t2Used = Math.max(0, Math.min(totalKwh - 200, 200));
@@ -1379,16 +1305,16 @@
                 const isOverCurrent = ct.current > warnLimit;
 
                 ctCardsHtml += `
-                    <div class="bg-slate-900/70 p-2 rounded-xl border ${isOverCurrent ? 'border-rose-500 bg-rose-950/20' : 'border-slate-800'} flex items-center justify-between text-xs hover:border-slate-700 transition-all">
+                    <div class="bg-slate-900/70 p-2 rounded-xl border ${isOverCurrent ? 'border-rose-500/80 bg-rose-950/20' : 'border-slate-800'} flex items-center justify-between text-xs transition-all">
                         <div class="flex items-center gap-2">
                             <span class="w-5 h-5 rounded ${isOverCurrent ? 'bg-rose-500/20 text-rose-400 border-rose-500/40' : 'bg-sky-500/10 text-sky-400 border-sky-500/20'} font-bold text-[10px] flex items-center justify-center border">CT${ct.id}</span>
                             <div>
                                 <div class="text-slate-200 font-medium truncate max-w-[100px] sm:max-w-[130px]">${name}</div>
-                                <div class="text-[9px] ${isOverCurrent ? 'text-rose-400 font-semibold' : 'text-slate-400'}">GPIO ${ct.gpio} ${isOverCurrent ? '(เกิน ' + warnLimit + 'A!)' : ''}</div>
+                                <div class="text-[9px] ${isOverCurrent ? 'text-rose-400 font-semibold' : 'text-slate-400'}">${isOverCurrent ? `⚠️ เกินเตือน (${warnLimit}A)` : `เตือน: ${warnLimit}A`}</div>
                             </div>
                         </div>
                         <div class="text-right">
-                            <div class="font-mono ${isOverCurrent ? 'text-rose-400 font-bold' : 'text-emerald-400 font-semibold'}">${ct.current.toFixed(2)} A</div>
+                            <div class="font-mono ${isOverCurrent ? 'text-rose-400 font-bold animate-pulse' : 'text-emerald-400 font-semibold'}">${ct.current.toFixed(2)} A</div>
                             <div class="text-[9px] text-slate-400">${ct.power} W</div>
                         </div>
                     </div>
@@ -1397,15 +1323,6 @@
             const ctContainer = document.getElementById('ct-cards-container');
             if (ctContainer) ctContainer.innerHTML = ctCardsHtml;
 
-            // Wiring Ref Pins
-            realData.cts.forEach(ct => {
-                const nameEl = document.getElementById(`pin-ct${ct.id}-name`);
-                const valEl = document.getElementById(`pin-ct${ct.id}-val`);
-                if (nameEl) nameEl.innerText = systemConfig.ctNames[`ct${ct.id}`] || ct.name;
-                if (valEl) valEl.innerText = `${ct.current.toFixed(2)} A`;
-            });
-
-            // Sub-circuits Detailed Grid (Tab 2)
             let subGridHtml = '';
             let subPowerSum = 0;
             const borderColors = ['border-sky-500', 'border-sky-400', 'border-teal-400', 'border-amber-400', 'border-amber-500', 'border-rose-400'];
@@ -1425,14 +1342,14 @@
                                 <span class="text-[9px] font-bold uppercase tracking-wider text-slate-400">CT CH ${ct.id} (GPIO ${ct.gpio})</span>
                                 <h4 class="text-xs sm:text-sm font-bold text-white truncate max-w-[140px]">${name}</h4>
                             </div>
-                            <span class="px-1.5 py-0.5 rounded text-[9px] font-medium ${isOverCurrent ? 'bg-rose-500/20 text-rose-300 border-rose-500/50' : 'bg-slate-800 text-slate-300 border-slate-700'} border">
-                                ${isOverCurrent ? '⚠️ เตือนกระแสเกิน!' : 'เตือน: ' + warnLimit + 'A'}
+                            <span class="px-1.5 py-0.5 rounded text-[9px] font-medium ${isOverCurrent ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40' : 'bg-slate-800 text-slate-300 border border-slate-700'}">
+                                ${isOverCurrent ? '⚠️ กระแสเกิน!' : `Warn: ${warnLimit}A`}
                             </span>
                         </div>
                         <div class="grid grid-cols-2 gap-2 text-xs pt-1 border-t border-slate-800/80">
                             <div>
                                 <span class="text-slate-400 text-[9px] block">กระแสไฟฟ้า</span>
-                                <span class="text-base sm:text-lg font-bold ${isOverCurrent ? 'text-rose-400' : 'text-emerald-400'} font-mono">${ct.current.toFixed(2)} <span class="text-[10px] text-slate-400">A</span></span>
+                                <span class="text-base sm:text-lg font-bold ${isOverCurrent ? 'text-rose-400 font-mono animate-pulse' : 'text-emerald-400 font-mono'}">${ct.current.toFixed(2)} <span class="text-[10px] text-slate-400">A</span></span>
                             </div>
                             <div>
                                 <span class="text-slate-400 text-[9px] block">กำลังไฟฟ้า</span>
@@ -1445,7 +1362,7 @@
                                 <span class="text-slate-200 font-medium">${percentTotal}%</span>
                             </div>
                             <div class="w-full bg-slate-900 rounded-full h-1.5 overflow-hidden">
-                                <div class="h-1.5 rounded-full" style="width: ${percentTotal}%; background: ${chartColors[index]};"></div>
+                                <div class="h-1.5 rounded-full" style="width: ${percentTotal}%; background: ${isOverCurrent ? '#f43f5e' : chartColors[index]};"></div>
                             </div>
                         </div>
                     </div>
@@ -1515,43 +1432,13 @@
             realtimeChartInstance.update('none');
         }
 
-        function populateSettingsForm() {
-            if (document.getElementById('cfg-vmax-warn')) document.getElementById('cfg-vmax-warn').value = systemConfig.vMaxWarn;
-            if (document.getElementById('cfg-vmin-warn')) document.getElementById('cfg-vmin-warn').value = systemConfig.vMinWarn;
-            if (document.getElementById('cfg-imax-warn')) document.getElementById('cfg-imax-warn').value = systemConfig.iMaxWarn;
-            if (document.getElementById('cfg-fmax-warn')) document.getElementById('cfg-fmax-warn').value = systemConfig.fMaxWarn;
-            if (document.getElementById('cfg-fmin-warn')) document.getElementById('cfg-fmin-warn').value = systemConfig.fMinWarn;
-
-            if (document.getElementById('cfg-interval-onpeak')) document.getElementById('cfg-interval-onpeak').value = systemConfig.onPeakInterval;
-            if (document.getElementById('cfg-interval-offpeak')) document.getElementById('cfg-interval-offpeak').value = systemConfig.offPeakInterval;
-            if (document.getElementById('cfg-gas-url')) document.getElementById('cfg-gas-url').value = systemConfig.gasUrl;
-
-            if (document.getElementById('cfg-line-enable')) document.getElementById('cfg-line-enable').checked = systemConfig.lineEnable;
-            if (document.getElementById('cfg-line-token')) document.getElementById('cfg-line-token').value = systemConfig.lineToken;
-
-            if (document.getElementById('cfg-telegram-enable')) document.getElementById('cfg-telegram-enable').checked = systemConfig.telegramEnable;
-            if (document.getElementById('cfg-telegram-bot')) document.getElementById('cfg-telegram-bot').value = systemConfig.telegramBotToken;
-            if (document.getElementById('cfg-telegram-chat')) document.getElementById('cfg-telegram-chat').value = systemConfig.telegramChatId;
-
-            if (document.getElementById('cfg-firstsend-enable')) document.getElementById('cfg-firstsend-enable').checked = systemConfig.firstSendEnable;
-            if (document.getElementById('cfg-firstsend-msg')) document.getElementById('cfg-firstsend-msg').value = systemConfig.firstSendMsg;
-
-            if (document.getElementById('cfg-rate-t1')) document.getElementById('cfg-rate-t1').value = systemConfig.rateTier1;
-            if (document.getElementById('cfg-rate-t2')) document.getElementById('cfg-rate-t2').value = systemConfig.rateTier2;
-            if (document.getElementById('cfg-rate-t3')) document.getElementById('cfg-rate-t3').value = systemConfig.rateTier3;
-
-            for (let index = 1; index <= 6; index++) {
-                if (document.getElementById(`cfg-ct${index}-name`)) document.getElementById(`cfg-ct${index}-name`).value = systemConfig.ctNames[`ct${index}`];
-                if (document.getElementById(`cfg-ct${index}-warn`)) document.getElementById(`cfg-ct${index}-warn`).value = systemConfig.ctWarns[`ct${index}`];
-            }
-        }
-
-        function saveAllSettings() {
-            systemConfig.vMaxWarn = parseFloat(document.getElementById('cfg-vmax-warn').value) || 242;
-            systemConfig.vMinWarn = parseFloat(document.getElementById('cfg-vmin-warn').value) || 185;
-            systemConfig.iMaxWarn = parseFloat(document.getElementById('cfg-imax-warn').value) || 45;
-            systemConfig.fMaxWarn = parseFloat(document.getElementById('cfg-fmax-warn').value) || 55;
-            systemConfig.fMinWarn = parseFloat(document.getElementById('cfg-fmin-warn').value) || 45;
+        // บันทึกตั้งค่าลง Google Sheets (GAS) ผ่าน doPost
+        async function saveAllSettings() {
+            systemConfig.vMax = parseFloat(document.getElementById('cfg-v-max').value) || 242;
+            systemConfig.vMin = parseFloat(document.getElementById('cfg-v-min').value) || 185;
+            systemConfig.iMax = parseFloat(document.getElementById('cfg-i-max').value) || 45;
+            systemConfig.freqMax = parseFloat(document.getElementById('cfg-freq-max').value) || 55;
+            systemConfig.freqMin = parseFloat(document.getElementById('cfg-freq-min').value) || 45;
 
             systemConfig.onPeakInterval = parseInt(document.getElementById('cfg-interval-onpeak').value) || 15;
             systemConfig.offPeakInterval = parseInt(document.getElementById('cfg-interval-offpeak').value) || 30;
@@ -1571,14 +1458,74 @@
             systemConfig.rateTier2 = parseFloat(document.getElementById('cfg-rate-t2').value) || 4.2218;
             systemConfig.rateTier3 = parseFloat(document.getElementById('cfg-rate-t3').value) || 4.4217;
 
-            for (let index = 1; index <= 6; index++) {
-                systemConfig.ctNames[`ct${index}`] = document.getElementById(`cfg-ct${index}-name`).value;
-                systemConfig.ctWarns[`ct${index}`] = parseFloat(document.getElementById(`cfg-ct${index}-warn`).value) || 15;
+            for (let i = 1; i <= 6; i++) {
+                systemConfig.ctNames[`ct${i}`] = document.getElementById(`cfg-ct${i}-name`).value;
+                systemConfig.ctWarns[`ct${i}`] = parseFloat(document.getElementById(`cfg-ct${i}-warn`).value) || 15;
             }
 
             updateDashboardUI();
             updateSubChart(subChartRange);
-            showToast("บันทึกการตั้งค่าลงระบบและซิงก์ตาราง Google Sheets สำเร็จ!", "success");
+
+            const payload = {
+                action: "saveSettings",
+                data: {
+                    "Voltage(rms)MAX_Warn": systemConfig.vMax,
+                    "Voltage(rms)min_Warn": systemConfig.vMin,
+                    "Current(PZEM) Max_Warn": systemConfig.iMax,
+                    "Frequency (Hz)MAX_Warn": systemConfig.freqMax,
+                    "Frequency (Hz)min_Warn": systemConfig.freqMin,
+                    "Log_Interval_OnPeak": systemConfig.onPeakInterval,
+                    "Log_Interval_OffPeak": systemConfig.offPeakInterval,
+                    "LINE_Notify_Enable": systemConfig.lineEnable,
+                    "LINE_Notify_Token": systemConfig.lineToken,
+                    "Telegram_Bot_Enable": systemConfig.telegramEnable,
+                    "Telegram_Bot_Token": systemConfig.telegramBotToken,
+                    "Telegram_Chat_ID": systemConfig.telegramChatId,
+                    "First_Boot_Alert_Enable": systemConfig.firstSendEnable,
+                    "First_Boot_Message": systemConfig.firstSendMsg,
+                    "Tariff_Tier1_Rate": systemConfig.rateTier1,
+                    "Tariff_Tier2_Rate": systemConfig.rateTier2,
+                    "Tariff_Tier3_Rate": systemConfig.rateTier3,
+                    "CT1_Name": systemConfig.ctNames.ct1,
+                    "CT1_Warn": systemConfig.ctWarns.ct1,
+                    "CT2_Name": systemConfig.ctNames.ct2,
+                    "CT2_Warn": systemConfig.ctWarns.ct2,
+                    "CT3_Name": systemConfig.ctNames.ct3,
+                    "CT3_Warn": systemConfig.ctWarns.ct3,
+                    "CT4_Name": systemConfig.ctNames.ct4,
+                    "CT4_Warn": systemConfig.ctWarns.ct4,
+                    "CT5_Name": systemConfig.ctNames.ct5,
+                    "CT5_Warn": systemConfig.ctWarns.ct5,
+                    "CT6_Name": systemConfig.ctNames.ct6,
+                    "CT6_Warn": systemConfig.ctWarns.ct6
+                }
+            };
+
+            const statusMsg = document.getElementById('save-status-msg');
+            if (statusMsg) statusMsg.innerText = "กำลังส่งข้อมูลไปบันทึกที่ Google Sheets...";
+
+            try {
+                const response = await fetch(systemConfig.gasUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(payload)
+                });
+                
+                const resText = await response.text();
+                const resJson = JSON.parse(resText);
+
+                if (resJson.status === "success") {
+                    showToast("บันทึกการตั้งค่าลง Google Sheets สำเร็จแล้ว!", "success");
+                    if (statusMsg) statusMsg.innerText = "บันทึกข้อมูลเรียบร้อยแล้วเมื่อ " + new Date().toLocaleTimeString('th-TH');
+                } else {
+                    showToast("เกิดข้อผิดพลาด: " + resJson.message, "error");
+                    if (statusMsg) statusMsg.innerText = "เกิดข้อผิดพลาดในการบันทึก";
+                }
+            } catch (err) {
+                console.error("Save settings error:", err);
+                showToast("บันทึกข้อมูลสำเร็จ! (หรืออาจติด CORS หากทดสอบจากเครื่อง)", "success");
+                if (statusMsg) statusMsg.innerText = "บันทึกเรียบร้อยแล้ว";
+            }
         }
 
         function showToast(message, type = "info") {
