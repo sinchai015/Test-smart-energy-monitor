@@ -78,7 +78,7 @@
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #0ea5e9; }
 
-        input[type="date"] { color-scheme: dark; }
+        input[type="date"], input[type="time"] { color-scheme: dark; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between antialiased selection:bg-sky-500 selection:text-white w-full overflow-x-hidden">
@@ -450,10 +450,10 @@
                         </div>
                     </div>
 
-                    <!-- 3. LINE & Telegram -->
+                    <!-- 3. LINE & Telegram Connection -->
                     <div class="glass-card p-4 sm:p-6 rounded-xl sm:rounded-2xl space-y-4">
                         <h3 class="text-sm sm:text-base font-semibold text-emerald-400 border-b border-slate-800 pb-2 flex items-center gap-2">
-                            <i class="fa-solid fa-bell text-emerald-400"></i> การแจ้งเตือน (LINE Notify / Telegram)
+                            <i class="fa-solid fa-bell text-emerald-400"></i> ช่องทางการเชื่อมต่อการแจ้งเตือน (LINE / Telegram)
                         </h3>
 
                         <div class="space-y-1.5 border-b border-slate-800 pb-3">
@@ -469,7 +469,7 @@
                             <input type="text" id="cfg-line-token" value="ln_token_example_vru6823271" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-300 font-mono focus:border-emerald-500 focus:outline-none">
                         </div>
 
-                        <div class="space-y-1.5 border-b border-slate-800 pb-3">
+                        <div class="space-y-1.5 pt-1">
                             <div class="flex items-center justify-between">
                                 <span class="text-xs font-semibold text-slate-200 flex items-center gap-2">
                                     <i class="fa-brands fa-telegram text-sky-400 text-base"></i> เปิดใช้งาน Telegram Bot
@@ -480,24 +480,62 @@
                                 </label>
                             </div>
                             <div class="grid grid-cols-2 gap-2">
-                                <input type="text" id="cfg-telegram-bot" value="bot123456789:ABC..." class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-300 font-mono focus:border-sky-500 focus:outline-none">
-                                <input type="text" id="cfg-telegram-chat" value="-100987654321" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-300 font-mono focus:border-sky-500 focus:outline-none">
+                                <input type="text" id="cfg-telegram-bot" value="bot123456789:ABC..." class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-300 font-mono focus:border-sky-500 focus:outline-none" placeholder="Telegram Bot Token">
+                                <input type="text" id="cfg-telegram-chat" value="-100987654321" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-300 font-mono focus:border-sky-500 focus:outline-none" placeholder="Chat ID">
                             </div>
                         </div>
+                    </div>
 
-                        <div class="space-y-1.5 pt-1">
+                    <!-- 4. Scheduled Alerts & Reports Settings (กลุ่มใหม่เพิ่มเติม) -->
+                    <div class="glass-card p-4 sm:p-6 rounded-xl sm:rounded-2xl space-y-4 border-l-4 border-l-amber-500">
+                        <h3 class="text-sm sm:text-base font-semibold text-amber-400 border-b border-slate-800 pb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-clock text-amber-400"></i> การตั้งค่าข้อความและเวลาแจ้งเตือน
+                        </h3>
+
+                        <!-- 1. แจ้งเตือนครั้งแรก (First-Time Boot) -->
+                        <div class="space-y-1.5 border-b border-slate-800 pb-3">
                             <div class="flex items-center justify-between">
-                                <span class="text-xs font-semibold text-amber-300">แจ้งเตือนครั้งแรก (First-Time Boot)</span>
+                                <span class="text-xs font-semibold text-amber-300 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-power-off text-amber-400"></i> 1. แจ้งเตือนครั้งแรก (First-Time Boot)
+                                </span>
                                 <label class="relative inline-flex items-center cursor-pointer">
                                     <input type="checkbox" id="cfg-firstsend-enable" class="sr-only peer">
                                     <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
                                 </label>
                             </div>
-                            <textarea id="cfg-firstsend-msg" rows="2" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2 text-xs text-slate-200 focus:border-amber-500 focus:outline-none">⚡ [System Boot] ระบบ Smart Energy Monitor (ESP32) เริ่มทำงานเรียบร้อยแล้ว สถานะบอร์ด: ONLINE</textarea>
+                            <textarea id="cfg-firstsend-msg" rows="2" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2 text-xs text-slate-200 focus:border-amber-500 focus:outline-none" placeholder="ข้อความแจ้งเตือนครั้งแรก...">⚡ [System Boot] ระบบ Smart Energy Monitor (ESP32) เริ่มทำงานเรียบร้อยแล้ว สถานะบอร์ด: ONLINE</textarea>
+                        </div>
+
+                        <!-- 2. แจ้งเตือนตอนเช้า เช็คสถานะออนไลน์ -->
+                        <div class="space-y-1.5 border-b border-slate-800 pb-3">
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="text-xs font-semibold text-sky-300 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-sun text-amber-400"></i> 2. แจ้งเตือนตอนเช้า (เช็คสถานะออนไลน์)
+                                </span>
+                                <div class="flex items-center gap-1.5">
+                                    <span class="text-[10px] text-slate-400">เวลาที่แจ้งเตือน:</span>
+                                    <input type="time" id="cfg-timer-morning-report" value="07:00" class="bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-xs text-sky-400 font-mono focus:border-sky-500 focus:outline-none">
+                                </div>
+                            </div>
+                            <input type="text" id="cfg-morning-report-msg" value="สถานะบอร์ด: ONLINE" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-200 focus:border-sky-500 focus:outline-none" placeholder="ข้อความรายงานตอนเช้า...">
+                        </div>
+
+                        <!-- 3. แจ้งเตือนตอนเย็น สรุปรายงานประจำวัน -->
+                        <div class="space-y-1.5 pt-1">
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="text-xs font-semibold text-indigo-300 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-moon text-indigo-400"></i> 3. แจ้งเตือนตอนเย็น (สรุปรายงานประจำวัน)
+                                </span>
+                                <div class="flex items-center gap-1.5">
+                                    <span class="text-[10px] text-slate-400">เวลาที่แจ้งเตือน:</span>
+                                    <input type="time" id="cfg-timer-daily-report" value="18:00" class="bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-xs text-indigo-400 font-mono focus:border-indigo-500 focus:outline-none">
+                                </div>
+                            </div>
+                            <input type="text" id="cfg-daily-report-msg" value="สรุปรายงานประจำวัน" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-200 focus:border-indigo-500 focus:outline-none" placeholder="ข้อความสรุปรายงานประจำวัน...">
                         </div>
                     </div>
 
-                    <!-- 4. Tariff Rate -->
+                    <!-- 5. Tariff Rate -->
                     <div class="glass-card p-4 sm:p-6 rounded-xl sm:rounded-2xl space-y-4">
                         <h3 class="text-sm sm:text-base font-semibold text-amber-400 border-b border-slate-800 pb-2 flex items-center gap-2">
                             <i class="fa-solid fa-tags text-amber-400"></i> ตั้งค่าอัตราค่าไฟฟ้าพื้นฐาน (บาท/หน่วย)
@@ -518,7 +556,7 @@
                         </div>
                     </div>
 
-                    <!-- 5. CT Names & CT Warn Limits -->
+                    <!-- 6. CT Names & CT Warn Limits -->
                     <div class="glass-card p-4 sm:p-6 rounded-xl sm:rounded-2xl space-y-4 lg:col-span-2">
                         <h3 class="text-sm sm:text-base font-semibold text-purple-400 border-b border-slate-800 pb-2 flex items-center gap-2">
                             <i class="fa-solid fa-pen-to-square text-purple-400"></i> ตั้งชื่อโหลดวงจรย่อย และขีดจำกัดกระแสเกิน (CT1 - CT6 Warn)
@@ -678,6 +716,10 @@
             telegramChatId: "-100987654321",
             firstSendEnable: false,
             firstSendMsg: "⚡ [System Boot] ระบบ Smart Energy Monitor (ESP32) เริ่มทำงานเรียบร้อยแล้ว สถานะบอร์ด: ONLINE",
+            morningReportMsg: "สถานะบอร์ด: ONLINE",
+            timerMorningReport: "07:00",
+            dailyReportMsg: "สรุปรายงานประจำวัน",
+            timerDailyReport: "18:00",
             rateTier1: 3.2484,
             rateTier2: 4.2218,
             rateTier3: 4.4217,
@@ -771,6 +813,12 @@
                     if (cfg["First_Boot_Alert_Enable"] !== undefined) systemConfig.firstSendEnable = Boolean(cfg["First_Boot_Alert_Enable"]);
                     if (cfg["First_Boot_Message"]) systemConfig.firstSendMsg = cfg["First_Boot_Message"];
 
+                    if (cfg["Morning_Report"]) systemConfig.morningReportMsg = cfg["Morning_Report"];
+                    if (cfg["Timer_Morning_Report"]) systemConfig.timerMorningReport = cfg["Timer_Morning_Report"].toString().substring(0, 5);
+
+                    if (cfg["Daily_Report"]) systemConfig.dailyReportMsg = cfg["Daily_Report"];
+                    if (cfg["Timer_Daily_Report"]) systemConfig.timerDailyReport = cfg["Timer_Daily_Report"].toString().substring(0, 5);
+
                     if (cfg["Tariff_Tier1_Rate"]) systemConfig.rateTier1 = parseFloat(cfg["Tariff_Tier1_Rate"]);
                     if (cfg["Tariff_Tier2_Rate"]) systemConfig.rateTier2 = parseFloat(cfg["Tariff_Tier2_Rate"]);
                     if (cfg["Tariff_Tier3_Rate"]) systemConfig.rateTier3 = parseFloat(cfg["Tariff_Tier3_Rate"]);
@@ -809,6 +857,12 @@
 
             document.getElementById('cfg-firstsend-enable').checked = systemConfig.firstSendEnable;
             document.getElementById('cfg-firstsend-msg').value = systemConfig.firstSendMsg;
+
+            if (document.getElementById('cfg-morning-report-msg')) document.getElementById('cfg-morning-report-msg').value = systemConfig.morningReportMsg;
+            if (document.getElementById('cfg-timer-morning-report')) document.getElementById('cfg-timer-morning-report').value = systemConfig.timerMorningReport;
+
+            if (document.getElementById('cfg-daily-report-msg')) document.getElementById('cfg-daily-report-msg').value = systemConfig.dailyReportMsg;
+            if (document.getElementById('cfg-timer-daily-report')) document.getElementById('cfg-timer-daily-report').value = systemConfig.timerDailyReport;
 
             document.getElementById('cfg-rate-t1').value = systemConfig.rateTier1;
             document.getElementById('cfg-rate-t2').value = systemConfig.rateTier2;
@@ -1454,6 +1508,12 @@
             systemConfig.firstSendEnable = document.getElementById('cfg-firstsend-enable').checked;
             systemConfig.firstSendMsg = document.getElementById('cfg-firstsend-msg').value;
 
+            systemConfig.morningReportMsg = document.getElementById('cfg-morning-report-msg').value;
+            systemConfig.timerMorningReport = document.getElementById('cfg-timer-morning-report').value;
+
+            systemConfig.dailyReportMsg = document.getElementById('cfg-daily-report-msg').value;
+            systemConfig.timerDailyReport = document.getElementById('cfg-timer-daily-report').value;
+
             systemConfig.rateTier1 = parseFloat(document.getElementById('cfg-rate-t1').value) || 3.2484;
             systemConfig.rateTier2 = parseFloat(document.getElementById('cfg-rate-t2').value) || 4.2218;
             systemConfig.rateTier3 = parseFloat(document.getElementById('cfg-rate-t3').value) || 4.4217;
@@ -1483,6 +1543,10 @@
                     "Telegram_Chat_ID": systemConfig.telegramChatId,
                     "First_Boot_Alert_Enable": systemConfig.firstSendEnable,
                     "First_Boot_Message": systemConfig.firstSendMsg,
+                    "Morning_Report": systemConfig.morningReportMsg,
+                    "Timer_Morning_Report": systemConfig.timerMorningReport,
+                    "Daily_Report": systemConfig.dailyReportMsg,
+                    "Timer_Daily_Report": systemConfig.timerDailyReport,
                     "Tariff_Tier1_Rate": systemConfig.rateTier1,
                     "Tariff_Tier2_Rate": systemConfig.rateTier2,
                     "Tariff_Tier3_Rate": systemConfig.rateTier3,
