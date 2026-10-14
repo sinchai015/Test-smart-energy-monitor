@@ -35,11 +35,10 @@
             }
         }
     </script>
-    <!-- Google Fonts -->
+    <!-- Google Fonts & FontAwesome Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -95,7 +94,7 @@
                     </h1>
                     <p class="text-[11px] sm:text-xs text-slate-400 flex items-center gap-1.5">
                         <span class="truncate"><i class="fa-solid fa-microchip text-sky-400"></i> ESP32</span>
-                        <span id="data-updated-time" class="text-slate-400 font-medium text-[10px] sm:text-xs ml-1">กำลังโหลดข้อมูล...</span>
+                        <span id="data-updated-time" class="text-slate-300 font-medium text-[10px] sm:text-xs ml-1">กำลังดึงข้อมูล...</span>
                     </p>
                 </div>
             </div>
@@ -215,17 +214,7 @@
                             <h2 class="text-sm sm:text-base font-semibold text-slate-200 flex items-center gap-2">
                                 <i class="fa-solid fa-chart-area text-sky-400"></i> กราฟกำลังไฟฟ้า (Power Trend - Watt)
                             </h2>
-                            <p id="main-chart-description" class="text-[11px] text-slate-400">แนวโน้มกำลังไฟฟ้ารวม Main PZEM-004T</p>
-                        </div>
-                        <div class="flex flex-col sm:flex-row items-stretch gap-2">
-                            <select id="chart-time-range" onchange="handleMainChartRangeChange(this.value)" class="bg-slate-900 text-xs text-slate-300 border border-slate-700 rounded-lg px-3 py-2 focus:outline-none focus:border-sky-500 cursor-pointer">
-                                <option value="realtime" selected>ข้อมูลล่าสุด (Real-time)</option>
-                                <option value="today">วันนี้ (24 ชม.)</option>
-                                <option value="week">ย้อนหลัง 1 สัปดาห์</option>
-                                <option value="month">ย้อนหลัง 1 เดือน</option>
-                                <option value="custom">เลือกวันที่ย้อนหลัง</option>
-                            </select>
-                            <input type="date" id="chart-history-date" onchange="updateMainChart()" class="hidden bg-slate-900 text-xs text-slate-300 border border-sky-500 rounded-lg px-3 py-2 focus:outline-none cursor-pointer">
+                            <p id="main-chart-description" class="text-[11px] text-slate-400">แสดงข้อมูลประวัติย้อนหลังจริงจาก Google Sheets</p>
                         </div>
                     </div>
                     <div class="chart-box">
@@ -268,17 +257,7 @@
                         <h3 class="text-sm sm:text-base font-semibold text-slate-200 flex items-center gap-2">
                             <i class="fa-solid fa-chart-line text-teal-400"></i> วิเคราะห์กำลังไฟฟ้าแต่ละวงจรย่อย (Watt)
                         </h3>
-                        <p id="sub-chart-description" class="text-[11px] text-slate-400">เปรียบเทียบแนวโน้มกำลังไฟฟ้าของ CT 6 ช่องตามช่วงเวลา</p>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <label class="text-xs text-slate-300 font-medium flex items-center gap-1 shrink-0">
-                            <i class="fa-solid fa-calendar-days text-sky-400"></i> ช่วงเวลา:
-                        </label>
-                        <select id="sub-time-range" onchange="updateSubChart(this.value)" class="bg-slate-900 text-xs text-slate-200 border border-slate-700 rounded-xl px-3 py-1.5 focus:outline-none focus:border-sky-500 font-medium cursor-pointer">
-                            <option value="day">1 วัน</option>
-                            <option value="week">7 วัน</option>
-                            <option value="month">1 เดือน</option>
-                        </select>
+                        <p id="sub-chart-description" class="text-[11px] text-slate-400">เปรียบเทียบแนวโน้มกำลังไฟฟ้า CT1–CT6 จาก Google Sheets</p>
                     </div>
                 </div>
                 <div class="chart-box" style="height: 320px;">
@@ -289,18 +268,26 @@
 
         <!-- ================= TAB 3: TARIFF & COST CALCULATOR ================= -->
         <div id="tab-tariff" class="tab-content hidden space-y-4 sm:space-y-6">
-            <div class="glass-card p-4 sm:p-5 rounded-xl sm:rounded-2xl border-l-4 border-l-emerald-500">
-                <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-                    <i class="fa-solid fa-calculator text-emerald-400"></i> คำนวณค่าไฟฟ้าแบบขั้นบันได (Progressive Electricity Tariff)
-                </h2>
-                <p class="text-[11px] sm:text-xs text-slate-400 mt-1">ระบบคิดคำนวณตามอัตราค่าไฟฟ้าพื้นฐานประเภทบ้านอยู่อาศัย ตามสเปกหน่วยการใช้งาน</p>
+            <div class="glass-card p-4 sm:p-5 rounded-xl sm:rounded-2xl border-l-4 border-l-emerald-500 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                <div>
+                    <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-calculator text-emerald-400"></i> คำนวณค่าไฟฟ้าแบบขั้นบันได (Progressive Electricity Tariff)
+                    </h2>
+                    <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">ระบบคำนวณโดยการ SUM รวมค่า Energy (PZEM) kWh ประจำเดือนจาก Google Sheets</p>
+                </div>
+                <div class="flex items-center gap-2 shrink-0">
+                    <label class="text-xs text-slate-300 font-medium"><i class="fa-solid fa-calendar-days text-emerald-400 mr-1"></i>เลือกเดือน:</label>
+                    <select id="tariff-month-select" onchange="calculateTariffForMonth(this.value)" class="bg-slate-900 text-xs text-emerald-400 font-bold border border-emerald-500/50 rounded-xl px-3 py-2 focus:outline-none cursor-pointer shadow-md">
+                        <option value="current">เดือนปัจจุบัน (สะสม)</option>
+                    </select>
+                </div>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 w-full">
                 <div class="lg:col-span-2 glass-card p-4 sm:p-6 rounded-xl sm:rounded-2xl space-y-4">
                     <h3 class="text-sm sm:text-base font-semibold text-slate-200 border-b border-slate-800 pb-2.5 flex items-center justify-between">
-                        <span><i class="fa-solid fa-receipt text-amber-400 mr-1.5"></i>รายละเอียดการคิดค่าไฟเดือนปัจจุบัน</span>
-                        <span class="text-xs font-normal text-slate-400">หน่วยรวมสะสม: <strong id="calc-total-kwh" class="text-sky-400 font-mono text-sm">0.00</strong> kWh</span>
+                        <span><i class="fa-solid fa-receipt text-amber-400 mr-1.5"></i>รายละเอียดการคิดค่าไฟประจำเดือน (<span id="selected-month-label" class="text-emerald-400">เดือนปัจจุบัน</span>)</span>
+                        <span class="text-xs font-normal text-slate-400">หน่วยรวม (SUM kWh): <strong id="calc-total-kwh" class="text-sky-400 font-mono text-sm">0.00</strong> kWh</span>
                     </h3>
 
                     <div class="space-y-2.5 text-xs sm:text-sm">
@@ -354,20 +341,19 @@
                     <div class="chart-box my-auto">
                         <canvas id="costDistributionChart"></canvas>
                     </div>
-                    <p class="text-[10px] text-slate-400 text-center mt-2">* คำนวณตามสัดส่วนกำลังไฟฟ้าสะสมของแต่ละวงจร</p>
+                    <p class="text-[10px] text-slate-400 text-center mt-2">* คำนวณตามสัดส่วนกำลังไฟฟ้าของแต่ละวงจรย่อย</p>
                 </div>
             </div>
         </div>
 
         <!-- ================= TAB 4: SYSTEM SETTINGS ================= -->
         <div id="tab-settings" class="tab-content hidden space-y-4 sm:space-y-6">
-            
             <div id="settings-lock-screen" class="glass-card p-6 sm:p-8 rounded-xl sm:rounded-2xl text-center space-y-4 max-w-xl mx-auto my-6 sm:my-12 border border-amber-500/30">
                 <div class="w-14 h-14 bg-amber-500/10 border border-amber-500/30 text-amber-400 rounded-full flex items-center justify-center text-2xl mx-auto glow-amber">
                     <i class="fa-solid fa-lock"></i>
                 </div>
                 <h2 class="text-lg sm:text-xl font-bold text-white">ต้องการสิทธิ์ Admin เข้าสู่ระบบ</h2>
-                <p class="text-xs text-slate-400">กรุณาเข้าสู่ระบบด้วยรหัสผ่านผู้ดูแลระบบ (VRU6823271) เพื่อเข้าถึงการตั้งค่าการส่งข้อมูลแจ้งเตือน ค่าไฟฟ้า และช่วงเวลา Google Sheets</p>
+                <p class="text-xs text-slate-400">กรุณาเข้าสู่ระบบด้วยรหัสผ่านผู้ดูแลระบบ (VRU6823271) เพื่อเข้าถึงการตั้งค่าระบบ</p>
                 <button onclick="openLoginModal()" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-bold text-xs sm:text-sm shadow-lg shadow-amber-500/20 transition-all">
                     <i class="fa-solid fa-key mr-2"></i> ป้อนรหัสผ่าน Admin
                 </button>
@@ -387,8 +373,6 @@
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 w-full">
-
-                    <!-- 1. Protection Limits -->
                     <div class="glass-card p-4 sm:p-6 rounded-xl sm:rounded-2xl space-y-4 border-l-4 border-l-rose-500">
                         <h3 class="text-sm sm:text-base font-semibold text-rose-400 border-b border-slate-800 pb-2 flex items-center gap-2">
                             <i class="fa-solid fa-shield-halved text-rose-400"></i> ตั้งค่าขีดจำกัดแจ้งเตือนไฟฟ้าเมนหลัก
@@ -417,12 +401,10 @@
                         </div>
                     </div>
 
-                    <!-- 2. Google Sheets Interval & URL -->
                     <div class="glass-card p-4 sm:p-6 rounded-xl sm:rounded-2xl space-y-4">
                         <h3 class="text-sm sm:text-base font-semibold text-sky-400 border-b border-slate-800 pb-2 flex items-center gap-2">
                             <i class="fa-solid fa-table text-sky-400"></i> ตั้งค่ารอบส่งข้อมูลไป Google Sheets (GAS)
                         </h3>
-
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                             <div class="space-y-1">
                                 <label class="text-slate-300 font-medium">ช่วงเวลา On-Peak (นาที/ครั้ง):</label>
@@ -433,108 +415,12 @@
                                 <input type="number" id="cfg-interval-offpeak" value="30" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono focus:border-sky-500 focus:outline-none">
                             </div>
                         </div>
-
                         <div class="space-y-1 text-xs pt-1">
-                            <div class="flex items-center justify-between">
-                                <label class="text-slate-300 font-medium">Google Apps Script Web App URL:</label>
-                                <span class="text-[10px] text-rose-400 font-semibold px-2 py-0.5 rounded bg-rose-500/10 border border-rose-500/30">
-                                    <i class="fa-solid fa-lock mr-1"></i> ส่วนสำคัญของระบบ
-                                </span>
-                            </div>
+                            <label class="text-slate-300 font-medium">Google Apps Script Web App URL:</label>
                             <input type="text" id="cfg-gas-url" value="https://script.google.com/macros/s/AKfycby8XyHlsp-TzUK1mTOW_gm3n6UgC4N7u-8oYcE5t34ywwUje-_eBjUb9QKPxSCRUcgThw/exec" class="w-full bg-slate-900 border border-rose-500/40 rounded-xl px-3 py-2 text-slate-300 font-mono text-xs focus:border-rose-500 focus:outline-none shadow-sm">
-                            <p class="text-[11px] text-rose-400 font-medium flex items-center gap-1.5 mt-1 bg-rose-950/30 p-2 rounded-lg border border-rose-500/20">
-                                <i class="fa-solid fa-triangle-exclamation text-rose-400 text-sm shrink-0"></i>
-                                <span><strong>คำเตือนสำคัญ:</strong> ห้ามแก้ไขหรือลบ URL นี้โดยไม่จำเป็น! หากเปลี่ยนค่าหรือใส่ลิงก์ผิด แดชบอร์ดจะไม่สามารถดึงข้อมูลจริงและบันทึกการตั้งค่าลง Google Sheets ได้</span>
-                            </p>
                         </div>
                     </div>
 
-                    <!-- 3. LINE & Telegram Connection -->
-                    <div class="glass-card p-4 sm:p-6 rounded-xl sm:rounded-2xl space-y-4">
-                        <h3 class="text-sm sm:text-base font-semibold text-emerald-400 border-b border-slate-800 pb-2 flex items-center gap-2">
-                            <i class="fa-solid fa-bell text-emerald-400"></i> ช่องทางการเชื่อมต่อการแจ้งเตือน (LINE / Telegram)
-                        </h3>
-
-                        <div class="space-y-1.5 border-b border-slate-800 pb-3">
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs font-semibold text-slate-200 flex items-center gap-2">
-                                    <i class="fa-brands fa-line text-emerald-400 text-base"></i> เปิดใช้งาน LINE Notify
-                                </span>
-                                <label class="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" id="cfg-line-enable" checked class="sr-only peer">
-                                    <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
-                                </label>
-                            </div>
-                            <input type="text" id="cfg-line-token" value="ln_token_example_vru6823271" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-300 font-mono focus:border-emerald-500 focus:outline-none">
-                        </div>
-
-                        <div class="space-y-1.5 pt-1">
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs font-semibold text-slate-200 flex items-center gap-2">
-                                    <i class="fa-brands fa-telegram text-sky-400 text-base"></i> เปิดใช้งาน Telegram Bot
-                                </span>
-                                <label class="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" id="cfg-telegram-enable" class="sr-only peer">
-                                    <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-sky-500"></div>
-                                </label>
-                            </div>
-                            <div class="grid grid-cols-2 gap-2">
-                                <input type="text" id="cfg-telegram-bot" value="bot123456789:ABC..." class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-300 font-mono focus:border-sky-500 focus:outline-none" placeholder="Telegram Bot Token">
-                                <input type="text" id="cfg-telegram-chat" value="-100987654321" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-300 font-mono focus:border-sky-500 focus:outline-none" placeholder="Chat ID">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 4. Scheduled Alerts & Reports Settings -->
-                    <div class="glass-card p-4 sm:p-6 rounded-xl sm:rounded-2xl space-y-4 border-l-4 border-l-amber-500">
-                        <h3 class="text-sm sm:text-base font-semibold text-amber-400 border-b border-slate-800 pb-2 flex items-center gap-2">
-                            <i class="fa-solid fa-clock text-amber-400"></i> การตั้งค่าข้อความและเวลาแจ้งเตือน
-                        </h3>
-
-                        <!-- 1. แจ้งเตือนครั้งแรก (First-Time Boot) -->
-                        <div class="space-y-1.5 border-b border-slate-800 pb-3">
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs font-semibold text-amber-300 flex items-center gap-1.5">
-                                    <i class="fa-solid fa-power-off text-amber-400"></i> 1. แจ้งเตือนครั้งแรก (First-Time Boot)
-                                </span>
-                                <label class="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" id="cfg-firstsend-enable" class="sr-only peer">
-                                    <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
-                                </label>
-                            </div>
-                            <textarea id="cfg-firstsend-msg" rows="2" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2 text-xs text-slate-200 focus:border-amber-500 focus:outline-none" placeholder="ข้อความแจ้งเตือนครั้งแรก...">⚡ [System Boot] ระบบ Smart Energy Monitor (ESP32) เริ่มทำงานเรียบร้อยแล้ว สถานะบอร์ด: ONLINE</textarea>
-                        </div>
-
-                        <!-- 2. แจ้งเตือนตอนเช้า เช็คสถานะออนไลน์ -->
-                        <div class="space-y-1.5 border-b border-slate-800 pb-3">
-                            <div class="flex items-center justify-between gap-2">
-                                <span class="text-xs font-semibold text-sky-300 flex items-center gap-1.5">
-                                    <i class="fa-solid fa-sun text-amber-400"></i> 2. แจ้งเตือนตอนเช้า (เช็คสถานะออนไลน์)
-                                </span>
-                                <div class="flex items-center gap-1.5">
-                                    <span class="text-[10px] text-slate-400">เวลาที่แจ้งเตือน:</span>
-                                    <input type="time" id="cfg-timer-morning-report" value="07:00" class="bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-xs text-sky-400 font-mono focus:border-sky-500 focus:outline-none">
-                                </div>
-                            </div>
-                            <input type="text" id="cfg-morning-report-msg" value="สถานะบอร์ด: ONLINE" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-200 focus:border-sky-500 focus:outline-none" placeholder="ข้อความรายงานตอนเช้า...">
-                        </div>
-
-                        <!-- 3. แจ้งเตือนตอนเย็น สรุปรายงานประจำวัน -->
-                        <div class="space-y-1.5 pt-1">
-                            <div class="flex items-center justify-between gap-2">
-                                <span class="text-xs font-semibold text-indigo-300 flex items-center gap-1.5">
-                                    <i class="fa-solid fa-moon text-indigo-400"></i> 3. แจ้งเตือนตอนเย็น (สรุปรายงานประจำวัน)
-                                </span>
-                                <div class="flex items-center gap-1.5">
-                                    <span class="text-[10px] text-slate-400">เวลาที่แจ้งเตือน:</span>
-                                    <input type="time" id="cfg-timer-daily-report" value="18:00" class="bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-xs text-indigo-400 font-mono focus:border-indigo-500 focus:outline-none">
-                                </div>
-                            </div>
-                            <input type="text" id="cfg-daily-report-msg" value="สรุปรายงานประจำวัน" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-200 focus:border-indigo-500 focus:outline-none" placeholder="ข้อความสรุปรายงานประจำวัน...">
-                        </div>
-                    </div>
-
-                    <!-- 5. Tariff Rate -->
                     <div class="glass-card p-4 sm:p-6 rounded-xl sm:rounded-2xl space-y-4">
                         <h3 class="text-sm sm:text-base font-semibold text-amber-400 border-b border-slate-800 pb-2 flex items-center gap-2">
                             <i class="fa-solid fa-tags text-amber-400"></i> ตั้งค่าอัตราค่าไฟฟ้าพื้นฐาน (บาท/หน่วย)
@@ -554,88 +440,6 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- 6. CT Names & CT Warn Limits -->
-                    <div class="glass-card p-4 sm:p-6 rounded-xl sm:rounded-2xl space-y-4 lg:col-span-2">
-                        <h3 class="text-sm sm:text-base font-semibold text-purple-400 border-b border-slate-800 pb-2 flex items-center gap-2">
-                            <i class="fa-solid fa-pen-to-square text-purple-400"></i> ตั้งชื่อโหลดวงจรย่อย และขีดจำกัดกระแสเกิน (CT1 - CT6 Warn)
-                        </h3>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
-                            <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-800 space-y-2">
-                                <span class="font-bold text-sky-400 block">CT 1 (GPIO 36)</span>
-                                <div>
-                                    <label class="text-slate-400 block text-[10px]">ชื่อวงจร (CT1_Name):</label>
-                                    <input type="text" id="cfg-ct1-name" value="ปลั๊ก ชั้น 1" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-slate-200">
-                                </div>
-                                <div>
-                                    <label class="text-slate-400 block text-[10px]">เตือนกระแสเกิน (CT1_Warn - A):</label>
-                                    <input type="number" id="cfg-ct1-warn" value="15" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-amber-300 font-mono">
-                                </div>
-                            </div>
-
-                            <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-800 space-y-2">
-                                <span class="font-bold text-sky-400 block">CT 2 (GPIO 39)</span>
-                                <div>
-                                    <label class="text-slate-400 block text-[10px]">ชื่อวงจร (CT2_Name):</label>
-                                    <input type="text" id="cfg-ct2-name" value="ปลั๊ก ชั้น 2" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-slate-200">
-                                </div>
-                                <div>
-                                    <label class="text-slate-400 block text-[10px]">เตือนกระแสเกิน (CT2_Warn - A):</label>
-                                    <input type="number" id="cfg-ct2-warn" value="15" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-amber-300 font-mono">
-                                </div>
-                            </div>
-
-                            <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-800 space-y-2">
-                                <span class="font-bold text-sky-400 block">CT 3 (GPIO 34)</span>
-                                <div>
-                                    <label class="text-slate-400 block text-[10px]">ชื่อวงจร (CT3_Name):</label>
-                                    <input type="text" id="cfg-ct3-name" value="แสงสว่างรวม" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-slate-200">
-                                </div>
-                                <div>
-                                    <label class="text-slate-400 block text-[10px]">เตือนกระแสเกิน (CT3_Warn - A):</label>
-                                    <input type="number" id="cfg-ct3-warn" value="10" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-amber-300 font-mono">
-                                </div>
-                            </div>
-
-                            <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-800 space-y-2">
-                                <span class="font-bold text-sky-400 block">CT 4 (GPIO 35)</span>
-                                <div>
-                                    <label class="text-slate-400 block text-[10px]">ชื่อวงจร (CT4_Name):</label>
-                                    <input type="text" id="cfg-ct4-name" value="แอร์ 1" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-slate-200">
-                                </div>
-                                <div>
-                                    <label class="text-slate-400 block text-[10px]">เตือนกระแสเกิน (CT4_Warn - A):</label>
-                                    <input type="number" id="cfg-ct4-warn" value="7" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-amber-300 font-mono">
-                                </div>
-                            </div>
-
-                            <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-800 space-y-2">
-                                <span class="font-bold text-sky-400 block">CT 5 (GPIO 32)</span>
-                                <div>
-                                    <label class="text-slate-400 block text-[10px]">ชื่อวงจร (CT5_Name):</label>
-                                    <input type="text" id="cfg-ct5-name" value="แอร์ 2" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-slate-200">
-                                </div>
-                                <div>
-                                    <label class="text-slate-400 block text-[10px]">เตือนกระแสเกิน (CT5_Warn - A):</label>
-                                    <input type="number" id="cfg-ct5-warn" value="7" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-amber-300 font-mono">
-                                </div>
-                            </div>
-
-                            <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-800 space-y-2">
-                                <span class="font-bold text-sky-400 block">CT 6 (GPIO 33)</span>
-                                <div>
-                                    <label class="text-slate-400 block text-[10px]">ชื่อวงจร (CT6_Name):</label>
-                                    <input type="text" id="cfg-ct6-name" value="เครื่องทำน้ำอุ่น 1" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-slate-200">
-                                </div>
-                                <div>
-                                    <label class="text-slate-400 block text-[10px]">เตือนกระแสเกิน (CT6_Warn - A):</label>
-                                    <input type="number" id="cfg-ct6-warn" value="12" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-amber-300 font-mono">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
 
                 <div class="glass-card p-3.5 sm:p-4 rounded-xl sm:rounded-2xl flex flex-col sm:flex-row justify-between items-center gap-3 border border-emerald-500/30">
@@ -675,27 +479,9 @@
         </div>
     </div>
 
-    <div id="toast-container" class="fixed bottom-4 right-4 z-50 space-y-2 pointer-events-none"></div>
-
-    <footer class="border-t border-slate-800 bg-slate-950/60 py-3 px-4 text-center text-xs text-slate-500 w-full">
-        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-1.5">
-            <div>
-                <span>Smart Energy Monitor System &copy; 2026</span> | <span>ESP32-DevKitC</span>
-            </div>
-            <div class="flex items-center gap-2 text-[11px] text-slate-400">
-                <span>PZEM-004T (Main)</span>
-                <span>•</span>
-                <span>CT SCT-013-030 (6 ช่อง)</span>
-            </div>
-        </div>
-    </footer>
-
     <script>
         let isAdminLoggedIn = false;
         const ADMIN_PASSWORD_REQ = "VRU6823271";
-
-        let mainChartRange = 'realtime';
-        let subChartRange = 'day';
 
         const chartColors = ['#0ea5e9', '#38bdf8', '#2dd4bf', '#f59e0b', '#fbbf24', '#f43f5e'];
 
@@ -708,47 +494,15 @@
             onPeakInterval: 15,
             offPeakInterval: 30,
             gasUrl: "https://script.google.com/macros/s/AKfycby8XyHlsp-TzUK1mTOW_gm3n6UgC4N7u-8oYcE5t34ywwUje-_eBjUb9QKPxSCRUcgThw/exec",
-            lineEnable: true,
-            lineToken: "ln_token_example_vru6823271",
-            telegramEnable: false,
-            telegramBotToken: "bot123456789:ABC...",
-            telegramChatId: "-100987654321",
-            firstSendEnable: false,
-            firstSendMsg: "⚡ [System Boot] ระบบ Smart Energy Monitor (ESP32) เริ่มทำงานเรียบร้อยแล้ว สถานะบอร์ด: ONLINE",
-            morningReportMsg: "สถานะบอร์ด: ONLINE",
-            timerMorningReport: "07:00",
-            dailyReportMsg: "สรุปรายงานประจำวัน",
-            timerDailyReport: "18:00",
             rateTier1: 3.2484,
             rateTier2: 4.2218,
             rateTier3: 4.4217,
-            ctNames: {
-                ct1: "ปลั๊ก ชั้น 1",
-                ct2: "ปลั๊ก ชั้น 2",
-                ct3: "แสงสว่างรวม",
-                ct4: "แอร์ 1",
-                ct5: "แอร์ 2",
-                ct6: "เครื่องทำน้ำอุ่น 1"
-            },
-            ctWarns: {
-                ct1: 15,
-                ct2: 15,
-                ct3: 10,
-                ct4: 7,
-                ct5: 7,
-                ct6: 12
-            }
+            ctNames: { ct1: "ปลั๊ก ชั้น 1", ct2: "ปลั๊ก ชั้น 2", ct3: "แสงสว่างรวม", ct4: "แอร์ 1", ct5: "แอร์ 2", ct6: "เครื่องทำน้ำอุ่น 1" },
+            ctWarns: { ct1: 15, ct2: 15, ct3: 10, ct4: 7, ct5: 7, ct6: 12 }
         };
 
-        // ตัวแปรสำหรับเก็บข้อมูลจริงจาก GAS
         let realData = {
-            voltage: 0,
-            currentTotal: 0,
-            powerTotal: 0,
-            pf: 0,
-            freq: 0,
-            kwhTotal: 0,
-            lastUpdate: "-",
+            voltage: 0, currentTotal: 0, powerTotal: 0, pf: 0, freq: 0, kwhTotal: 0, lastUpdate: "-",
             cts: [
                 { id: 1, name: "ปลั๊ก ชั้น 1", gpio: 36, current: 0, power: 0 },
                 { id: 2, name: "ปลั๊ก ชั้น 2", gpio: 39, current: 0, power: 0 },
@@ -759,21 +513,33 @@
             ]
         };
 
-        // เก็บประวัติข้อมูลจริงสำหรับทำกราฟ
         let historicalLogs = [];
+        let monthlyKwhSummary = {}; // ผลรวม SUM Energy (PZEM) kWh แยกตามเดือน (YYYY-MM)
 
         let realtimeChartInstance = null;
         let subcircuitBarChartInstance = null;
         let costPieChartInstance = null;
 
+        // ฟังก์ชันคลีนข้อความวันเวลา ป้องกันปัญหา Sat D จากปี 1899
+        function formatCleanTime(timeStr, dateStr) {
+            if (!timeStr) return "-";
+            let timeMatch = String(timeStr).match(/(\d{2}:\d{2})(:\d{2})?/);
+            let timeOnly = timeMatch ? timeMatch[1] : String(timeStr);
+            if (dateStr && dateStr !== "-" && dateStr.includes("-")) {
+                let parts = dateStr.split("-");
+                if (parts.length === 3) {
+                    return `${parts[1]}-${parts[2]} ${timeOnly}`; // แสดงผล เช่น "09-01 00:30"
+                }
+            }
+            return timeOnly;
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
-            setHistoryDateLimits();
             initCharts();
             loadSettingsFromGAS();
             fetchRealDataFromGAS();
 
-            // ดึงข้อมูลจริงใหม่ทุกๆ 10 วินาที
-            setInterval(fetchRealDataFromGAS, 10000);
+            setInterval(fetchRealDataFromGAS, 10000); // ซิงค์ข้อมูลทุก 10 วินาที
 
             document.getElementById('login-password-input')?.addEventListener('keyup', (e) => {
                 if (e.key === 'Enter') submitAdminLogin();
@@ -786,7 +552,6 @@
             });
         });
 
-        // ดึงค่าการตั้งค่าจาก Google Sheets (GAS)
         async function loadSettingsFromGAS() {
             const url = systemConfig.gasUrl;
             if (!url) return;
@@ -797,32 +562,9 @@
 
                 if (result.status === "success" && result.data) {
                     const cfg = result.data;
-                    
                     if (cfg["Voltage(rms)MAX_Warn"]) systemConfig.vMax = parseFloat(cfg["Voltage(rms)MAX_Warn"]);
                     if (cfg["Voltage(rms)min_Warn"]) systemConfig.vMin = parseFloat(cfg["Voltage(rms)min_Warn"]);
                     if (cfg["Current(PZEM) Max_Warn"]) systemConfig.iMax = parseFloat(cfg["Current(PZEM) Max_Warn"]);
-                    if (cfg["Frequency (Hz)MAX_Warn"]) systemConfig.freqMax = parseFloat(cfg["Frequency (Hz)MAX_Warn"]);
-                    if (cfg["Frequency (Hz)min_Warn"]) systemConfig.freqMin = parseFloat(cfg["Frequency (Hz)min_Warn"]);
-
-                    if (cfg["Log_Interval_OnPeak"]) systemConfig.onPeakInterval = parseInt(cfg["Log_Interval_OnPeak"]);
-                    if (cfg["Log_Interval_OffPeak"]) systemConfig.offPeakInterval = parseInt(cfg["Log_Interval_OffPeak"]);
-
-                    if (cfg["LINE_Notify_Enable"] !== undefined) systemConfig.lineEnable = Boolean(cfg["LINE_Notify_Enable"]);
-                    if (cfg["LINE_Notify_Token"]) systemConfig.lineToken = cfg["LINE_Notify_Token"];
-
-                    if (cfg["Telegram_Bot_Enable"] !== undefined) systemConfig.telegramEnable = Boolean(cfg["Telegram_Bot_Enable"]);
-                    if (cfg["Telegram_Bot_Token"]) systemConfig.telegramBotToken = cfg["Telegram_Bot_Token"];
-                    if (cfg["Telegram_Chat_ID"]) systemConfig.telegramChatId = cfg["Telegram_Chat_ID"];
-
-                    if (cfg["First_Boot_Alert_Enable"] !== undefined) systemConfig.firstSendEnable = Boolean(cfg["First_Boot_Alert_Enable"]);
-                    if (cfg["First_Boot_Message"]) systemConfig.firstSendMsg = cfg["First_Boot_Message"];
-
-                    if (cfg["Morning_Report"]) systemConfig.morningReportMsg = cfg["Morning_Report"];
-                    if (cfg["Timer_Morning_Report"]) systemConfig.timerMorningReport = cfg["Timer_Morning_Report"].toString().substring(0, 5);
-
-                    if (cfg["Daily_Report"]) systemConfig.dailyReportMsg = cfg["Daily_Report"];
-                    if (cfg["Timer_Daily_Report"]) systemConfig.timerDailyReport = cfg["Timer_Daily_Report"].toString().substring(0, 5);
-
                     if (cfg["Tariff_Tier1_Rate"]) systemConfig.rateTier1 = parseFloat(cfg["Tariff_Tier1_Rate"]);
                     if (cfg["Tariff_Tier2_Rate"]) systemConfig.rateTier2 = parseFloat(cfg["Tariff_Tier2_Rate"]);
                     if (cfg["Tariff_Tier3_Rate"]) systemConfig.rateTier3 = parseFloat(cfg["Tariff_Tier3_Rate"]);
@@ -836,11 +578,10 @@
                     updateDashboardUI();
                 }
             } catch (err) {
-                console.warn("ไม่สามารถโหลดค่าตั้งค่าจาก GAS ได้:", err);
+                console.warn("ไม่สามารถดึงการตั้งค่าจาก GAS ได้:", err);
             }
         }
 
-        // ดึงข้อมูลไฟฟ้าจริงล่าสุดจาก Google Apps Script
         async function fetchRealDataFromGAS() {
             const url = systemConfig.gasUrl;
             if (!url) return;
@@ -858,7 +599,7 @@
                     realData.kwhTotal = parseFloat(data.kwh_total) || 0;
                     realData.pf = parseFloat(data.pf) || 0;
                     realData.freq = parseFloat(data.frequency) || 0;
-                    realData.lastUpdate = data.time || new Date().toLocaleTimeString('th-TH');
+                    realData.lastUpdate = formatCleanTime(data.time, data.date);
 
                     if (data.sub_circuits) {
                         for (let i = 1; i <= 6; i++) {
@@ -869,52 +610,99 @@
                         }
                     }
 
-                    // อัปเดตข้อมูลย้อนหลังหากมีมา
                     if (result.logs && Array.isArray(result.logs)) {
                         historicalLogs = result.logs;
+                        processMonthlyKwhSummaries();
                     }
 
-                    // อัปเดตการแสดงผลบนหน้าจอ
                     const updateTimeEl = document.getElementById('data-updated-time');
-                    if (updateTimeEl) updateTimeEl.innerText = `อัปเดตล่าสุด: ${realData.lastUpdate}`;
+                    if (updateTimeEl) updateTimeEl.innerText = `อัปเดตล่าสุด: ${data.date || ''} ${realData.lastUpdate}`;
 
                     updateDashboardUI();
                     updateMainChart();
-                    updateSubChart(subChartRange);
+                    updateSubChart();
                 }
             } catch (err) {
-                console.warn("ไม่สามารถดึงข้อมูลจริงจาก GAS ได้:", err);
-                const updateTimeEl = document.getElementById('data-updated-time');
-                if (updateTimeEl) updateTimeEl.innerText = `การเชื่อมต่อขัดข้อง`;
+                console.warn("เกิดข้อผิดพลาดในการดึงข้อมูลจาก GAS:", err);
             }
+        }
+
+        // รวมค่า SUM Energy (PZEM) kWh แยกตามเดือน
+        function processMonthlyKwhSummaries() {
+            monthlyKwhSummary = {};
+            
+            historicalLogs.forEach(log => {
+                if (log.date && log.date.includes('-')) {
+                    let monthKey = log.date.substring(0, 7); // ตัวอย่าง "2026-09"
+                    if (!monthlyKwhSummary[monthKey]) {
+                        monthlyKwhSummary[monthKey] = 0;
+                    }
+                    monthlyKwhSummary[monthKey] += (log.kwh || 0); // รวมค่าหน่วยไฟ Energy (PZEM) kWh
+                }
+            });
+
+            // อัปเดตตัวเลือกเดือนในหน้าคำนวณค่าไฟ
+            const selectEl = document.getElementById('tariff-month-select');
+            if (selectEl) {
+                const currentVal = selectEl.value;
+                let optionsHtml = `<option value="current">เดือนปัจจุบัน (สะสม: ${realData.kwhTotal.toFixed(2)} kWh)</option>`;
+                
+                Object.keys(monthlyKwhSummary).sort().reverse().forEach(monthKey => {
+                    let sumKwh = monthlyKwhSummary[monthKey];
+                    optionsHtml += `<option value="${monthKey}">เดือน ${monthKey} (SUM: ${sumKwh.toFixed(2)} kWh)</option>`;
+                });
+                
+                selectEl.innerHTML = optionsHtml;
+                if (currentVal && selectEl.querySelector(`option[value="${currentVal}"]`)) {
+                    selectEl.value = currentVal;
+                }
+            }
+
+            calculateTariffForMonth(document.getElementById('tariff-month-select')?.value || 'current');
+        }
+
+        function calculateTariffForMonth(selectedVal) {
+            let totalKwh = realData.kwhTotal;
+            let monthLabel = "เดือนปัจจุบัน";
+
+            if (selectedVal !== 'current' && monthlyKwhSummary[selectedVal] !== undefined) {
+                totalKwh = monthlyKwhSummary[selectedVal];
+                monthLabel = `เดือน ${selectedVal}`;
+            }
+
+            document.getElementById('selected-month-label').innerText = monthLabel;
+            
+            const t1Used = Math.min(totalKwh, 200);
+            const t2Used = Math.max(0, Math.min(totalKwh - 200, 200));
+            const t3Used = Math.max(0, totalKwh - 400);
+
+            const t1Cost = t1Used * systemConfig.rateTier1;
+            const t2Cost = t2Used * systemConfig.rateTier2;
+            const t3Cost = t3Used * systemConfig.rateTier3;
+
+            const baseEnergyCost = t1Cost + t2Cost + t3Cost;
+            const serviceCharge = 38.22;
+            const ftCost = totalKwh * 0.3972;
+            const subtotalBill = baseEnergyCost + serviceCharge + ftCost;
+            const vatCost = subtotalBill * 0.07;
+            const grandTotalBill = subtotalBill + vatCost;
+
+            if (document.getElementById('calc-total-kwh')) document.getElementById('calc-total-kwh').innerText = totalKwh.toFixed(2);
+            if (document.getElementById('tier1-used')) document.getElementById('tier1-used').innerText = t1Used.toFixed(2);
+            if (document.getElementById('tier1-cost')) document.getElementById('tier1-cost').innerText = `${t1Cost.toFixed(2)} บาท`;
+            if (document.getElementById('tier2-used')) document.getElementById('tier2-used').innerText = t2Used.toFixed(2);
+            if (document.getElementById('tier2-cost')) document.getElementById('tier2-cost').innerText = `${t2Cost.toFixed(2)} บาท`;
+            if (document.getElementById('tier3-used')) document.getElementById('tier3-used').innerText = t3Used.toFixed(2);
+            if (document.getElementById('tier3-cost')) document.getElementById('tier3-cost').innerText = `${t3Cost.toFixed(2)} บาท`;
+            if (document.getElementById('ft-total-cost')) document.getElementById('ft-total-cost').innerText = `${ftCost.toFixed(2)} บาท`;
+            if (document.getElementById('total-bill-grand')) document.getElementById('total-bill-grand').innerText = `${grandTotalBill.toFixed(2)} บาท`;
+            if (document.getElementById('val-est-cost') && selectedVal === 'current') document.getElementById('val-est-cost').innerText = grandTotalBill.toFixed(2);
         }
 
         function syncSettingsToUI() {
             document.getElementById('cfg-v-max').value = systemConfig.vMax;
             document.getElementById('cfg-v-min').value = systemConfig.vMin;
             document.getElementById('cfg-i-max').value = systemConfig.iMax;
-            document.getElementById('cfg-freq-max').value = systemConfig.freqMax;
-            document.getElementById('cfg-freq-min').value = systemConfig.freqMin;
-
-            document.getElementById('cfg-interval-onpeak').value = systemConfig.onPeakInterval;
-            document.getElementById('cfg-interval-offpeak').value = systemConfig.offPeakInterval;
-
-            document.getElementById('cfg-line-enable').checked = systemConfig.lineEnable;
-            document.getElementById('cfg-line-token').value = systemConfig.lineToken;
-
-            document.getElementById('cfg-telegram-enable').checked = systemConfig.telegramEnable;
-            document.getElementById('cfg-telegram-bot').value = systemConfig.telegramBotToken;
-            document.getElementById('cfg-telegram-chat').value = systemConfig.telegramChatId;
-
-            document.getElementById('cfg-firstsend-enable').checked = systemConfig.firstSendEnable;
-            document.getElementById('cfg-firstsend-msg').value = systemConfig.firstSendMsg;
-
-            if (document.getElementById('cfg-morning-report-msg')) document.getElementById('cfg-morning-report-msg').value = systemConfig.morningReportMsg;
-            if (document.getElementById('cfg-timer-morning-report')) document.getElementById('cfg-timer-morning-report').value = systemConfig.timerMorningReport;
-
-            if (document.getElementById('cfg-daily-report-msg')) document.getElementById('cfg-daily-report-msg').value = systemConfig.dailyReportMsg;
-            if (document.getElementById('cfg-timer-daily-report')) document.getElementById('cfg-timer-daily-report').value = systemConfig.timerDailyReport;
-
             document.getElementById('cfg-rate-t1').value = systemConfig.rateTier1;
             document.getElementById('cfg-rate-t2').value = systemConfig.rateTier2;
             document.getElementById('cfg-rate-t3').value = systemConfig.rateTier3;
@@ -923,29 +711,6 @@
                 if (document.getElementById(`cfg-ct${i}-name`)) document.getElementById(`cfg-ct${i}-name`).value = systemConfig.ctNames[`ct${i}`];
                 if (document.getElementById(`cfg-ct${i}-warn`)) document.getElementById(`cfg-ct${i}-warn`).value = systemConfig.ctWarns[`ct${i}`];
             }
-        }
-
-        function getLocalDateString(date) {
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-            return `${year}-${month}-${day}`;
-        }
-
-        function createDateFromInput(value) {
-            const parts = value.split('-').map(Number);
-            return new Date(parts[0], parts[1] - 1, parts[2], 0, 0, 0, 0);
-        }
-
-        function setHistoryDateLimits() {
-            const dateInput = document.getElementById('chart-history-date');
-            if (!dateInput) return;
-            const today = new Date();
-            const earliestDate = new Date(today);
-            earliestDate.setDate(today.getDate() - 29);
-            dateInput.min = getLocalDateString(earliestDate);
-            dateInput.max = getLocalDateString(today);
-            dateInput.value = getLocalDateString(today);
         }
 
         function openLoginModal() {
@@ -965,40 +730,24 @@
 
         function submitAdminLogin() {
             const passInput = document.getElementById('login-password-input').value;
-            const errorMsg = document.getElementById('login-error-msg');
-            
             if (passInput === ADMIN_PASSWORD_REQ) {
                 isAdminLoggedIn = true;
-                errorMsg.classList.add('hidden');
                 closeLoginModal();
-                
                 document.getElementById('admin-badge-text').innerText = "Admin: ออนไลน์";
-                const badge = document.getElementById('admin-status-badge');
-                badge.classList.remove('text-amber-400', 'border-amber-500/40', 'bg-amber-500/10');
-                badge.classList.add('text-emerald-400', 'border-emerald-500/40', 'bg-emerald-500/10');
-                
                 document.getElementById('settings-lock-screen').classList.add('hidden');
                 document.getElementById('settings-authorized-panel').classList.remove('hidden');
-                
-                showToast("เข้าสู่ระบบผู้ดูแลระบบสำเร็จ!", "success");
                 switchTab('settings');
             } else {
-                errorMsg.classList.remove('hidden');
+                document.getElementById('login-error-msg').classList.remove('hidden');
             }
         }
 
         function adminLogout() {
             isAdminLoggedIn = false;
             document.getElementById('admin-badge-text').innerText = "เข้าสู่ระบบ Admin";
-            const badge = document.getElementById('admin-status-badge');
-            badge.classList.remove('text-emerald-400', 'border-emerald-500/40', 'bg-emerald-500/10');
-            badge.classList.add('text-amber-400', 'border-amber-500/40', 'bg-amber-500/10');
-            
             document.getElementById('settings-lock-screen').classList.remove('hidden');
             document.getElementById('settings-authorized-panel').classList.add('hidden');
-            
             switchTab('dashboard');
-            showToast("ออกจากระบบเรียบร้อยแล้ว", "info");
         }
 
         function switchTab(tabId) {
@@ -1008,43 +757,19 @@
             }
 
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('bg-sky-500', 'text-white', 'shadow-md');
-                btn.classList.add('text-slate-400', 'hover:text-slate-200', 'hover:bg-slate-800');
-            });
-
-            document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
-                btn.classList.remove('text-sky-400', 'font-semibold');
-                btn.classList.add('text-slate-400');
-            });
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-sky-500', 'text-white', 'shadow-md'));
+            document.querySelectorAll('.mobile-nav-btn').forEach(btn => btn.classList.remove('text-sky-400', 'font-semibold'));
 
             const activeTab = document.getElementById(`tab-${tabId}`);
             if (activeTab) activeTab.classList.remove('hidden');
             
             const activeNav = document.getElementById(`nav-${tabId}`);
-            if (activeNav) {
-                activeNav.classList.remove('text-slate-400', 'hover:text-slate-200', 'hover:bg-slate-800');
-                activeNav.classList.add('bg-sky-500', 'text-white', 'shadow-md');
-            }
-
-            const activeMobileNav = document.getElementById(`mobile-nav-${tabId}`);
-            if (activeMobileNav) {
-                activeMobileNav.classList.remove('text-slate-400');
-                activeMobileNav.classList.add('text-sky-400', 'font-semibold');
-            }
+            if (activeNav) activeNav.classList.add('bg-sky-500', 'text-white', 'shadow-md');
 
             setTimeout(() => {
-                if (tabId === 'dashboard' && realtimeChartInstance) {
-                    realtimeChartInstance.resize();
-                    realtimeChartInstance.update();
-                } else if (tabId === 'subcircuits' && subcircuitBarChartInstance) {
-                    subcircuitBarChartInstance.resize();
-                    subcircuitBarChartInstance.update();
-                } else if (tabId === 'tariff' && costPieChartInstance) {
-                    costPieChartInstance.resize();
-                    costPieChartInstance.update();
-                }
+                if (tabId === 'dashboard' && realtimeChartInstance) realtimeChartInstance.resize();
+                if (tabId === 'subcircuits' && subcircuitBarChartInstance) subcircuitBarChartInstance.resize();
+                if (tabId === 'tariff' && costPieChartInstance) costPieChartInstance.resize();
             }, 50);
         }
 
@@ -1054,7 +779,7 @@
                 if (ctxRealtime) {
                     realtimeChartInstance = new Chart(ctxRealtime, {
                         type: 'line',
-                        data: { labels: [], datasets: [{ label: 'กำลังไฟฟ้ารวม Main (W)', data: [], borderColor: '#0ea5e9', backgroundColor: 'rgba(14, 165, 233, 0.12)', fill: true, tension: 0.3, borderWidth: 2, pointRadius: 2 }] },
+                        data: { labels: [], datasets: [{ label: 'กำลังไฟฟ้ารวม Main จาก Google Sheets (W)', data: [], borderColor: '#0ea5e9', backgroundColor: 'rgba(14, 165, 233, 0.12)', fill: true, tension: 0.3, borderWidth: 2, pointRadius: 2 }] },
                         options: {
                             responsive: true,
                             maintainAspectRatio: false,
@@ -1067,7 +792,7 @@
                     });
                 }
 
-                updateSubChart('day');
+                updateSubChart();
 
                 const ctxPie = document.getElementById('costDistributionChart')?.getContext('2d');
                 if (ctxPie) {
@@ -1096,78 +821,45 @@
             }
         }
 
-        function handleMainChartRangeChange(range) {
-            mainChartRange = range;
-            const dateInput = document.getElementById('chart-history-date');
-            if (range === 'custom') {
-                dateInput?.classList.remove('hidden');
-            } else {
-                dateInput?.classList.add('hidden');
-            }
-            updateMainChart();
-        }
-
         function updateMainChart() {
             if (!realtimeChartInstance) return;
-            mainChartRange = document.getElementById('chart-time-range')?.value || 'realtime';
             const labels = [];
             const values = [];
-            let datasetLabel = 'กำลังไฟฟ้ารวม Main (W)';
-            let description = 'แนวโน้มกำลังไฟฟ้ารวม Main PZEM-004T';
-            let xAxisTitle = 'เวลา';
 
             if (historicalLogs && historicalLogs.length > 0) {
-                // นำข้อมูลจริงจากชีตมาใส่ในกราฟ
-                historicalLogs.forEach(log => {
-                    labels.push(log.time || log.date);
+                historicalLogs.slice(-30).forEach(log => {
+                    labels.push(formatCleanTime(log.time, log.date));
                     values.push(log.power_main || 0);
                 });
-                datasetLabel = 'กำลังไฟฟ้ารวม Main จาก Google Sheets (W)';
-                description = `แสดงข้อมูลประวัติย้อนหลังจริง (${historicalLogs.length} รายการล่าสุด)`;
             } else {
-                // หากยังไม่มีประวัติในชีต แสดงค่าปัจจุบันล่าสุด
-                labels.push(realData.lastUpdate || new Date().toLocaleTimeString('th-TH'));
+                labels.push(realData.lastUpdate || 'ปัจจุบัน');
                 values.push(realData.powerTotal);
-                datasetLabel = 'กำลังไฟฟ้ารวม Main ปัจจุบัน (W)';
-                description = 'แสดงข้อมูล Real-time ล่าสุดจากเซนเซอร์';
             }
 
             realtimeChartInstance.data.labels = labels;
-            realtimeChartInstance.data.datasets[0].label = datasetLabel;
             realtimeChartInstance.data.datasets[0].data = values;
-            realtimeChartInstance.options.scales.x.title.text = xAxisTitle;
             realtimeChartInstance.update();
-
-            const descEl = document.getElementById('main-chart-description');
-            if (descEl) descEl.innerText = description;
         }
 
-        function updateSubChart(range = 'day') {
-            subChartRange = range;
+        function updateSubChart() {
             const canvas = document.getElementById('subcircuitBarChart');
             if (!canvas) return;
 
-            const labels = historicalLogs.length > 0 ? historicalLogs.map(l => l.time) : [realData.lastUpdate || 'ปัจจุบัน'];
+            const logsToUse = historicalLogs.length > 0 ? historicalLogs.slice(-30) : [];
+            const labels = logsToUse.length > 0 ? logsToUse.map(l => formatCleanTime(l.time, l.date)) : [realData.lastUpdate || 'ปัจจุบัน'];
+            
             const datasets = realData.cts.map((ct, index) => {
                 const name = systemConfig.ctNames[`ct${ct.id}`] || ct.name;
-                
-                let dataPoints = [];
-                if (historicalLogs.length > 0) {
-                    dataPoints = historicalLogs.map(l => (l.sub_circuits ? l.sub_circuits[`ct${ct.id}_w`] : 0));
-                } else {
-                    dataPoints = [ct.power];
-                }
+                const dataPoints = logsToUse.length > 0 
+                    ? logsToUse.map(l => (l.sub_circuits ? l.sub_circuits[`ct${ct.id}_w`] : 0))
+                    : [ct.power];
 
                 return {
                     label: `CT${ct.id} ${name}`,
                     data: dataPoints,
                     borderColor: chartColors[index],
                     backgroundColor: chartColors[index],
-                    pointBackgroundColor: chartColors[index],
-                    pointBorderColor: '#0f172a',
-                    pointBorderWidth: 1,
-                    pointRadius: 2.5,
-                    borderWidth: 2.4,
+                    borderWidth: 2,
                     tension: 0.35,
                     fill: false
                 };
@@ -1183,54 +875,15 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    interaction: { mode: 'index', intersect: false },
                     plugins: {
-                        legend: {
-                            display: true,
-                            position: 'top',
-                            labels: {
-                                color: '#cbd5e1',
-                                usePointStyle: true,
-                                pointStyle: 'circle',
-                                boxWidth: 8,
-                                padding: 14,
-                                font: { family: 'Prompt', size: 10 }
-                            }
-                        },
-                        tooltip: {
-                            backgroundColor: 'rgba(15, 23, 42, 0.97)',
-                            titleColor: '#f8fafc',
-                            bodyColor: '#cbd5e1',
-                            borderColor: '#475569',
-                            borderWidth: 1,
-                            padding: 12,
-                            callbacks: {
-                                label(context) {
-                                    return `${context.dataset.label}: ${Number(context.parsed.y).toLocaleString('th-TH')} W`;
-                                },
-                                footer(items) {
-                                    const total = items.reduce((sum, item) => sum + Number(item.parsed.y), 0);
-                                    return `รวม: ${total.toLocaleString('th-TH')} W`;
-                                }
-                            }
-                        }
+                        legend: { position: 'top', labels: { color: '#cbd5e1', font: { family: 'Prompt', size: 10 } } }
                     },
                     scales: {
-                        x: {
-                            grid: { color: 'rgba(51, 65, 85, 0.25)' },
-                            ticks: { color: '#94a3b8', autoSkip: true, maxRotation: 0, font: { family: 'Prompt', size: 10 } }
-                        },
-                        y: {
-                            beginAtZero: true,
-                            grid: { color: 'rgba(51, 65, 85, 0.30)' },
-                            ticks: { color: '#94a3b8', callback(val) { return Number(val).toLocaleString('th-TH'); }, font: { family: 'Prompt', size: 10 } }
-                        }
+                        x: { grid: { color: 'rgba(51, 65, 85, 0.25)' }, ticks: { color: '#94a3b8', font: { size: 10 } } },
+                        y: { beginAtZero: true, grid: { color: 'rgba(51, 65, 85, 0.30)' }, ticks: { color: '#94a3b8', font: { size: 10 } } }
                     }
                 }
             });
-
-            const descEl = document.getElementById('sub-chart-description');
-            if (descEl) descEl.innerText = `เปรียบเทียบกำลังไฟฟ้า CT1–CT6 จริงจาก Google Sheets`;
         }
 
         function updateDashboardUI() {
@@ -1242,55 +895,6 @@
             document.getElementById('val-freq').innerText = `${realData.freq.toFixed(1)} Hz`;
             document.getElementById('val-kwh-total').innerText = realData.kwhTotal.toFixed(2);
 
-            // ตรวจสอบแรงดันไฟฟ้าแจ้งเตือน
-            const vText = document.getElementById('status-voltage-text');
-            if (realData.voltage > systemConfig.vMax) {
-                vText.className = "text-[10px] text-rose-400 mt-0.5 truncate font-semibold";
-                vText.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> แรงดันสูงเกินกำหนด! (> ${systemConfig.vMax}V)`;
-            } else if (realData.voltage < systemConfig.vMin && realData.voltage > 0) {
-                vText.className = "text-[10px] text-amber-400 mt-0.5 truncate font-semibold";
-                vText.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> แรงดันตกเกินกำหนด! (< ${systemConfig.vMin}V)`;
-            } else {
-                vText.className = "text-[10px] text-emerald-400 mt-0.5 truncate";
-                vText.innerHTML = `<i class="fa-solid fa-circle-check"></i> ปกติ (${systemConfig.vMin}-${systemConfig.vMax}V)`;
-            }
-
-            const totalKwh = realData.kwhTotal;
-            const t1Used = Math.min(totalKwh, 200);
-            const t2Used = Math.max(0, Math.min(totalKwh - 200, 200));
-            const t3Used = Math.max(0, totalKwh - 400);
-
-            const t1Cost = t1Used * systemConfig.rateTier1;
-            const t2Cost = t2Used * systemConfig.rateTier2;
-            const t3Cost = t3Used * systemConfig.rateTier3;
-
-            const baseEnergyCost = t1Cost + t2Cost + t3Cost;
-            const serviceCharge = 38.22;
-            const ftCost = totalKwh * 0.3972;
-            const subtotalBill = baseEnergyCost + serviceCharge + ftCost;
-            const vatCost = subtotalBill * 0.07;
-            const grandTotalBill = subtotalBill + vatCost;
-
-            document.getElementById('val-est-cost').innerText = grandTotalBill.toFixed(2);
-
-            const calcKwhEl = document.getElementById('calc-total-kwh');
-            if (calcKwhEl) calcKwhEl.innerText = totalKwh.toFixed(2);
-
-            if (document.getElementById('tier1-used')) document.getElementById('tier1-used').innerText = t1Used.toFixed(2);
-            if (document.getElementById('tier1-rate-display')) document.getElementById('tier1-rate-display').innerText = systemConfig.rateTier1.toFixed(4);
-            if (document.getElementById('tier1-cost')) document.getElementById('tier1-cost').innerText = `${t1Cost.toFixed(2)} บาท`;
-
-            if (document.getElementById('tier2-used')) document.getElementById('tier2-used').innerText = t2Used.toFixed(2);
-            if (document.getElementById('tier2-rate-display')) document.getElementById('tier2-rate-display').innerText = systemConfig.rateTier2.toFixed(4);
-            if (document.getElementById('tier2-cost')) document.getElementById('tier2-cost').innerText = `${t2Cost.toFixed(2)} บาท`;
-
-            if (document.getElementById('tier3-used')) document.getElementById('tier3-used').innerText = t3Used.toFixed(2);
-            if (document.getElementById('tier3-rate-display')) document.getElementById('tier3-rate-display').innerText = systemConfig.rateTier3.toFixed(4);
-            if (document.getElementById('tier3-cost')) document.getElementById('tier3-cost').innerText = `${t3Cost.toFixed(2)} บาท`;
-
-            if (document.getElementById('ft-total-cost')) document.getElementById('ft-total-cost').innerText = `${ftCost.toFixed(2)} บาท`;
-            if (document.getElementById('total-bill-grand')) document.getElementById('total-bill-grand').innerText = `${grandTotalBill.toFixed(2)} บาท`;
-
             let ctCardsHtml = '';
             realData.cts.forEach(ct => {
                 const name = systemConfig.ctNames[`ct${ct.id}`] || ct.name;
@@ -1298,75 +902,56 @@
                 const isOverCurrent = ct.current > warnLimit;
 
                 ctCardsHtml += `
-                    <div class="bg-slate-900/70 p-2 rounded-xl border ${isOverCurrent ? 'border-rose-500/80 bg-rose-950/20' : 'border-slate-800'} flex items-center justify-between text-xs transition-all">
+                    <div class="bg-slate-900/70 p-2 rounded-xl border ${isOverCurrent ? 'border-rose-500/80 bg-rose-950/20' : 'border-slate-800'} flex items-center justify-between text-xs">
                         <div class="flex items-center gap-2">
-                            <span class="w-5 h-5 rounded ${isOverCurrent ? 'bg-rose-500/20 text-rose-400 border-rose-500/40' : 'bg-sky-500/10 text-sky-400 border-sky-500/20'} font-bold text-[10px] flex items-center justify-center border">CT${ct.id}</span>
+                            <span class="w-5 h-5 rounded ${isOverCurrent ? 'bg-rose-500/20 text-rose-400' : 'bg-sky-500/10 text-sky-400'} font-bold text-[10px] flex items-center justify-center border border-slate-700">CT${ct.id}</span>
                             <div>
-                                <div class="text-slate-200 font-medium truncate max-w-[100px] sm:max-w-[130px]">${name}</div>
-                                <div class="text-[9px] ${isOverCurrent ? 'text-rose-400 font-semibold' : 'text-slate-400'}">${isOverCurrent ? `⚠️ เกินเตือน (${warnLimit}A)` : `เตือน: ${warnLimit}A`}</div>
+                                <div class="text-slate-200 font-medium truncate max-w-[120px]">${name}</div>
+                                <div class="text-[9px] text-slate-400">เตือน: ${warnLimit}A</div>
                             </div>
                         </div>
                         <div class="text-right">
-                            <div class="font-mono ${isOverCurrent ? 'text-rose-400 font-bold animate-pulse' : 'text-emerald-400 font-semibold'}">${ct.current.toFixed(2)} A</div>
+                            <div class="font-mono ${isOverCurrent ? 'text-rose-400 font-bold' : 'text-emerald-400 font-semibold'}">${ct.current.toFixed(2)} A</div>
                             <div class="text-[9px] text-slate-400">${ct.power} W</div>
                         </div>
                     </div>
                 `;
             });
-            const ctContainer = document.getElementById('ct-cards-container');
-            if (ctContainer) ctContainer.innerHTML = ctCardsHtml;
+            if (document.getElementById('ct-cards-container')) document.getElementById('ct-cards-container').innerHTML = ctCardsHtml;
 
             let subGridHtml = '';
             let subPowerSum = 0;
-            const borderColors = ['border-sky-500', 'border-sky-400', 'border-teal-400', 'border-amber-400', 'border-amber-500', 'border-rose-400'];
 
             realData.cts.forEach((ct, index) => {
                 subPowerSum += ct.power;
                 const name = systemConfig.ctNames[`ct${ct.id}`] || ct.name;
                 const warnLimit = systemConfig.ctWarns[`ct${ct.id}`] || 15;
-                const isOverCurrent = ct.current > warnLimit;
-                const colorClass = isOverCurrent ? 'border-rose-500 glow-rose' : borderColors[index % borderColors.length];
-                const percentTotal = realData.powerTotal > 0 ? ((ct.power / realData.powerTotal) * 100).toFixed(1) : '0.0';
 
                 subGridHtml += `
-                    <div class="glass-card p-3 sm:p-4 rounded-xl sm:rounded-2xl border-l-4 ${colorClass} space-y-2">
+                    <div class="glass-card p-3 sm:p-4 rounded-xl sm:rounded-2xl border-l-4 border-sky-500 space-y-2">
                         <div class="flex justify-between items-start">
                             <div>
-                                <span class="text-[9px] font-bold uppercase tracking-wider text-slate-400">CT CH ${ct.id} (GPIO ${ct.gpio})</span>
+                                <span class="text-[9px] font-bold text-slate-400">CT CH ${ct.id} (GPIO ${ct.gpio})</span>
                                 <h4 class="text-xs sm:text-sm font-bold text-white truncate max-w-[140px]">${name}</h4>
                             </div>
-                            <span class="px-1.5 py-0.5 rounded text-[9px] font-medium ${isOverCurrent ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40' : 'bg-slate-800 text-slate-300 border border-slate-700'}">
-                                ${isOverCurrent ? '⚠️ กระแสเกิน!' : `Warn: ${warnLimit}A`}
-                            </span>
+                            <span class="px-1.5 py-0.5 rounded text-[9px] bg-slate-800 text-slate-300 border border-slate-700">Warn: ${warnLimit}A</span>
                         </div>
                         <div class="grid grid-cols-2 gap-2 text-xs pt-1 border-t border-slate-800/80">
                             <div>
                                 <span class="text-slate-400 text-[9px] block">กระแสไฟฟ้า</span>
-                                <span class="text-base sm:text-lg font-bold ${isOverCurrent ? 'text-rose-400 font-mono animate-pulse' : 'text-emerald-400 font-mono'}">${ct.current.toFixed(2)} <span class="text-[10px] text-slate-400">A</span></span>
+                                <span class="text-base sm:text-lg font-bold text-emerald-400 font-mono">${ct.current.toFixed(2)} A</span>
                             </div>
                             <div>
                                 <span class="text-slate-400 text-[9px] block">กำลังไฟฟ้า</span>
-                                <span class="text-base sm:text-lg font-bold text-sky-400 font-mono">${ct.power} <span class="text-[10px] text-slate-400">W</span></span>
-                            </div>
-                        </div>
-                        <div class="space-y-1">
-                            <div class="flex justify-between text-[9px] text-slate-400">
-                                <span>สัดส่วนภาระไฟ</span>
-                                <span class="text-slate-200 font-medium">${percentTotal}%</span>
-                            </div>
-                            <div class="w-full bg-slate-900 rounded-full h-1.5 overflow-hidden">
-                                <div class="h-1.5 rounded-full" style="width: ${percentTotal}%; background: ${isOverCurrent ? '#f43f5e' : chartColors[index]};"></div>
+                                <span class="text-base sm:text-lg font-bold text-sky-400 font-mono">${ct.power} W</span>
                             </div>
                         </div>
                     </div>
                 `;
             });
 
-            const subTotalEl = document.getElementById('sub-total-power');
-            if (subTotalEl) subTotalEl.innerText = `${subPowerSum.toLocaleString()} W`;
-
-            const subGridEl = document.getElementById('subcircuits-detail-grid');
-            if (subGridEl) subGridEl.innerHTML = subGridHtml;
+            if (document.getElementById('sub-total-power')) document.getElementById('sub-total-power').innerText = `${subPowerSum.toLocaleString()} W`;
+            if (document.getElementById('subcircuits-detail-grid')) document.getElementById('subcircuits-detail-grid').innerHTML = subGridHtml;
 
             if (costPieChartInstance) {
                 costPieChartInstance.data.labels = realData.cts.map(c => `CT${c.id} ${systemConfig.ctNames[`ct${c.id}`] || c.name}`);
@@ -1375,34 +960,10 @@
             }
         }
 
-        // บันทึกตั้งค่าลง Google Sheets (GAS) ผ่าน doPost
         async function saveAllSettings() {
             systemConfig.vMax = parseFloat(document.getElementById('cfg-v-max').value) || 242;
             systemConfig.vMin = parseFloat(document.getElementById('cfg-v-min').value) || 185;
             systemConfig.iMax = parseFloat(document.getElementById('cfg-i-max').value) || 45;
-            systemConfig.freqMax = parseFloat(document.getElementById('cfg-freq-max').value) || 55;
-            systemConfig.freqMin = parseFloat(document.getElementById('cfg-freq-min').value) || 45;
-
-            systemConfig.onPeakInterval = parseInt(document.getElementById('cfg-interval-onpeak').value) || 15;
-            systemConfig.offPeakInterval = parseInt(document.getElementById('cfg-interval-offpeak').value) || 30;
-            systemConfig.gasUrl = document.getElementById('cfg-gas-url').value;
-
-            systemConfig.lineEnable = document.getElementById('cfg-line-enable').checked;
-            systemConfig.lineToken = document.getElementById('cfg-line-token').value;
-
-            systemConfig.telegramEnable = document.getElementById('cfg-telegram-enable').checked;
-            systemConfig.telegramBotToken = document.getElementById('cfg-telegram-bot').value;
-            systemConfig.telegramChatId = document.getElementById('cfg-telegram-chat').value;
-
-            systemConfig.firstSendEnable = document.getElementById('cfg-firstsend-enable').checked;
-            systemConfig.firstSendMsg = document.getElementById('cfg-firstsend-msg').value;
-
-            systemConfig.morningReportMsg = document.getElementById('cfg-morning-report-msg').value;
-            systemConfig.timerMorningReport = document.getElementById('cfg-timer-morning-report').value;
-
-            systemConfig.dailyReportMsg = document.getElementById('cfg-daily-report-msg').value;
-            systemConfig.timerDailyReport = document.getElementById('cfg-timer-daily-report').value;
-
             systemConfig.rateTier1 = parseFloat(document.getElementById('cfg-rate-t1').value) || 3.2484;
             systemConfig.rateTier2 = parseFloat(document.getElementById('cfg-rate-t2').value) || 4.2218;
             systemConfig.rateTier3 = parseFloat(document.getElementById('cfg-rate-t3').value) || 4.4217;
@@ -1412,90 +973,34 @@
                 systemConfig.ctWarns[`ct${i}`] = parseFloat(document.getElementById(`cfg-ct${i}-warn`).value) || 15;
             }
 
-            updateDashboardUI();
-            updateSubChart(subChartRange);
-
             const payload = {
                 action: "saveSettings",
                 data: {
                     "Voltage(rms)MAX_Warn": systemConfig.vMax,
                     "Voltage(rms)min_Warn": systemConfig.vMin,
                     "Current(PZEM) Max_Warn": systemConfig.iMax,
-                    "Frequency (Hz)MAX_Warn": systemConfig.freqMax,
-                    "Frequency (Hz)min_Warn": systemConfig.freqMin,
-                    "Log_Interval_OnPeak": systemConfig.onPeakInterval,
-                    "Log_Interval_OffPeak": systemConfig.offPeakInterval,
-                    "LINE_Notify_Enable": systemConfig.lineEnable,
-                    "LINE_Notify_Token": systemConfig.lineToken,
-                    "Telegram_Bot_Enable": systemConfig.telegramEnable,
-                    "Telegram_Bot_Token": systemConfig.telegramBotToken,
-                    "Telegram_Chat_ID": systemConfig.telegramChatId,
-                    "First_Boot_Alert_Enable": systemConfig.firstSendEnable,
-                    "First_Boot_Message": systemConfig.firstSendMsg,
-                    "Morning_Report": systemConfig.morningReportMsg,
-                    "Timer_Morning_Report": systemConfig.timerMorningReport,
-                    "Daily_Report": systemConfig.dailyReportMsg,
-                    "Timer_Daily_Report": systemConfig.timerDailyReport,
                     "Tariff_Tier1_Rate": systemConfig.rateTier1,
                     "Tariff_Tier2_Rate": systemConfig.rateTier2,
                     "Tariff_Tier3_Rate": systemConfig.rateTier3,
-                    "CT1_Name": systemConfig.ctNames.ct1,
-                    "CT1_Warn": systemConfig.ctWarns.ct1,
-                    "CT2_Name": systemConfig.ctNames.ct2,
-                    "CT2_Warn": systemConfig.ctWarns.ct2,
-                    "CT3_Name": systemConfig.ctNames.ct3,
-                    "CT3_Warn": systemConfig.ctWarns.ct3,
-                    "CT4_Name": systemConfig.ctNames.ct4,
-                    "CT4_Warn": systemConfig.ctWarns.ct4,
-                    "CT5_Name": systemConfig.ctNames.ct5,
-                    "CT5_Warn": systemConfig.ctWarns.ct5,
-                    "CT6_Name": systemConfig.ctNames.ct6,
-                    "CT6_Warn": systemConfig.ctWarns.ct6
+                    "CT1_Name": systemConfig.ctNames.ct1, "CT1_Warn": systemConfig.ctWarns.ct1,
+                    "CT2_Name": systemConfig.ctNames.ct2, "CT2_Warn": systemConfig.ctWarns.ct2,
+                    "CT3_Name": systemConfig.ctNames.ct3, "CT3_Warn": systemConfig.ctWarns.ct3,
+                    "CT4_Name": systemConfig.ctNames.ct4, "CT4_Warn": systemConfig.ctWarns.ct4,
+                    "CT5_Name": systemConfig.ctNames.ct5, "CT5_Warn": systemConfig.ctWarns.ct5,
+                    "CT6_Name": systemConfig.ctNames.ct6, "CT6_Warn": systemConfig.ctWarns.ct6
                 }
             };
 
-            const statusMsg = document.getElementById('save-status-msg');
-            if (statusMsg) statusMsg.innerText = "กำลังส่งข้อมูลไปบันทึกที่ Google Sheets...";
-
             try {
-                const response = await fetch(systemConfig.gasUrl, {
+                await fetch(systemConfig.gasUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify(payload)
                 });
-                
-                const resText = await response.text();
-                const resJson = JSON.parse(resText);
-
-                if (resJson.status === "success") {
-                    showToast("บันทึกการตั้งค่าลง Google Sheets สำเร็จแล้ว!", "success");
-                    if (statusMsg) statusMsg.innerText = "บันทึกข้อมูลเรียบร้อยแล้วเมื่อ " + new Date().toLocaleTimeString('th-TH');
-                } else {
-                    showToast("เกิดข้อผิดพลาด: " + resJson.message, "error");
-                    if (statusMsg) statusMsg.innerText = "เกิดข้อผิดพลาดในการบันทึก";
-                }
+                alert("บันทึกการตั้งค่าลง Google Sheets เรียบร้อยแล้ว!");
             } catch (err) {
-                console.error("Save settings error:", err);
-                showToast("บันทึกข้อมูลสำเร็จ! (หรืออาจติด CORS หากทดสอบจากเครื่อง)", "success");
-                if (statusMsg) statusMsg.innerText = "บันทึกเรียบร้อยแล้ว";
+                alert("เกิดข้อผิดพลาดในการบันทึกข้อมูล");
             }
-        }
-
-        function showToast(message, type = "info") {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = `p-3 rounded-xl border text-xs font-medium shadow-xl transition-all duration-300 pointer-events-auto flex items-center gap-2 ${
-                type === 'success' ? 'bg-emerald-950/90 border-emerald-500/50 text-emerald-200' :
-                type === 'error' ? 'bg-rose-950/90 border-rose-500/50 text-rose-200' :
-                'bg-slate-900/90 border-sky-500/50 text-sky-200'
-            }`;
-            toast.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check' : 'fa-circle-info'}"></i> ${message}`;
-            container.appendChild(toast);
-
-            setTimeout(() => {
-                toast.classList.add('opacity-0', 'translate-y-2');
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
         }
     </script>
 </body>
