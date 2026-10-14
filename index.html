@@ -78,6 +78,12 @@
         ::-webkit-scrollbar-thumb:hover { background: #0ea5e9; }
 
         input[type="date"], input[type="time"] { color-scheme: dark; }
+
+        .range-btn-active {
+            background-color: #0ea5e9 !important;
+            color: #ffffff !important;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between antialiased selection:bg-sky-500 selection:text-white w-full overflow-x-hidden">
@@ -94,7 +100,11 @@
                     </h1>
                     <p class="text-[11px] sm:text-xs text-slate-400 flex items-center gap-1.5">
                         <span class="truncate"><i class="fa-solid fa-microchip text-sky-400"></i> ESP32</span>
-                        <span id="data-updated-time" class="text-slate-300 font-medium text-[10px] sm:text-xs ml-1">กำลังดึงข้อมูล...</span>
+                        <span class="relative flex h-2 w-2 ml-1">
+                            <span id="sync-ping" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                            <span id="sync-dot" class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                        </span>
+                        <span id="data-updated-time" class="text-slate-300 font-medium text-[10px] sm:text-xs">กำลังดึงข้อมูล...</span>
                     </p>
                 </div>
             </div>
@@ -191,7 +201,7 @@
                         <span id="val-kwh-total" class="text-xl sm:text-2xl font-bold text-purple-300 font-mono">0.00</span>
                         <span class="text-xs text-slate-400">kWh</span>
                     </div>
-                    <p class="text-[10px] text-purple-300 mt-0.5 truncate">สะสมเดือนนี้</p>
+                    <p class="text-[10px] text-purple-300 mt-0.5 truncate">สะสมล่าสุด</p>
                 </div>
 
                 <div class="glass-card p-3 sm:p-4 rounded-xl sm:rounded-2xl border-l-4 border-l-rose-500 glow-rose col-span-2 xs:col-span-2 sm:col-span-1">
@@ -215,6 +225,18 @@
                                 <i class="fa-solid fa-chart-area text-sky-400"></i> กราฟกำลังไฟฟ้า (Power Trend - Watt)
                             </h2>
                             <p id="main-chart-description" class="text-[11px] text-slate-400">แสดงข้อมูลประวัติย้อนหลังจริงจาก Google Sheets</p>
+                        </div>
+
+                        <div class="flex items-center space-x-1 bg-slate-900/90 p-1 rounded-lg border border-slate-800 shrink-0 self-start sm:self-auto">
+                            <button onclick="setMainTimeRange('24h')" id="main-range-24h" class="range-btn-main range-btn-active px-2.5 py-1 rounded text-[11px] text-slate-400 hover:text-white transition-all">
+                                24 ชม. (รายวัน)
+                            </button>
+                            <button onclick="setMainTimeRange('7d')" id="main-range-7d" class="range-btn-main px-2.5 py-1 rounded text-[11px] text-slate-400 hover:text-white transition-all">
+                                7 วัน (รายสัปดาห์)
+                            </button>
+                            <button onclick="setMainTimeRange('30d')" id="main-range-30d" class="range-btn-main px-2.5 py-1 rounded text-[11px] text-slate-400 hover:text-white transition-all">
+                                30 วัน (รายเดือน)
+                            </button>
                         </div>
                     </div>
                     <div class="chart-box">
@@ -259,6 +281,18 @@
                         </h3>
                         <p id="sub-chart-description" class="text-[11px] text-slate-400">เปรียบเทียบแนวโน้มกำลังไฟฟ้า CT1–CT6 จาก Google Sheets</p>
                     </div>
+
+                    <div class="flex items-center space-x-1 bg-slate-900/90 p-1 rounded-lg border border-slate-800 shrink-0">
+                        <button onclick="setSubTimeRange('24h')" id="sub-range-24h" class="range-btn-sub range-btn-active px-2.5 py-1 rounded text-[11px] text-slate-400 hover:text-white transition-all">
+                            24 ชม. (รายวัน)
+                        </button>
+                        <button onclick="setSubTimeRange('7d')" id="sub-range-7d" class="range-btn-sub px-2.5 py-1 rounded text-[11px] text-slate-400 hover:text-white transition-all">
+                            7 วัน (รายสัปดาห์)
+                        </button>
+                        <button onclick="setSubTimeRange('30d')" id="sub-range-30d" class="range-btn-sub px-2.5 py-1 rounded text-[11px] text-slate-400 hover:text-white transition-all">
+                            30 วัน (รายเดือน)
+                        </button>
+                    </div>
                 </div>
                 <div class="chart-box" style="height: 320px;">
                     <canvas id="subcircuitBarChart"></canvas>
@@ -273,7 +307,7 @@
                     <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
                         <i class="fa-solid fa-calculator text-emerald-400"></i> คำนวณค่าไฟฟ้าแบบขั้นบันได (Progressive Electricity Tariff)
                     </h2>
-                    <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">ระบบคำนวณโดยการ SUM รวมค่า Energy (PZEM) kWh ประจำเดือนจาก Google Sheets</p>
+                    <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">ระบบคำนวณโดยการ SUM รวมค่า Energy (PZEM) kWh (คอลัมน์ H) ประจำเดือนจาก Google Sheets</p>
                 </div>
                 <div class="flex items-center gap-2 shrink-0">
                     <label class="text-xs text-slate-300 font-medium"><i class="fa-solid fa-calendar-days text-emerald-400 mr-1"></i>เลือกเดือน:</label>
@@ -485,6 +519,9 @@
 
         const chartColors = ['#0ea5e9', '#38bdf8', '#2dd4bf', '#f59e0b', '#fbbf24', '#f43f5e'];
 
+        let currentMainTimeRange = '24h'; // 24h, 7d, 30d
+        let currentSubTimeRange = '24h';  // 24h, 7d, 30d
+
         let systemConfig = {
             vMax: 242,
             vMin: 185,
@@ -502,7 +539,7 @@
         };
 
         let realData = {
-            voltage: 0, currentTotal: 0, powerTotal: 0, pf: 0, freq: 0, kwhTotal: 0, lastUpdate: "-",
+            voltage: 0, currentTotal: 0, powerTotal: 0, pf: 0, freq: 0, kwhTotal: 0, date: "", time: "",
             cts: [
                 { id: 1, name: "ปลั๊ก ชั้น 1", gpio: 36, current: 0, power: 0 },
                 { id: 2, name: "ปลั๊ก ชั้น 2", gpio: 39, current: 0, power: 0 },
@@ -514,24 +551,59 @@
         };
 
         let historicalLogs = [];
-        let monthlyKwhSummary = {}; // ผลรวม SUM Energy (PZEM) kWh แยกตามเดือน (YYYY-MM)
+        let monthlyKwhSummary = {}; // SUM Energy (PZEM) kWh แยกตามเดือน YYYY-MM
 
         let realtimeChartInstance = null;
         let subcircuitBarChartInstance = null;
         let costPieChartInstance = null;
 
-        // ฟังก์ชันคลีนข้อความวันเวลา ป้องกันปัญหา Sat D จากปี 1899
-        function formatCleanTime(timeStr, dateStr) {
-            if (!timeStr) return "-";
-            let timeMatch = String(timeStr).match(/(\d{2}:\d{2})(:\d{2})?/);
-            let timeOnly = timeMatch ? timeMatch[1] : String(timeStr);
-            if (dateStr && dateStr !== "-" && dateStr.includes("-")) {
-                let parts = dateStr.split("-");
+        const thaiMonths = {
+            "01": "มกราคม", "02": "กุมภาพันธ์", "03": "มีนาคม", "04": "เมษายน",
+            "05": "พฤษภาคม", "06": "มิถุนายน", "07": "กรกฎาคม", "08": "สิงหาคม",
+            "09": "กันยายน", "10": "ตุลาคม", "11": "พฤศจิกายน", "12": "ธันวาคม"
+        };
+
+        function formatMonthYearTH(ymStr) {
+            if (!ymStr || !ymStr.includes('-')) return ymStr;
+            const parts = ymStr.split('-');
+            const yearBE = parseInt(parts[0], 10) + 543;
+            const monthName = thaiMonths[parts[1]] || parts[1];
+            return `${monthName} ${yearBE}`;
+        }
+
+        function cleanDateStr(dStr) {
+            if (!dStr) return "";
+            let s = String(dStr).trim();
+            let match = s.match(/\b(2\d{3}-\d{2}-\d{2})\b/);
+            if (match) return match[1];
+            return s.substring(0, 10);
+        }
+
+        function cleanTimeStr(tStr) {
+            if (!tStr) return "00:00";
+            let s = String(tStr).trim();
+            let match = s.match(/\b([01]?\d|2[0-3]):([0-5]\d)\b/);
+            if (match) {
+                return `${match[1].padStart(2, '0')}:${match[2]}`;
+            }
+            return "00:00";
+        }
+
+        function formatCleanTime(timeStr, dateStr, range = '24h') {
+            let d = cleanDateStr(dateStr);
+            let t = cleanTimeStr(timeStr);
+            
+            if (d && d.includes("-")) {
+                let parts = d.split("-");
                 if (parts.length === 3) {
-                    return `${parts[1]}-${parts[2]} ${timeOnly}`; // แสดงผล เช่น "09-01 00:30"
+                    if (range === '24h') {
+                        return t;
+                    } else {
+                        return `${parts[1]}-${parts[2]} ${t}`;
+                    }
                 }
             }
-            return timeOnly;
+            return t || "-";
         }
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -539,7 +611,8 @@
             loadSettingsFromGAS();
             fetchRealDataFromGAS();
 
-            setInterval(fetchRealDataFromGAS, 10000); // ซิงค์ข้อมูลทุก 10 วินาที
+            // ดึงข้อมูลใหม่ทุกๆ 10 วินาที พร้อม Cache Busting
+            setInterval(fetchRealDataFromGAS, 10000);
 
             document.getElementById('login-password-input')?.addEventListener('keyup', (e) => {
                 if (e.key === 'Enter') submitAdminLogin();
@@ -557,7 +630,8 @@
             if (!url) return;
 
             try {
-                const response = await fetch(url);
+                const cacheBustUrl = `${url}?action=getSettings&_t=${Date.now()}`;
+                const response = await fetch(cacheBustUrl);
                 const result = await response.json();
 
                 if (result.status === "success" && result.data) {
@@ -586,8 +660,13 @@
             const url = systemConfig.gasUrl;
             if (!url) return;
 
+            const pingEl = document.getElementById('sync-ping');
+            const dotEl = document.getElementById('sync-dot');
+
             try {
-                const response = await fetch(`${url}?action=getLatestData`);
+                // ป้องกัน Cache โดยใส่ Timestamp ต่อท้าย Query String
+                const cacheBustUrl = `${url}?action=getLatestData&_t=${Date.now()}`;
+                const response = await fetch(cacheBustUrl);
                 const result = await response.json();
 
                 if (result.status === "success" && result.data) {
@@ -599,7 +678,8 @@
                     realData.kwhTotal = parseFloat(data.kwh_total) || 0;
                     realData.pf = parseFloat(data.pf) || 0;
                     realData.freq = parseFloat(data.frequency) || 0;
-                    realData.lastUpdate = formatCleanTime(data.time, data.date);
+                    realData.date = cleanDateStr(data.date);
+                    realData.time = cleanTimeStr(data.time);
 
                     if (data.sub_circuits) {
                         for (let i = 1; i <= 6; i++) {
@@ -612,53 +692,52 @@
 
                     if (result.logs && Array.isArray(result.logs)) {
                         historicalLogs = result.logs;
-                        processMonthlyKwhSummaries();
+                    }
+
+                    if (result.monthlyKwh && typeof result.monthlyKwh === 'object') {
+                        monthlyKwhSummary = result.monthlyKwh;
                     }
 
                     const updateTimeEl = document.getElementById('data-updated-time');
-                    if (updateTimeEl) updateTimeEl.innerText = `อัปเดตล่าสุด: ${data.date || ''} ${realData.lastUpdate}`;
+                    if (updateTimeEl) {
+                        updateTimeEl.innerText = `อัปเดตล่าสุด: ${realData.date} ${realData.time}`;
+                    }
+
+                    if (pingEl) pingEl.className = "animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75";
+                    if (dotEl) dotEl.className = "relative inline-flex rounded-full h-2 w-2 bg-emerald-500";
 
                     updateDashboardUI();
                     updateMainChart();
                     updateSubChart();
+                    updateTariffMonthSelect();
                 }
             } catch (err) {
                 console.warn("เกิดข้อผิดพลาดในการดึงข้อมูลจาก GAS:", err);
+                if (pingEl) pingEl.className = "hidden";
+                if (dotEl) dotEl.className = "relative inline-flex rounded-full h-2 w-2 bg-rose-500";
             }
         }
 
-        // รวมค่า SUM Energy (PZEM) kWh แยกตามเดือน
-        function processMonthlyKwhSummaries() {
-            monthlyKwhSummary = {};
-            
-            historicalLogs.forEach(log => {
-                if (log.date && log.date.includes('-')) {
-                    let monthKey = log.date.substring(0, 7); // ตัวอย่าง "2026-09"
-                    if (!monthlyKwhSummary[monthKey]) {
-                        monthlyKwhSummary[monthKey] = 0;
-                    }
-                    monthlyKwhSummary[monthKey] += (log.kwh || 0); // รวมค่าหน่วยไฟ Energy (PZEM) kWh
-                }
+        function updateTariffMonthSelect() {
+            const selectEl = document.getElementById('tariff-month-select');
+            if (!selectEl) return;
+
+            const currentVal = selectEl.value;
+            let optionsHtml = `<option value="current">เดือนปัจจุบัน (สะสมล่าสุด: ${realData.kwhTotal.toFixed(2)} kWh)</option>`;
+
+            const sortedMonths = Object.keys(monthlyKwhSummary).sort().reverse();
+            sortedMonths.forEach(monthKey => {
+                let sumKwh = monthlyKwhSummary[monthKey];
+                let labelTH = formatMonthYearTH(monthKey);
+                optionsHtml += `<option value="${monthKey}">เดือน ${labelTH} (SUM รวม: ${sumKwh.toLocaleString('th-TH', {minimumFractionDigits: 2})} kWh)</option>`;
             });
 
-            // อัปเดตตัวเลือกเดือนในหน้าคำนวณค่าไฟ
-            const selectEl = document.getElementById('tariff-month-select');
-            if (selectEl) {
-                const currentVal = selectEl.value;
-                let optionsHtml = `<option value="current">เดือนปัจจุบัน (สะสม: ${realData.kwhTotal.toFixed(2)} kWh)</option>`;
-                
-                Object.keys(monthlyKwhSummary).sort().reverse().forEach(monthKey => {
-                    let sumKwh = monthlyKwhSummary[monthKey];
-                    optionsHtml += `<option value="${monthKey}">เดือน ${monthKey} (SUM: ${sumKwh.toFixed(2)} kWh)</option>`;
-                });
-                
-                selectEl.innerHTML = optionsHtml;
-                if (currentVal && selectEl.querySelector(`option[value="${currentVal}"]`)) {
-                    selectEl.value = currentVal;
-                }
+            selectEl.innerHTML = optionsHtml;
+            if (currentVal && selectEl.querySelector(`option[value="${currentVal}"]`)) {
+                selectEl.value = currentVal;
             }
 
-            calculateTariffForMonth(document.getElementById('tariff-month-select')?.value || 'current');
+            calculateTariffForMonth(selectEl.value || 'current');
         }
 
         function calculateTariffForMonth(selectedVal) {
@@ -667,10 +746,11 @@
 
             if (selectedVal !== 'current' && monthlyKwhSummary[selectedVal] !== undefined) {
                 totalKwh = monthlyKwhSummary[selectedVal];
-                monthLabel = `เดือน ${selectedVal}`;
+                monthLabel = `เดือน ${formatMonthYearTH(selectedVal)}`;
             }
 
-            document.getElementById('selected-month-label').innerText = monthLabel;
+            const labelEl = document.getElementById('selected-month-label');
+            if (labelEl) labelEl.innerText = monthLabel;
             
             const t1Used = Math.min(totalKwh, 200);
             const t2Used = Math.max(0, Math.min(totalKwh - 200, 200));
@@ -687,16 +767,123 @@
             const vatCost = subtotalBill * 0.07;
             const grandTotalBill = subtotalBill + vatCost;
 
-            if (document.getElementById('calc-total-kwh')) document.getElementById('calc-total-kwh').innerText = totalKwh.toFixed(2);
+            if (document.getElementById('calc-total-kwh')) document.getElementById('calc-total-kwh').innerText = totalKwh.toLocaleString('th-TH', {minimumFractionDigits: 2});
             if (document.getElementById('tier1-used')) document.getElementById('tier1-used').innerText = t1Used.toFixed(2);
-            if (document.getElementById('tier1-cost')) document.getElementById('tier1-cost').innerText = `${t1Cost.toFixed(2)} บาท`;
+            if (document.getElementById('tier1-cost')) document.getElementById('tier1-cost').innerText = `${t1Cost.toLocaleString('th-TH', {minimumFractionDigits: 2})} บาท`;
             if (document.getElementById('tier2-used')) document.getElementById('tier2-used').innerText = t2Used.toFixed(2);
-            if (document.getElementById('tier2-cost')) document.getElementById('tier2-cost').innerText = `${t2Cost.toFixed(2)} บาท`;
+            if (document.getElementById('tier2-cost')) document.getElementById('tier2-cost').innerText = `${t2Cost.toLocaleString('th-TH', {minimumFractionDigits: 2})} บาท`;
             if (document.getElementById('tier3-used')) document.getElementById('tier3-used').innerText = t3Used.toFixed(2);
-            if (document.getElementById('tier3-cost')) document.getElementById('tier3-cost').innerText = `${t3Cost.toFixed(2)} บาท`;
-            if (document.getElementById('ft-total-cost')) document.getElementById('ft-total-cost').innerText = `${ftCost.toFixed(2)} บาท`;
-            if (document.getElementById('total-bill-grand')) document.getElementById('total-bill-grand').innerText = `${grandTotalBill.toFixed(2)} บาท`;
-            if (document.getElementById('val-est-cost') && selectedVal === 'current') document.getElementById('val-est-cost').innerText = grandTotalBill.toFixed(2);
+            if (document.getElementById('tier3-cost')) document.getElementById('tier3-cost').innerText = `${t3Cost.toLocaleString('th-TH', {minimumFractionDigits: 2})} บาท`;
+            if (document.getElementById('ft-total-cost')) document.getElementById('ft-total-cost').innerText = `${ftCost.toLocaleString('th-TH', {minimumFractionDigits: 2})} บาท`;
+            if (document.getElementById('total-bill-grand')) document.getElementById('total-bill-grand').innerText = `${grandTotalBill.toLocaleString('th-TH', {minimumFractionDigits: 2})} บาท`;
+            if (document.getElementById('val-est-cost') && selectedVal === 'current') document.getElementById('val-est-cost').innerText = grandTotalBill.toLocaleString('th-TH', {maximumFractionDigits: 2});
+        }
+
+        function setMainTimeRange(range) {
+            currentMainTimeRange = range;
+            document.querySelectorAll('.range-btn-main').forEach(btn => btn.classList.remove('range-btn-active'));
+            document.getElementById(`main-range-${range}`)?.classList.add('range-btn-active');
+            updateMainChart();
+        }
+
+        function setSubTimeRange(range) {
+            currentSubTimeRange = range;
+            document.querySelectorAll('.range-btn-sub').forEach(btn => btn.classList.remove('range-btn-active'));
+            document.getElementById(`sub-range-${range}`)?.classList.add('range-btn-active');
+            updateSubChart();
+        }
+
+        function filterLogsByRange(logs, range) {
+            if (!logs || logs.length === 0) return [];
+
+            let countNeeded = 96; // 24 ชั่วโมง
+            let sampleStep = 1;
+
+            if (range === '7d') {
+                countNeeded = 672; // 7 วัน
+                sampleStep = 4;
+            } else if (range === '30d') {
+                countNeeded = 2880; // 30 วัน
+                sampleStep = 16;
+            }
+
+            const sliced = logs.slice(-countNeeded);
+            const filtered = [];
+            for (let i = 0; i < sliced.length; i += sampleStep) {
+                filtered.push(sliced[i]);
+            }
+            return filtered;
+        }
+
+        function updateMainChart() {
+            if (!realtimeChartInstance) return;
+            const labels = [];
+            const values = [];
+
+            const filtered = filterLogsByRange(historicalLogs, currentMainTimeRange);
+
+            if (filtered.length > 0) {
+                filtered.forEach(log => {
+                    labels.push(formatCleanTime(log.time, log.date, currentMainTimeRange));
+                    values.push(parseFloat(log.power_main || 0) || 0);
+                });
+            } else {
+                labels.push(realData.time || 'ปัจจุบัน');
+                values.push(realData.powerTotal);
+            }
+
+            realtimeChartInstance.data.labels = labels;
+            realtimeChartInstance.data.datasets[0].data = values;
+            realtimeChartInstance.update('none');
+        }
+
+        function updateSubChart() {
+            const canvas = document.getElementById('subcircuitBarChart');
+            if (!canvas) return;
+
+            const filtered = filterLogsByRange(historicalLogs, currentSubTimeRange);
+
+            const labels = filtered.length > 0 
+                ? filtered.map(l => formatCleanTime(l.time, l.date, currentSubTimeRange)) 
+                : [realData.time || 'ปัจจุบัน'];
+            
+            const datasets = realData.cts.map((ct, index) => {
+                const name = systemConfig.ctNames[`ct${ct.id}`] || ct.name;
+                const dataPoints = filtered.length > 0 
+                    ? filtered.map(l => (l.sub_circuits ? parseFloat(l.sub_circuits[`ct${ct.id}_w`]) || 0 : 0))
+                    : [ct.power];
+
+                return {
+                    label: `CT${ct.id} ${name}`,
+                    data: dataPoints,
+                    borderColor: chartColors[index],
+                    backgroundColor: chartColors[index],
+                    borderWidth: 2,
+                    tension: 0.3,
+                    pointRadius: currentSubTimeRange === '24h' ? 2 : 1,
+                    fill: false
+                };
+            });
+
+            if (subcircuitBarChartInstance) {
+                subcircuitBarChartInstance.destroy();
+            }
+
+            subcircuitBarChartInstance = new Chart(canvas.getContext('2d'), {
+                type: 'line',
+                data: { labels, datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'top', labels: { color: '#cbd5e1', font: { family: 'Prompt', size: 10 } } }
+                    },
+                    scales: {
+                        x: { grid: { color: 'rgba(51, 65, 85, 0.25)' }, ticks: { color: '#94a3b8', font: { size: 10 } } },
+                        y: { beginAtZero: true, grid: { color: 'rgba(51, 65, 85, 0.30)' }, ticks: { color: '#94a3b8', font: { size: 10 } } }
+                    }
+                }
+            });
         }
 
         function syncSettingsToUI() {
@@ -819,71 +1006,6 @@
             } catch (err) {
                 console.error("Chart initialization error:", err);
             }
-        }
-
-        function updateMainChart() {
-            if (!realtimeChartInstance) return;
-            const labels = [];
-            const values = [];
-
-            if (historicalLogs && historicalLogs.length > 0) {
-                historicalLogs.slice(-30).forEach(log => {
-                    labels.push(formatCleanTime(log.time, log.date));
-                    values.push(log.power_main || 0);
-                });
-            } else {
-                labels.push(realData.lastUpdate || 'ปัจจุบัน');
-                values.push(realData.powerTotal);
-            }
-
-            realtimeChartInstance.data.labels = labels;
-            realtimeChartInstance.data.datasets[0].data = values;
-            realtimeChartInstance.update();
-        }
-
-        function updateSubChart() {
-            const canvas = document.getElementById('subcircuitBarChart');
-            if (!canvas) return;
-
-            const logsToUse = historicalLogs.length > 0 ? historicalLogs.slice(-30) : [];
-            const labels = logsToUse.length > 0 ? logsToUse.map(l => formatCleanTime(l.time, l.date)) : [realData.lastUpdate || 'ปัจจุบัน'];
-            
-            const datasets = realData.cts.map((ct, index) => {
-                const name = systemConfig.ctNames[`ct${ct.id}`] || ct.name;
-                const dataPoints = logsToUse.length > 0 
-                    ? logsToUse.map(l => (l.sub_circuits ? l.sub_circuits[`ct${ct.id}_w`] : 0))
-                    : [ct.power];
-
-                return {
-                    label: `CT${ct.id} ${name}`,
-                    data: dataPoints,
-                    borderColor: chartColors[index],
-                    backgroundColor: chartColors[index],
-                    borderWidth: 2,
-                    tension: 0.35,
-                    fill: false
-                };
-            });
-
-            if (subcircuitBarChartInstance) {
-                subcircuitBarChartInstance.destroy();
-            }
-
-            subcircuitBarChartInstance = new Chart(canvas.getContext('2d'), {
-                type: 'line',
-                data: { labels, datasets },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'top', labels: { color: '#cbd5e1', font: { family: 'Prompt', size: 10 } } }
-                    },
-                    scales: {
-                        x: { grid: { color: 'rgba(51, 65, 85, 0.25)' }, ticks: { color: '#94a3b8', font: { size: 10 } } },
-                        y: { beginAtZero: true, grid: { color: 'rgba(51, 65, 85, 0.30)' }, ticks: { color: '#94a3b8', font: { size: 10 } } }
-                    }
-                }
-            });
         }
 
         function updateDashboardUI() {
