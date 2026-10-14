@@ -95,8 +95,7 @@
                     </h1>
                     <p class="text-[11px] sm:text-xs text-slate-400 flex items-center gap-1.5">
                         <span class="truncate"><i class="fa-solid fa-microchip text-sky-400"></i> ESP32</span>
-                        <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping shrink-0"></span>
-                        <span class="text-emerald-400 font-medium text-[10px] sm:text-xs">DEMO LIVE</span>
+                        <span id="data-updated-time" class="text-slate-400 font-medium text-[10px] sm:text-xs ml-1">กำลังโหลดข้อมูล...</span>
                     </p>
                 </div>
             </div>
@@ -142,7 +141,7 @@
                         <i class="fa-solid fa-plug text-sky-400 text-sm sm:text-base"></i>
                     </div>
                     <div class="mt-1.5 flex items-baseline gap-1">
-                        <span id="val-voltage" class="text-xl sm:text-2xl font-bold text-white font-mono">231.5</span>
+                        <span id="val-voltage" class="text-xl sm:text-2xl font-bold text-white font-mono">0.0</span>
                         <span class="text-xs text-slate-400">V</span>
                     </div>
                     <p id="status-voltage-text" class="text-[10px] text-emerald-400 mt-0.5 truncate"><i class="fa-solid fa-circle-check"></i> ปกติ (220-240V)</p>
@@ -154,7 +153,7 @@
                         <i class="fa-solid fa-bolt-lightning text-amber-400 text-sm sm:text-base"></i>
                     </div>
                     <div class="mt-1.5 flex items-baseline gap-1">
-                        <span id="val-current-total" class="text-xl sm:text-2xl font-bold text-amber-300 font-mono">18.42</span>
+                        <span id="val-current-total" class="text-xl sm:text-2xl font-bold text-amber-300 font-mono">0.00</span>
                         <span class="text-xs text-slate-400">A</span>
                     </div>
                     <p class="text-[10px] text-slate-400 mt-0.5 truncate">เมน PZEM-004T</p>
@@ -166,10 +165,10 @@
                         <i class="fa-solid fa-gauge-high text-emerald-400 text-sm sm:text-base"></i>
                     </div>
                     <div class="mt-1.5 flex items-baseline gap-1">
-                        <span id="val-power-total" class="text-xl sm:text-2xl font-bold text-emerald-400 font-mono">4,264</span>
+                        <span id="val-power-total" class="text-xl sm:text-2xl font-bold text-emerald-400 font-mono">0</span>
                         <span class="text-xs text-slate-400">W</span>
                     </div>
-                    <p class="text-[10px] text-emerald-400 mt-0.5 truncate">4.26 kW (Real-time)</p>
+                    <p id="val-power-kw" class="text-[10px] text-emerald-400 mt-0.5 truncate">0.00 kW</p>
                 </div>
 
                 <div class="glass-card p-3 sm:p-4 rounded-xl sm:rounded-2xl border-l-4 border-l-indigo-500">
@@ -178,10 +177,10 @@
                         <i class="fa-solid fa-wave-square text-indigo-400 text-sm sm:text-base"></i>
                     </div>
                     <div class="mt-1.5 flex items-baseline gap-1">
-                        <span id="val-pf" class="text-xl sm:text-2xl font-bold text-indigo-300 font-mono">0.98</span>
+                        <span id="val-pf" class="text-xl sm:text-2xl font-bold text-indigo-300 font-mono">0.00</span>
                         <span class="text-xs text-slate-400">PF</span>
                     </div>
-                    <p id="val-freq" class="text-[10px] text-slate-400 mt-0.5 truncate">50.0 Hz</p>
+                    <p id="val-freq" class="text-[10px] text-slate-400 mt-0.5 truncate">0.0 Hz</p>
                 </div>
 
                 <div class="glass-card p-3 sm:p-4 rounded-xl sm:rounded-2xl border-l-4 border-l-purple-500">
@@ -190,7 +189,7 @@
                         <i class="fa-solid fa-charging-station text-purple-400 text-sm sm:text-base"></i>
                     </div>
                     <div class="mt-1.5 flex items-baseline gap-1">
-                        <span id="val-kwh-total" class="text-xl sm:text-2xl font-bold text-purple-300 font-mono">284.50</span>
+                        <span id="val-kwh-total" class="text-xl sm:text-2xl font-bold text-purple-300 font-mono">0.00</span>
                         <span class="text-xs text-slate-400">kWh</span>
                     </div>
                     <p class="text-[10px] text-purple-300 mt-0.5 truncate">สะสมเดือนนี้</p>
@@ -202,7 +201,7 @@
                         <i class="fa-solid fa-baht-sign text-rose-400 text-sm sm:text-base"></i>
                     </div>
                     <div class="mt-1.5 flex items-baseline gap-1">
-                        <span id="val-est-cost" class="text-xl sm:text-2xl font-bold text-rose-400 font-mono">1,218.25</span>
+                        <span id="val-est-cost" class="text-xl sm:text-2xl font-bold text-rose-400 font-mono">0.00</span>
                         <span class="text-xs text-slate-400">บาท</span>
                     </div>
                     <p class="text-[10px] text-rose-300 mt-0.5 truncate">คิดแบบขั้นบันได</p>
@@ -220,8 +219,8 @@
                         </div>
                         <div class="flex flex-col sm:flex-row items-stretch gap-2">
                             <select id="chart-time-range" onchange="handleMainChartRangeChange(this.value)" class="bg-slate-900 text-xs text-slate-300 border border-slate-700 rounded-lg px-3 py-2 focus:outline-none focus:border-sky-500 cursor-pointer">
-                                <option value="realtime">Real-time (30 วินาที)</option>
-                                <option value="today" selected>วันนี้ (24 ชม.)</option>
+                                <option value="realtime" selected>ข้อมูลล่าสุด (Real-time)</option>
+                                <option value="today">วันนี้ (24 ชม.)</option>
                                 <option value="week">ย้อนหลัง 1 สัปดาห์</option>
                                 <option value="month">ย้อนหลัง 1 เดือน</option>
                                 <option value="custom">เลือกวันที่ย้อนหลัง</option>
@@ -257,7 +256,7 @@
                 </div>
                 <div class="sm:text-right">
                     <span class="text-[11px] text-slate-400 block">กำลังไฟฟ้ารวมวงจรย่อย:</span>
-                    <span id="sub-total-power" class="text-lg sm:text-xl font-bold text-sky-400 font-mono">4,242 W</span>
+                    <span id="sub-total-power" class="text-lg sm:text-xl font-bold text-sky-400 font-mono">0 W</span>
                 </div>
             </div>
 
@@ -301,23 +300,23 @@
                 <div class="lg:col-span-2 glass-card p-4 sm:p-6 rounded-xl sm:rounded-2xl space-y-4">
                     <h3 class="text-sm sm:text-base font-semibold text-slate-200 border-b border-slate-800 pb-2.5 flex items-center justify-between">
                         <span><i class="fa-solid fa-receipt text-amber-400 mr-1.5"></i>รายละเอียดการคิดค่าไฟเดือนปัจจุบัน</span>
-                        <span class="text-xs font-normal text-slate-400">หน่วยรวมสะสม: <strong id="calc-total-kwh" class="text-sky-400 font-mono text-sm">284.50</strong> kWh</span>
+                        <span class="text-xs font-normal text-slate-400">หน่วยรวมสะสม: <strong id="calc-total-kwh" class="text-sky-400 font-mono text-sm">0.00</strong> kWh</span>
                     </h3>
 
                     <div class="space-y-2.5 text-xs sm:text-sm">
                         <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800 flex justify-between items-center">
                             <div>
                                 <span class="font-medium text-slate-200">ขั้นที่ 1: 0 - 200 หน่วย</span>
-                                <p class="text-[11px] text-slate-400">ใช้อยู่: <span id="tier1-used" class="text-sky-400">200.00</span> หน่วย @ <span id="tier1-rate-display" class="text-slate-300">3.2484</span> บาท</p>
+                                <p class="text-[11px] text-slate-400">ใช้อยู่: <span id="tier1-used" class="text-sky-400">0.00</span> หน่วย @ <span id="tier1-rate-display" class="text-slate-300">3.2484</span> บาท</p>
                             </div>
-                            <span id="tier1-cost" class="font-mono font-semibold text-emerald-400">649.68 บาท</span>
+                            <span id="tier1-cost" class="font-mono font-semibold text-emerald-400">0.00 บาท</span>
                         </div>
                         <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800 flex justify-between items-center">
                             <div>
                                 <span class="font-medium text-slate-200">ขั้นที่ 2: 201 - 400 หน่วย</span>
-                                <p class="text-[11px] text-slate-400">ใช้อยู่: <span id="tier2-used" class="text-sky-400">84.50</span> หน่วย @ <span id="tier2-rate-display" class="text-slate-300">4.2218</span> บาท</p>
+                                <p class="text-[11px] text-slate-400">ใช้อยู่: <span id="tier2-used" class="text-sky-400">0.00</span> หน่วย @ <span id="tier2-rate-display" class="text-slate-300">4.2218</span> บาท</p>
                             </div>
-                            <span id="tier2-cost" class="font-mono font-semibold text-emerald-400">356.74 บาท</span>
+                            <span id="tier2-cost" class="font-mono font-semibold text-emerald-400">0.00 บาท</span>
                         </div>
                         <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800 flex justify-between items-center">
                             <div>
@@ -335,7 +334,7 @@
                         </div>
                         <div class="bg-slate-900/50 p-2.5 rounded-xl border border-slate-800">
                             <span class="text-slate-400 text-[11px] block">ค่า FT (0.3972 บาท/หน่วย):</span>
-                            <span id="ft-total-cost" class="text-xs sm:text-sm font-semibold text-slate-200">113.00 บาท</span>
+                            <span id="ft-total-cost" class="text-xs sm:text-sm font-semibold text-slate-200">0.00 บาท</span>
                         </div>
                     </div>
 
@@ -344,7 +343,7 @@
                             <span class="text-[10px] sm:text-xs text-rose-300 font-medium uppercase tracking-wider block">สุทธิประมาณการค่าไฟฟ้าเดือนนี้</span>
                             <span class="text-[10px] text-slate-400">(รวมค่าบริการ + FT + VAT 7%)</span>
                         </div>
-                        <span id="total-bill-grand" class="text-lg sm:text-2xl font-bold text-rose-400 font-mono">1,238.65 บาท</span>
+                        <span id="total-bill-grand" class="text-lg sm:text-2xl font-bold text-rose-400 font-mono">0.00 บาท</span>
                     </div>
                 </div>
 
@@ -486,7 +485,7 @@
                         </div>
                     </div>
 
-                    <!-- 4. Scheduled Alerts & Reports Settings (กลุ่มใหม่เพิ่มเติม) -->
+                    <!-- 4. Scheduled Alerts & Reports Settings -->
                     <div class="glass-card p-4 sm:p-6 rounded-xl sm:rounded-2xl space-y-4 border-l-4 border-l-amber-500">
                         <h3 class="text-sm sm:text-base font-semibold text-amber-400 border-b border-slate-800 pb-2 flex items-center gap-2">
                             <i class="fa-solid fa-clock text-amber-400"></i> การตั้งค่าข้อความและเวลาแจ้งเตือน
@@ -695,7 +694,7 @@
         let isAdminLoggedIn = false;
         const ADMIN_PASSWORD_REQ = "VRU6823271";
 
-        let mainChartRange = 'today';
+        let mainChartRange = 'realtime';
         let subChartRange = 'day';
 
         const chartColors = ['#0ea5e9', '#38bdf8', '#2dd4bf', '#f59e0b', '#fbbf24', '#f43f5e'];
@@ -741,22 +740,27 @@
             }
         };
 
+        // ตัวแปรสำหรับเก็บข้อมูลจริงจาก GAS
         let realData = {
-            voltage: 231.5,
-            currentTotal: 18.42,
-            powerTotal: 4264,
-            pf: 0.98,
-            freq: 50.0,
-            kwhTotal: 284.50,
+            voltage: 0,
+            currentTotal: 0,
+            powerTotal: 0,
+            pf: 0,
+            freq: 0,
+            kwhTotal: 0,
+            lastUpdate: "-",
             cts: [
-                { id: 1, name: "ปลั๊ก ชั้น 1", gpio: 36, current: 2.45, power: 566 },
-                { id: 2, name: "ปลั๊ก ชั้น 2", gpio: 39, current: 1.80, power: 416 },
-                { id: 3, name: "แสงสว่างรวม", gpio: 34, current: 0.95, power: 220 },
-                { id: 4, name: "แอร์ 1", gpio: 35, current: 5.60, power: 1296 },
-                { id: 5, name: "แอร์ 2", gpio: 32, current: 4.20, power: 972 },
-                { id: 6, name: "เครื่องทำน้ำอุ่น 1", gpio: 33, current: 3.42, power: 792 }
+                { id: 1, name: "ปลั๊ก ชั้น 1", gpio: 36, current: 0, power: 0 },
+                { id: 2, name: "ปลั๊ก ชั้น 2", gpio: 39, current: 0, power: 0 },
+                { id: 3, name: "แสงสว่างรวม", gpio: 34, current: 0, power: 0 },
+                { id: 4, name: "แอร์ 1", gpio: 35, current: 0, power: 0 },
+                { id: 5, name: "แอร์ 2", gpio: 32, current: 0, power: 0 },
+                { id: 6, name: "เครื่องทำน้ำอุ่น 1", gpio: 33, current: 0, power: 0 }
             ]
         };
+
+        // เก็บประวัติข้อมูลจริงสำหรับทำกราฟ
+        let historicalLogs = [];
 
         let realtimeChartInstance = null;
         let subcircuitBarChartInstance = null;
@@ -765,11 +769,11 @@
         document.addEventListener('DOMContentLoaded', () => {
             setHistoryDateLimits();
             initCharts();
-            updateDashboardUI();
-            updateMainChart();
-            updateSubChart('day');
-            startDataStreamSimulation();
             loadSettingsFromGAS();
+            fetchRealDataFromGAS();
+
+            // ดึงข้อมูลจริงใหม่ทุกๆ 10 วินาที
+            setInterval(fetchRealDataFromGAS, 10000);
 
             document.getElementById('login-password-input')?.addEventListener('keyup', (e) => {
                 if (e.key === 'Enter') submitAdminLogin();
@@ -782,10 +786,10 @@
             });
         });
 
-        // ดึงค่าการตั้งค่าจาก Google Sheets (GAS) มาแสดงผลทันทีเมื่อเปิดเว็บ
+        // ดึงค่าการตั้งค่าจาก Google Sheets (GAS)
         async function loadSettingsFromGAS() {
             const url = systemConfig.gasUrl;
-            if (!url || url.includes("AKfycbx...")) return;
+            if (!url) return;
 
             try {
                 const response = await fetch(url);
@@ -830,11 +834,58 @@
 
                     syncSettingsToUI();
                     updateDashboardUI();
-                    updateSubChart(subChartRange);
-                    showToast("ซิงค์ข้อมูลตั้งค่าจาก Google Sheets สำเร็จ", "success");
                 }
             } catch (err) {
                 console.warn("ไม่สามารถโหลดค่าตั้งค่าจาก GAS ได้:", err);
+            }
+        }
+
+        // ดึงข้อมูลไฟฟ้าจริงล่าสุดจาก Google Apps Script
+        async function fetchRealDataFromGAS() {
+            const url = systemConfig.gasUrl;
+            if (!url) return;
+
+            try {
+                const response = await fetch(`${url}?action=getLatestData`);
+                const result = await response.json();
+
+                if (result.status === "success" && result.data) {
+                    const data = result.data;
+                    
+                    realData.voltage = parseFloat(data.voltage) || 0;
+                    realData.currentTotal = parseFloat(data.current_main) || 0;
+                    realData.powerTotal = parseFloat(data.power_main) || 0;
+                    realData.kwhTotal = parseFloat(data.kwh_total) || 0;
+                    realData.pf = parseFloat(data.pf) || 0;
+                    realData.freq = parseFloat(data.frequency) || 0;
+                    realData.lastUpdate = data.time || new Date().toLocaleTimeString('th-TH');
+
+                    if (data.sub_circuits) {
+                        for (let i = 1; i <= 6; i++) {
+                            const ctCurr = parseFloat(data.sub_circuits[`ct${i}_a`]) || 0;
+                            const ctPow = parseFloat(data.sub_circuits[`ct${i}_w`]) || Math.round(realData.voltage * ctCurr * (realData.pf || 1));
+                            realData.cts[i - 1].current = ctCurr;
+                            realData.cts[i - 1].power = ctPow;
+                        }
+                    }
+
+                    // อัปเดตข้อมูลย้อนหลังหากมีมา
+                    if (result.logs && Array.isArray(result.logs)) {
+                        historicalLogs = result.logs;
+                    }
+
+                    // อัปเดตการแสดงผลบนหน้าจอ
+                    const updateTimeEl = document.getElementById('data-updated-time');
+                    if (updateTimeEl) updateTimeEl.innerText = `อัปเดตล่าสุด: ${realData.lastUpdate}`;
+
+                    updateDashboardUI();
+                    updateMainChart();
+                    updateSubChart(subChartRange);
+                }
+            } catch (err) {
+                console.warn("ไม่สามารถดึงข้อมูลจริงจาก GAS ได้:", err);
+                const updateTimeEl = document.getElementById('data-updated-time');
+                if (updateTimeEl) updateTimeEl.innerText = `การเชื่อมต่อขัดข้อง`;
             }
         }
 
@@ -895,39 +946,6 @@
             dateInput.min = getLocalDateString(earliestDate);
             dateInput.max = getLocalDateString(today);
             dateInput.value = getLocalDateString(today);
-        }
-
-        function seededRandom(seed) {
-            const value = Math.sin(seed * 12.9898 + 78.233) * 43758.5453;
-            return value - Math.floor(value);
-        }
-
-        function getDateSeed(date) {
-            return date.getFullYear() * 10000 + (date.getMonth() + 1) * 100 + date.getDate();
-        }
-
-        function formatThaiShortDate(date) {
-            return date.toLocaleDateString('th-TH', { day: '2-digit', month: 'short' });
-        }
-
-        function formatThaiFullDate(date) {
-            return date.toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric' });
-        }
-
-        function createHourlyPower(hour, dateSeed) {
-            const nightLoad = 760;
-            const morningPeak = Math.exp(-Math.pow((hour - 8.5) / 2.8, 2)) * 1450;
-            const afternoonPeak = Math.exp(-Math.pow((hour - 14) / 4.2, 2)) * 2250;
-            const eveningPeak = Math.exp(-Math.pow((hour - 19) / 2.8, 2)) * 2800;
-            const randomVariation = (seededRandom(dateSeed + hour * 31) - 0.5) * 300;
-            return Math.max(500, Math.round(nightLoad + morningPeak + afternoonPeak + eveningPeak + randomVariation));
-        }
-
-        function createDailyAverage(date) {
-            const seed = getDateSeed(date);
-            const weeklyPattern = 2800 + Math.sin(seed * 0.07) * 520 + Math.cos(seed * 0.031) * 280;
-            const variation = (seededRandom(seed) - 0.5) * 520;
-            return Math.max(1200, Math.round(weeklyPattern + variation));
         }
 
         function openLoginModal() {
@@ -1091,65 +1109,27 @@
 
         function updateMainChart() {
             if (!realtimeChartInstance) return;
-            mainChartRange = document.getElementById('chart-time-range')?.value || 'today';
+            mainChartRange = document.getElementById('chart-time-range')?.value || 'realtime';
             const labels = [];
             const values = [];
             let datasetLabel = 'กำลังไฟฟ้ารวม Main (W)';
             let description = 'แนวโน้มกำลังไฟฟ้ารวม Main PZEM-004T';
             let xAxisTitle = 'เวลา';
 
-            if (mainChartRange === 'realtime') {
-                const now = new Date();
-                const totalPower = realData.powerTotal;
-                for (let index = 10; index >= 0; index--) {
-                    const time = new Date(now.getTime() - index * 3000);
-                    labels.push(time.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
-                    values.push(Math.max(0, Math.round(totalPower + (seededRandom(now.getTime() / 1000 + index) - 0.5) * 260)));
-                }
-                datasetLabel = 'กำลังไฟฟ้ารวม Main แบบ Real-time (W)';
-                description = 'ข้อมูลจำลองแบบ Real-time ช่วง 30 วินาทีล่าสุด';
-            } else if (mainChartRange === 'today') {
-                const today = new Date();
-                const dateSeed = getDateSeed(today);
-                for (let hour = 0; hour < 24; hour += 3) {
-                    labels.push(`${String(hour).padStart(2, '0')}:00`);
-                    values.push(createHourlyPower(hour, dateSeed));
-                }
-                datasetLabel = 'กำลังไฟฟ้ารวม Main วันนี้ (W)';
-                description = `ข้อมูลกำลังไฟฟ้าจำลองวันนี้ ${formatThaiFullDate(today)}`;
-            } else if (mainChartRange === 'week') {
-                const today = new Date();
-                for (let index = 6; index >= 0; index--) {
-                    const date = new Date(today);
-                    date.setDate(today.getDate() - index);
-                    labels.push(formatThaiShortDate(date));
-                    values.push(createDailyAverage(date));
-                }
-                datasetLabel = 'กำลังไฟฟ้าเฉลี่ยย้อนหลัง 1 สัปดาห์ (W)';
-                description = 'ข้อมูลกำลังไฟฟ้าเฉลี่ยรายวันย้อนหลัง 7 วัน';
-                xAxisTitle = 'วันที่';
-            } else if (mainChartRange === 'month') {
-                const today = new Date();
-                for (let index = 29; index >= 0; index--) {
-                    const date = new Date(today);
-                    date.setDate(today.getDate() - index);
-                    labels.push(formatThaiShortDate(date));
-                    values.push(createDailyAverage(date));
-                }
-                datasetLabel = 'กำลังไฟฟ้าเฉลี่ยย้อนหลัง 1 เดือน (W)';
-                description = 'ข้อมูลกำลังไฟฟ้าเฉลี่ยรายวันย้อนหลัง 30 วัน';
-                xAxisTitle = 'วันที่';
-            } else if (mainChartRange === 'custom') {
-                const input = document.getElementById('chart-history-date');
-                if (!input?.value) return;
-                const selectedDate = createDateFromInput(input.value);
-                const dateSeed = getDateSeed(selectedDate);
-                for (let hour = 0; hour < 24; hour++) {
-                    labels.push(`${String(hour).padStart(2, '0')}:00`);
-                    values.push(createHourlyPower(hour, dateSeed));
-                }
-                datasetLabel = `กำลังไฟฟ้าวันที่ ${formatThaiFullDate(selectedDate)} (W)`;
-                description = `ข้อมูลจำลองย้อนหลังวันที่ ${formatThaiFullDate(selectedDate)}`;
+            if (historicalLogs && historicalLogs.length > 0) {
+                // นำข้อมูลจริงจากชีตมาใส่ในกราฟ
+                historicalLogs.forEach(log => {
+                    labels.push(log.time || log.date);
+                    values.push(log.power_main || 0);
+                });
+                datasetLabel = 'กำลังไฟฟ้ารวม Main จาก Google Sheets (W)';
+                description = `แสดงข้อมูลประวัติย้อนหลังจริง (${historicalLogs.length} รายการล่าสุด)`;
+            } else {
+                // หากยังไม่มีประวัติในชีต แสดงค่าปัจจุบันล่าสุด
+                labels.push(realData.lastUpdate || new Date().toLocaleTimeString('th-TH'));
+                values.push(realData.powerTotal);
+                datasetLabel = 'กำลังไฟฟ้ารวม Main ปัจจุบัน (W)';
+                description = 'แสดงข้อมูล Real-time ล่าสุดจากเซนเซอร์';
             }
 
             realtimeChartInstance.data.labels = labels;
@@ -1162,68 +1142,31 @@
             if (descEl) descEl.innerText = description;
         }
 
-        function createSubChartLabels(range) {
-            const labels = [];
-            const now = new Date();
-            if (range === 'day') {
-                for (let hour = 0; hour < 24; hour++) {
-                    labels.push(`${String(hour).padStart(2, '0')}:00`);
-                }
-            } else if (range === 'week') {
-                for (let index = 27; index >= 0; index--) {
-                    const date = new Date(now);
-                    date.setHours(now.getHours() - index * 6);
-                    labels.push(`${formatThaiShortDate(date)} ${String(date.getHours()).padStart(2, '0')}:00`);
-                }
-            } else {
-                for (let index = 29; index >= 0; index--) {
-                    const date = new Date(now);
-                    date.setDate(now.getDate() - index);
-                    labels.push(formatThaiShortDate(date));
-                }
-            }
-            return labels;
-        }
-
-        function createSubcircuitMockData(ct, ctIndex, pointCount, range) {
-            const values = [];
-            for (let index = 0; index < pointCount; index++) {
-                let loadFactor = 0.65;
-                if (range === 'day') {
-                    const hour = index;
-                    const morning = Math.exp(-Math.pow((hour - 8) / 3, 2)) * 0.30;
-                    const afternoon = Math.exp(-Math.pow((hour - 14) / 4, 2)) * 0.42;
-                    const evening = Math.exp(-Math.pow((hour - 20) / 3, 2)) * 0.55;
-                    loadFactor = 0.25 + morning + afternoon + evening;
-                } else if (range === 'week') {
-                    loadFactor = 0.62 + Math.sin(index * 0.55 + ctIndex) * 0.19;
-                } else {
-                    loadFactor = 0.66 + Math.sin(index * 0.40 + ctIndex) * 0.17 + Math.cos(index * 0.16) * 0.08;
-                }
-                const variation = 0.90 + seededRandom(index + ctIndex * 100 + pointCount) * 0.20;
-                values.push(Math.max(0, Math.round(ct.power * loadFactor * variation)));
-            }
-            return values;
-        }
-
         function updateSubChart(range = 'day') {
             subChartRange = range;
             const canvas = document.getElementById('subcircuitBarChart');
             if (!canvas) return;
 
-            const labels = createSubChartLabels(range);
+            const labels = historicalLogs.length > 0 ? historicalLogs.map(l => l.time) : [realData.lastUpdate || 'ปัจจุบัน'];
             const datasets = realData.cts.map((ct, index) => {
                 const name = systemConfig.ctNames[`ct${ct.id}`] || ct.name;
+                
+                let dataPoints = [];
+                if (historicalLogs.length > 0) {
+                    dataPoints = historicalLogs.map(l => (l.sub_circuits ? l.sub_circuits[`ct${ct.id}_w`] : 0));
+                } else {
+                    dataPoints = [ct.power];
+                }
+
                 return {
                     label: `CT${ct.id} ${name}`,
-                    data: createSubcircuitMockData(ct, index, labels.length, range),
+                    data: dataPoints,
                     borderColor: chartColors[index],
                     backgroundColor: chartColors[index],
                     pointBackgroundColor: chartColors[index],
                     pointBorderColor: '#0f172a',
                     pointBorderWidth: 1,
-                    pointRadius: range === 'day' ? 2.5 : 1.5,
-                    pointHoverRadius: 6,
+                    pointRadius: 2.5,
                     borderWidth: 2.4,
                     tension: 0.35,
                     fill: false
@@ -1275,7 +1218,7 @@
                     scales: {
                         x: {
                             grid: { color: 'rgba(51, 65, 85, 0.25)' },
-                            ticks: { color: '#94a3b8', autoSkip: true, maxRotation: 0, maxTicksLimit: range === 'day' ? 12 : 10, font: { family: 'Prompt', size: 10 } }
+                            ticks: { color: '#94a3b8', autoSkip: true, maxRotation: 0, font: { family: 'Prompt', size: 10 } }
                         },
                         y: {
                             beginAtZero: true,
@@ -1286,19 +1229,15 @@
                 }
             });
 
-            const descriptions = {
-                day: 'เปรียบเทียบ CT1–CT6 แบบกราฟเส้นซ้อนในช่วง 1 วัน',
-                week: 'เปรียบเทียบ CT1–CT6 แบบกราฟเส้นซ้อนย้อนหลัง 7 วัน',
-                month: 'เปรียบเทียบ CT1–CT6 แบบกราฟเส้นซ้อนย้อนหลัง 1 เดือน'
-            };
             const descEl = document.getElementById('sub-chart-description');
-            if (descEl) descEl.innerText = descriptions[range];
+            if (descEl) descEl.innerText = `เปรียบเทียบกำลังไฟฟ้า CT1–CT6 จริงจาก Google Sheets`;
         }
 
         function updateDashboardUI() {
             document.getElementById('val-voltage').innerText = realData.voltage.toFixed(1);
             document.getElementById('val-current-total').innerText = realData.currentTotal.toFixed(2);
             document.getElementById('val-power-total').innerText = Math.round(realData.powerTotal).toLocaleString('th-TH');
+            document.getElementById('val-power-kw').innerText = `${(realData.powerTotal / 1000).toFixed(2)} kW`;
             document.getElementById('val-pf').innerText = realData.pf.toFixed(2);
             document.getElementById('val-freq').innerText = `${realData.freq.toFixed(1)} Hz`;
             document.getElementById('val-kwh-total').innerText = realData.kwhTotal.toFixed(2);
@@ -1308,7 +1247,7 @@
             if (realData.voltage > systemConfig.vMax) {
                 vText.className = "text-[10px] text-rose-400 mt-0.5 truncate font-semibold";
                 vText.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> แรงดันสูงเกินกำหนด! (> ${systemConfig.vMax}V)`;
-            } else if (realData.voltage < systemConfig.vMin) {
+            } else if (realData.voltage < systemConfig.vMin && realData.voltage > 0) {
                 vText.className = "text-[10px] text-amber-400 mt-0.5 truncate font-semibold";
                 vText.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> แรงดันตกเกินกำหนด! (< ${systemConfig.vMin}V)`;
             } else {
@@ -1434,56 +1373,6 @@
                 costPieChartInstance.data.datasets[0].data = realData.cts.map(c => c.power);
                 costPieChartInstance.update('none');
             }
-        }
-
-        function startDataStreamSimulation() {
-            setInterval(() => {
-                const vFluct = (Math.random() - 0.5) * 1.5;
-                realData.voltage = Math.min(240, Math.max(220, 231.5 + vFluct));
-
-                let newPowerSum = 0;
-                realData.cts.forEach(ct => {
-                    const cFluct = (Math.random() - 0.5) * 0.15;
-                    ct.current = Math.max(0.1, ct.current + cFluct);
-                    ct.power = Math.round(ct.current * realData.voltage * realData.pf);
-                    newPowerSum += ct.power;
-                });
-
-                realData.powerTotal = newPowerSum;
-                realData.currentTotal = newPowerSum / (realData.voltage * realData.pf);
-                realData.kwhTotal += (newPowerSum / 3600000) * 2;
-
-                if (mainChartRange === 'realtime') {
-                    updateRealtimeMainChartPoint();
-                }
-
-                if (subcircuitBarChartInstance && subChartRange === 'day') {
-                    const currentHour = new Date().getHours();
-                    subcircuitBarChartInstance.data.datasets.forEach((dataset, index) => {
-                        if (dataset.data[currentHour] !== undefined && realData.cts[index]) {
-                            dataset.data[currentHour] = realData.cts[index].power;
-                        }
-                    });
-                    subcircuitBarChartInstance.update('none');
-                }
-
-                updateDashboardUI();
-            }, 2000);
-        }
-
-        function updateRealtimeMainChartPoint() {
-            if (!realtimeChartInstance) return;
-            const nowStr = new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            const labels = realtimeChartInstance.data.labels;
-            const values = realtimeChartInstance.data.datasets[0].data;
-
-            if (labels.length >= 11) {
-                labels.shift();
-                values.shift();
-            }
-            labels.push(nowStr);
-            values.push(realData.powerTotal);
-            realtimeChartInstance.update('none');
         }
 
         // บันทึกตั้งค่าลง Google Sheets (GAS) ผ่าน doPost
