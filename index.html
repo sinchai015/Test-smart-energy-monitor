@@ -673,6 +673,7 @@
 
         let mainChartRange = 'day'; // 'day' | 'week' | 'month'
         let subChartRange = 'day';  // 'day' | 'week' | 'month'
+        let dailyPeakLogs = [];
 
         const chartColors = ['#0ea5e9', '#38bdf8', '#2dd4bf', '#f59e0b', '#fbbf24', '#f43f5e'];
 
@@ -791,8 +792,10 @@
             initCharts();
             loadSettingsFromGAS();
             fetchRealDataFromGAS();
+            fetchHistoryDataFromGAS();
 
             setInterval(fetchRealDataFromGAS, 10000); // ซิงค์ข้อมูลจาก GAS ทุก 10 วินาที
+            setInterval(fetchHistoryDataFromGAS, 300000); // รีเฟรชค่าพีครายวันทุก 5 นาที
 
             document.getElementById('login-password-input')?.addEventListener('keyup', (e) => {
                 if (e.key === 'Enter') submitAdminLogin();
@@ -918,6 +921,22 @@
                     syncDot.classList.remove('bg-emerald-400');
                     syncDot.classList.add('bg-rose-500');
                 }
+            }
+        }
+
+        async function fetchHistoryDataFromGAS() {
+            const url = systemConfig.gasUrl;
+            if (!url) return;
+            try {
+                const response = await fetch(`${url}?action=getHistoryData&_t=${Date.now()}`);
+                const result = await response.json();
+                if (result.status === "success" && Array.isArray(result.logs)) {
+                    dailyPeakLogs = result.logs;
+                    if (mainChartRange === 'month') updateMainChart();
+                    if (subChartRange === 'month') updateSubChart();
+                }
+            } catch (err) {
+                console.warn("เกิดข้อผิดพลาดในการดึงข้อมูลสรุปรายวัน:", err);
             }
         }
 
@@ -1118,7 +1137,11 @@
                 activeBtn.classList.remove('text-slate-400');
                 activeBtn.classList.add('bg-sky-500', 'text-white');
             }
-            updateMainChart();
+            if (range === 'month' && dailyPeakLogs.length === 0) {
+                fetchHistoryDataFromGAS();
+            } else {
+                updateMainChart();
+            }
         }
 
         function setSubChartRange(range) {
@@ -1132,7 +1155,11 @@
                 activeBtn.classList.remove('text-slate-400');
                 activeBtn.classList.add('bg-sky-500', 'text-white');
             }
-            updateSubChart();
+            if (range === 'month' && dailyPeakLogs.length === 0) {
+                fetchHistoryDataFromGAS();
+            } else {
+                updateSubChart();
+            }
         }
 
         function initCharts() {
@@ -1188,16 +1215,25 @@
             const labels = [];
             const values = [];
 
+            if (mainChartRange === 'month') {
+                const peakLogs = dailyPeakLogs.length > 0 ? dailyPeakLogs : [];
+                for (let i = 0; i < peakLogs.length; i++) {
+                    const log = peakLogs[i];
+                    labels.push(formatCleanTime(log.time, log.date, mainChartRange));
+                    values.push(log.power_main || 0);
+                }
+                realtimeChartInstance.data.labels = labels;
+                realtimeChartInstance.data.datasets[0].data = values;
+                realtimeChartInstance.update();
+                return;
+            }
+
             let sliceCount = 30; // 24 ชม. (ค่าเริ่มต้น)
             if (mainChartRange === 'week') sliceCount = 336;  // 7 วัน
-            if (mainChartRange === 'month') sliceCount = 1440; // 30 วัน
 
             if (historicalLogs && historicalLogs.length > 0) {
                 const logsToUse = historicalLogs.slice(-sliceCount);
-                
-                // หากเลือกช่วงสัปดาห์หรือเดือน ให้ทำการจัดกลุ่มสเกลกราฟเพื่อไม่ให้แน่นเกินไป
-                const step = mainChartRange === 'month' ? Math.max(1, Math.floor(logsToUse.length / 30)) :
-                             mainChartRange === 'week' ? Math.max(1, Math.floor(logsToUse.length / 28)) : 1;
+                const step = mainChartRange === 'week' ? Math.max(1, Math.floor(logsToUse.length / 28)) : 1;
 
                 for (let i = 0; i < logsToUse.length; i += step) {
                     const log = logsToUse[i];
@@ -1218,28 +1254,29 @@
             const canvas = document.getElementById('subcircuitBarChart');
             if (!canvas) return;
 
-            let sliceCount = 30; // 24 ชม.
-            if (subChartRange === 'week') sliceCount = 336;  // 7 วัน
-            if (subChartRange === 'month') sliceCount = 1440; // 30 วัน
+            let sampledLogs = [];
 
-            const logsToUse = historicalLogs.length > 0 ? historicalLogs.slice(-sliceCount) : [];
-            const step = subChartRange === 'month' ? Math.max(1, Math.floor(logsToUse.length / 30)) :
-                         subChartRange === 'week' ? Math.max(1, Math.floor(logsToUse.length / 28)) : 1;
+            if (subChartRange === 'month') {
+                sampledLogs = dailyPeakLogs.length > 0 ? dailyPeakLogs : [];
+            } else {
+                let sliceCount = 30; // 24 ชม.
+                if (subChartRange === 'week') sliceCount = 336;  // 7 วัน
 
-            const sampledLogs = [];
-            if (logsToUse.length > 0) {
+                const logsToUse = historicalLogs.length > 0 ? historicalLogs.slice(-sliceCount) : [];
+                const step = subChartRange === 'week' ? Math.max(1, Math.floor(logsToUse.length / 28)) : 1;
+
                 for (let i = 0; i < logsToUse.length; i += step) {
                     sampledLogs.push(logsToUse[i]);
                 }
             }
 
-            const labels = sampledLogs.length > 0 
-                ? sampledLogs.map(l => formatCleanTime(l.time, l.date, subChartRange)) 
+            const labels = sampledLogs.length > 0
+                ? sampledLogs.map(l => formatCleanTime(l.time, l.date, subChartRange))
                 : [formatCleanTime(realData.time, realData.date, subChartRange)];
-            
+
             const datasets = realData.cts.map((ct, index) => {
                 const name = systemConfig.ctNames[`ct${ct.id}`] || ct.name;
-                const dataPoints = sampledLogs.length > 0 
+                const dataPoints = sampledLogs.length > 0
                     ? sampledLogs.map(l => (l.sub_circuits ? l.sub_circuits[`ct${ct.id}_w`] : 0))
                     : [ct.power];
 
