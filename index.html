@@ -1377,12 +1377,26 @@
 
             const statusMsg = document.getElementById('save-status-msg');
             if (statusMsg) statusMsg.innerText = "กำลังส่งข้อมูลไปบันทึกที่ Google Sheets...";
+
+            try {
+                const response = await fetch(systemConfig.gasUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify(payload)
                 });
-                alert("บันทึกการตั้งค่าลง Google Sheets เรียบร้อยแล้ว!");
+                const result = await response.json();
+                
+                if (result.status === "success") {
+                    if (statusMsg) statusMsg.innerText = "บันทึกการตั้งค่าลง Google Sheets เรียบร้อยแล้ว!";
+                    alert("บันทึกการตั้งค่าลง Google Sheets เรียบร้อยแล้ว!");
+                    updateDashboardUI();
+                } else {
+                    if (statusMsg) statusMsg.innerText = "บันทึกไม่สำเร็จ: " + (result.message || "");
+                    alert("บันทึกไม่สำเร็จ: " + (result.message || "เกิดข้อผิดพลาด"));
+                }
             } catch (err) {
+                console.error(err);
+                if (statusMsg) statusMsg.innerText = "เกิดข้อผิดพลาดในการเชื่อมต่อ Google Sheets";
                 alert("เกิดข้อผิดพลาดในการบันทึกข้อมูล");
             }
         }
