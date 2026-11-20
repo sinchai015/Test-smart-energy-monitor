@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Smart Energy Monitor Dashboard (ESP32 + PZEM-004T + 6x CT)</title>
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -35,12 +34,10 @@
             }
         }
     </script>
-    <!-- Google Fonts & FontAwesome Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
@@ -201,7 +198,7 @@
                         <span id="val-kwh-total" class="text-xl sm:text-2xl font-bold text-purple-300 font-mono">0.00</span>
                         <span class="text-xs text-slate-400">kWh</span>
                     </div>
-                    <p class="text-[10px] text-purple-300 mt-0.5 truncate">สะสมล่าสุด</p>
+                    <p id="val-kwh-month-sub" class="text-[10px] text-purple-300 mt-0.5 truncate">เดือนนี้รวม: 0.00 kWh</p>
                 </div>
 
                 <div class="glass-card p-3 sm:p-4 rounded-xl sm:rounded-2xl border-l-4 border-l-rose-500 glow-rose col-span-2 xs:col-span-2 sm:col-span-1">
@@ -213,7 +210,7 @@
                         <span id="val-est-cost" class="text-xl sm:text-2xl font-bold text-rose-400 font-mono">0.00</span>
                         <span class="text-xs text-slate-400">บาท</span>
                     </div>
-                    <p class="text-[10px] text-rose-300 mt-0.5 truncate">คิดแบบขั้นบันได</p>
+                    <p class="text-[10px] text-rose-300 mt-0.5 truncate">คิดแบบขั้นบันได (เดือนนี้)</p>
                 </div>
             </div>
 
@@ -307,12 +304,12 @@
                     <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
                         <i class="fa-solid fa-calculator text-emerald-400"></i> คำนวณค่าไฟฟ้าแบบขั้นบันได (Progressive Electricity Tariff)
                     </h2>
-                    <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">ระบบคำนวณโดยการ SUM รวมค่า Energy (PZEM) kWh (คอลัมน์ H) ประจำเดือนจาก Google Sheets</p>
+                    <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">ระบบคำนวณโดยการบวกตรงรวมค่า kWh (คอลัมน์ H) ประจำเดือนจาก Google Sheets</p>
                 </div>
                 <div class="flex items-center gap-2 shrink-0">
                     <label class="text-xs text-slate-300 font-medium"><i class="fa-solid fa-calendar-days text-emerald-400 mr-1"></i>เลือกเดือน:</label>
                     <select id="tariff-month-select" onchange="calculateTariffForMonth(this.value)" class="bg-slate-900 text-xs text-emerald-400 font-bold border border-emerald-500/50 rounded-xl px-3 py-2 focus:outline-none cursor-pointer shadow-md">
-                        <option value="current">เดือนปัจจุบัน (สะสม)</option>
+                        <option value="current">เดือนปัจจุบัน (บวกตรงคอลัมน์ H)</option>
                     </select>
                 </div>
             </div>
@@ -321,7 +318,7 @@
                 <div class="lg:col-span-2 glass-card p-4 sm:p-6 rounded-xl sm:rounded-2xl space-y-4">
                     <h3 class="text-sm sm:text-base font-semibold text-slate-200 border-b border-slate-800 pb-2.5 flex items-center justify-between">
                         <span><i class="fa-solid fa-receipt text-amber-400 mr-1.5"></i>รายละเอียดการคิดค่าไฟประจำเดือน (<span id="selected-month-label" class="text-emerald-400">เดือนปัจจุบัน</span>)</span>
-                        <span class="text-xs font-normal text-slate-400">หน่วยรวม (SUM kWh): <strong id="calc-total-kwh" class="text-sky-400 font-mono text-sm">0.00</strong> kWh</span>
+                        <span class="text-xs font-normal text-slate-400">หน่วยรวม (คอลัมน์ H): <strong id="calc-total-kwh" class="text-sky-400 font-mono text-sm">0.00</strong> kWh</span>
                     </h3>
 
                     <div class="space-y-2.5 text-xs sm:text-sm">
@@ -455,6 +452,10 @@
                         <div class="space-y-1 text-xs pt-1">
                             <label class="text-slate-300 font-medium">Google Apps Script Web App URL:</label>
                             <input type="text" id="cfg-gas-url" value="https://script.google.com/macros/s/AKfycby8XyHlsp-TzUK1mTOW_gm3n6UgC4N7u-8oYcE5t34ywwUje-_eBjUb9QKPxSCRUcgThw/exec" class="w-full bg-slate-900 border border-rose-500/40 rounded-xl px-3 py-2 text-slate-300 font-mono text-xs focus:border-rose-500 focus:outline-none shadow-sm">
+                            <p class="text-[11px] text-amber-400 pt-1 flex items-center gap-1.5">
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                                <span>เป็นส่วนสำคัญห้ามปรับเปลี่ยน หากแก้ไขผิดจะทำให้เชื่อมต่อ Google Sheets และบันทึกข้อมูลไม่ได้</span>
+                            </p>
                         </div>
                     </div>
 
@@ -500,7 +501,6 @@
                             <i class="fa-solid fa-clock text-amber-400"></i> การตั้งค่าข้อความและเวลาแจ้งเตือน
                         </h3>
 
-                        <!-- 1. First-Time Boot -->
                         <div class="space-y-1.5 border-b border-slate-800 pb-3">
                             <div class="flex items-center justify-between">
                                 <span class="text-xs font-semibold text-amber-300 flex items-center gap-1.5">
@@ -514,7 +514,6 @@
                             <textarea id="cfg-firstsend-msg" rows="2" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2 text-xs text-slate-200 focus:border-amber-500 focus:outline-none" placeholder="ข้อความแจ้งเตือนครั้งแรก...">⚡ [System Boot] ระบบ Smart Energy Monitor (ESP32) เริ่มทำงานเรียบร้อยแล้ว สถานะบอร์ด: ONLINE</textarea>
                         </div>
 
-                        <!-- 2. Morning Report -->
                         <div class="space-y-1.5 border-b border-slate-800 pb-3">
                             <div class="flex items-center justify-between gap-2">
                                 <span class="text-xs font-semibold text-sky-300 flex items-center gap-1.5">
@@ -528,7 +527,6 @@
                             <input type="text" id="cfg-morning-report-msg" value="สถานะบอร์ด: ONLINE" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-200 focus:border-sky-500 focus:outline-none">
                         </div>
 
-                        <!-- 3. Daily Evening Report -->
                         <div class="space-y-1.5 pt-1">
                             <div class="flex items-center justify-between gap-2">
                                 <span class="text-xs font-semibold text-indigo-300 flex items-center gap-1.5">
@@ -649,7 +647,7 @@
 
                 <div class="glass-card p-3.5 sm:p-4 rounded-xl sm:rounded-2xl flex flex-col sm:flex-row justify-between items-center gap-3 border border-emerald-500/30">
                     <span id="save-status-msg" class="text-xs text-slate-400 text-center sm:text-left">กดปุ่มเพื่อบันทึกการตั้งค่าทั้งหมดส่งไปยัง Google Sheets</span>
-                    <button onclick="saveAllSettings()" class="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-slate-950 font-bold text-xs sm:text-sm shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center gap-2">
+                    <button id="btn-save-settings" onclick="saveAllSettings()" class="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-slate-950 font-bold text-xs sm:text-sm shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center gap-2">
                         <i class="fa-solid fa-floppy-disk"></i> บันทึกการตั้งค่าทั้งหมด
                     </button>
                 </div>
@@ -687,11 +685,12 @@
     <script>
         let isAdminLoggedIn = false;
         const ADMIN_PASSWORD_REQ = "VRU6823271";
+        const DEFAULT_GAS_URL = "https://script.google.com/macros/s/AKfycby8XyHlsp-TzUK1mTOW_gm3n6UgC4N7u-8oYcE5t34ywwUje-_eBjUb9QKPxSCRUcgThw/exec";
 
         const chartColors = ['#0ea5e9', '#38bdf8', '#2dd4bf', '#f59e0b', '#fbbf24', '#f43f5e'];
 
-        let currentMainTimeRange = '24h'; // 24h, 7d, 30d
-        let currentSubTimeRange = '24h';  // 24h, 7d, 30d
+        let currentMainTimeRange = '24h';
+        let currentSubTimeRange = '24h';
 
         let systemConfig = {
             vMax: 242,
@@ -701,7 +700,7 @@
             freqMin: 45,
             onPeakInterval: 15,
             offPeakInterval: 30,
-            gasUrl: "https://script.google.com/macros/s/AKfycby8XyHlsp-TzUK1mTOW_gm3n6UgC4N7u-8oYcE5t34ywwUje-_eBjUb9QKPxSCRUcgThw/exec",
+            gasUrl: DEFAULT_GAS_URL,
             lineEnable: true,
             lineToken: "ln_token_example_vru6823271",
             telegramEnable: false,
@@ -744,6 +743,13 @@
             "05": "พฤษภาคม", "06": "มิถุนายน", "07": "กรกฎาคม", "08": "สิงหาคม",
             "09": "กันยายน", "10": "ตุลาคม", "11": "พฤศจิกายน", "12": "ธันวาคม"
         };
+
+        function getCurrentYearMonthKey() {
+            const now = new Date();
+            const y = now.getFullYear();
+            const m = String(now.getMonth() + 1).padStart(2, '0');
+            return `${y}-${m}`;
+        }
 
         function formatMonthYearTH(ymStr) {
             if (!ymStr || !ymStr.includes('-')) return ymStr;
@@ -816,14 +822,14 @@
 
                 if (result.status === "success" && result.data) {
                     const cfg = result.data;
-                    if (cfg["Voltage(rms)MAX_Warn"]) systemConfig.vMax = parseFloat(cfg["Voltage(rms)MAX_Warn"]);
-                    if (cfg["Voltage(rms)min_Warn"]) systemConfig.vMin = parseFloat(cfg["Voltage(rms)min_Warn"]);
-                    if (cfg["Current(PZEM) Max_Warn"]) systemConfig.iMax = parseFloat(cfg["Current(PZEM) Max_Warn"]);
-                    if (cfg["Frequency (Hz)MAX_Warn"]) systemConfig.freqMax = parseFloat(cfg["Frequency (Hz)MAX_Warn"]);
-                    if (cfg["Frequency (Hz)min_Warn"]) systemConfig.freqMin = parseFloat(cfg["Frequency (Hz)min_Warn"]);
+                    if (cfg["Voltage(rms)MAX_Warn"] !== undefined) systemConfig.vMax = parseFloat(cfg["Voltage(rms)MAX_Warn"]);
+                    if (cfg["Voltage(rms)min_Warn"] !== undefined) systemConfig.vMin = parseFloat(cfg["Voltage(rms)min_Warn"]);
+                    if (cfg["Current(PZEM) Max_Warn"] !== undefined) systemConfig.iMax = parseFloat(cfg["Current(PZEM) Max_Warn"]);
+                    if (cfg["Frequency (Hz)MAX_Warn"] !== undefined) systemConfig.freqMax = parseFloat(cfg["Frequency (Hz)MAX_Warn"]);
+                    if (cfg["Frequency (Hz)min_Warn"] !== undefined) systemConfig.freqMin = parseFloat(cfg["Frequency (Hz)min_Warn"]);
 
-                    if (cfg["Log_Interval_OnPeak"]) systemConfig.onPeakInterval = parseInt(cfg["Log_Interval_OnPeak"]);
-                    if (cfg["Log_Interval_OffPeak"]) systemConfig.offPeakInterval = parseInt(cfg["Log_Interval_OffPeak"]);
+                    if (cfg["Log_Interval_OnPeak"] !== undefined) systemConfig.onPeakInterval = parseInt(cfg["Log_Interval_OnPeak"], 10);
+                    if (cfg["Log_Interval_OffPeak"] !== undefined) systemConfig.offPeakInterval = parseInt(cfg["Log_Interval_OffPeak"], 10);
 
                     if (cfg["LINE_Messaging_API_Enable"] !== undefined) systemConfig.lineEnable = Boolean(cfg["LINE_Messaging_API_Enable"]);
                     if (cfg["LINE_Messaging_API_Token"]) systemConfig.lineToken = cfg["LINE_Messaging_API_Token"];
@@ -841,17 +847,18 @@
                     if (cfg["Daily_Report"]) systemConfig.dailyReportMsg = cfg["Daily_Report"];
                     if (cfg["Timer_Daily_Report"]) systemConfig.timerDailyReport = cfg["Timer_Daily_Report"].toString().substring(0, 5);
 
-                    if (cfg["Tariff_Tier1_Rate"]) systemConfig.rateTier1 = parseFloat(cfg["Tariff_Tier1_Rate"]);
-                    if (cfg["Tariff_Tier2_Rate"]) systemConfig.rateTier2 = parseFloat(cfg["Tariff_Tier2_Rate"]);
-                    if (cfg["Tariff_Tier3_Rate"]) systemConfig.rateTier3 = parseFloat(cfg["Tariff_Tier3_Rate"]);
+                    if (cfg["Tariff_Tier1_Rate"] !== undefined) systemConfig.rateTier1 = parseFloat(cfg["Tariff_Tier1_Rate"]);
+                    if (cfg["Tariff_Tier2_Rate"] !== undefined) systemConfig.rateTier2 = parseFloat(cfg["Tariff_Tier2_Rate"]);
+                    if (cfg["Tariff_Tier3_Rate"] !== undefined) systemConfig.rateTier3 = parseFloat(cfg["Tariff_Tier3_Rate"]);
 
                     for (let i = 1; i <= 6; i++) {
                         if (cfg[`CT${i}_Name`]) systemConfig.ctNames[`ct${i}`] = cfg[`CT${i}_Name`];
-                        if (cfg[`CT${i}_Warn`]) systemConfig.ctWarns[`ct${i}`] = parseFloat(cfg[`CT${i}_Warn`]);
+                        if (cfg[`CT${i}_Warn`] !== undefined) systemConfig.ctWarns[`ct${i}`] = parseFloat(cfg[`CT${i}_Warn`]);
                     }
 
                     syncSettingsToUI();
                     updateDashboardUI();
+                    calculateTariffForMonth(document.getElementById('tariff-month-select')?.value || 'current');
                 }
             } catch (err) {
                 console.warn("ไม่สามารถดึงการตั้งค่าจาก GAS ได้:", err);
@@ -919,18 +926,40 @@
             }
         }
 
+        function getCurrentMonthSumKwh() {
+            const ymKey = getCurrentMonthSumKeySafe();
+            if (monthlyKwhSummary[ymKey] !== undefined) {
+                return parseFloat(monthlyKwhSummary[ymKey]) || 0;
+            }
+            const sortedMonths = Object.keys(monthlyKwhSummary).sort().reverse();
+            if (sortedMonths.length > 0) {
+                return parseFloat(monthlyKwhSummary[sortedMonths[0]]) || 0;
+            }
+            return 0;
+        }
+
+        function getCurrentMonthSumKeySafe() {
+            if (realData.date && /^\d{4}-\d{2}/.test(realData.date)) {
+                return realData.date.substring(0, 7);
+            }
+            return getCurrentYearMonthKey();
+        }
+
         function updateTariffMonthSelect() {
             const selectEl = document.getElementById('tariff-month-select');
             if (!selectEl) return;
 
             const currentVal = selectEl.value;
-            let optionsHtml = `<option value="current">เดือนปัจจุบัน (สะสมล่าสุด: ${realData.kwhTotal.toFixed(2)} kWh)</option>`;
+            const currentMonthKey = getCurrentMonthSumKeySafe();
+            const currentMonthSum = getCurrentMonthSumKwh();
+
+            let optionsHtml = `<option value="current">เดือนปัจจุบัน (${formatMonthYearTH(currentMonthKey)} รวม: ${currentMonthSum.toLocaleString('th-TH', {minimumFractionDigits: 2})} kWh)</option>`;
 
             const sortedMonths = Object.keys(monthlyKwhSummary).sort().reverse();
             sortedMonths.forEach(monthKey => {
-                let sumKwh = monthlyKwhSummary[monthKey];
+                let sumKwh = parseFloat(monthlyKwhSummary[monthKey]) || 0;
                 let labelTH = formatMonthYearTH(monthKey);
-                optionsHtml += `<option value="${monthKey}">เดือน ${labelTH} (SUM รวม: ${sumKwh.toLocaleString('th-TH', {minimumFractionDigits: 2})} kWh)</option>`;
+                optionsHtml += `<option value="${monthKey}">เดือน ${labelTH} (รวมคอลัมน์ H: ${sumKwh.toLocaleString('th-TH', {minimumFractionDigits: 2})} kWh)</option>`;
             });
 
             selectEl.innerHTML = optionsHtml;
@@ -942,17 +971,22 @@
         }
 
         function calculateTariffForMonth(selectedVal) {
-            let totalKwh = realData.kwhTotal;
-            let monthLabel = "เดือนปัจจุบัน";
+            let totalKwh = getCurrentMonthSumKwh();
+            const currentMonthKey = getCurrentMonthSumKeySafe();
+            let monthLabel = `เดือนปัจจุบัน (${formatMonthYearTH(currentMonthKey)})`;
 
             if (selectedVal !== 'current' && monthlyKwhSummary[selectedVal] !== undefined) {
-                totalKwh = monthlyKwhSummary[selectedVal];
+                totalKwh = parseFloat(monthlyKwhSummary[selectedVal]) || 0;
                 monthLabel = `เดือน ${formatMonthYearTH(selectedVal)}`;
             }
 
             const labelEl = document.getElementById('selected-month-label');
             if (labelEl) labelEl.innerText = monthLabel;
-            
+
+            if (document.getElementById('tier1-rate-display')) document.getElementById('tier1-rate-display').innerText = systemConfig.rateTier1.toFixed(4);
+            if (document.getElementById('tier2-rate-display')) document.getElementById('tier2-rate-display').innerText = systemConfig.rateTier2.toFixed(4);
+            if (document.getElementById('tier3-rate-display')) document.getElementById('tier3-rate-display').innerText = systemConfig.rateTier3.toFixed(4);
+
             const t1Used = Math.min(totalKwh, 200);
             const t2Used = Math.max(0, Math.min(totalKwh - 200, 200));
             const t3Used = Math.max(0, totalKwh - 400);
@@ -978,6 +1012,7 @@
             if (document.getElementById('ft-total-cost')) document.getElementById('ft-total-cost').innerText = `${ftCost.toLocaleString('th-TH', {minimumFractionDigits: 2})} บาท`;
             if (document.getElementById('total-bill-grand')) document.getElementById('total-bill-grand').innerText = `${grandTotalBill.toLocaleString('th-TH', {minimumFractionDigits: 2})} บาท`;
             if (document.getElementById('val-est-cost') && selectedVal === 'current') document.getElementById('val-est-cost').innerText = grandTotalBill.toLocaleString('th-TH', {maximumFractionDigits: 2});
+            if (document.getElementById('val-kwh-month-sub')) document.getElementById('val-kwh-month-sub').innerText = `เดือนนี้รวม: ${getCurrentMonthSumKwh().toFixed(2)} kWh`;
         }
 
         function setMainTimeRange(range) {
@@ -997,14 +1032,14 @@
         function filterLogsByRange(logs, range) {
             if (!logs || logs.length === 0) return [];
 
-            let countNeeded = 96; // 24 ชั่วโมง (กรณี log ทุก 15 นาที)
+            let countNeeded = 96;
             let sampleStep = 1;
 
             if (range === '7d') {
-                countNeeded = 672; // 7 วัน
+                countNeeded = 672;
                 sampleStep = 4;
             } else if (range === '30d') {
-                countNeeded = 2880; // 30 วัน
+                countNeeded = 2880;
                 sampleStep = 16;
             }
 
@@ -1240,6 +1275,9 @@
             document.getElementById('val-pf').innerText = realData.pf.toFixed(2);
             document.getElementById('val-freq').innerText = `${realData.freq.toFixed(1)} Hz`;
             document.getElementById('val-kwh-total').innerText = realData.kwhTotal.toFixed(2);
+            if (document.getElementById('val-kwh-month-sub')) {
+                document.getElementById('val-kwh-month-sub').innerText = `เดือนนี้รวม: ${getCurrentMonthSumKwh().toFixed(2)} kWh`;
+            }
 
             let ctCardsHtml = '';
             realData.cts.forEach(ct => {
@@ -1268,7 +1306,7 @@
             let subGridHtml = '';
             let subPowerSum = 0;
 
-            realData.cts.forEach((ct, index) => {
+            realData.cts.forEach((ct) => {
                 subPowerSum += ct.power;
                 const name = systemConfig.ctNames[`ct${ct.id}`] || ct.name;
                 const warnLimit = systemConfig.ctWarns[`ct${ct.id}`] || 15;
@@ -1313,9 +1351,10 @@
             systemConfig.freqMax = parseFloat(document.getElementById('cfg-freq-max').value) || 55;
             systemConfig.freqMin = parseFloat(document.getElementById('cfg-freq-min').value) || 45;
 
-            systemConfig.onPeakInterval = parseInt(document.getElementById('cfg-interval-onpeak').value) || 15;
-            systemConfig.offPeakInterval = parseInt(document.getElementById('cfg-interval-offpeak').value) || 30;
-            systemConfig.gasUrl = document.getElementById('cfg-gas-url').value;
+            systemConfig.onPeakInterval = parseInt(document.getElementById('cfg-interval-onpeak').value, 10) || 15;
+            systemConfig.offPeakInterval = parseInt(document.getElementById('cfg-interval-offpeak').value, 10) || 30;
+            const inputUrl = (document.getElementById('cfg-gas-url').value || "").trim();
+            systemConfig.gasUrl = inputUrl || DEFAULT_GAS_URL;
 
             systemConfig.lineEnable = document.getElementById('cfg-line-enable').checked;
             systemConfig.lineToken = document.getElementById('cfg-line-token').value;
@@ -1376,7 +1415,9 @@
             };
 
             const statusMsg = document.getElementById('save-status-msg');
+            const saveBtn = document.getElementById('btn-save-settings');
             if (statusMsg) statusMsg.innerText = "กำลังส่งข้อมูลไปบันทึกที่ Google Sheets...";
+            if (saveBtn) saveBtn.disabled = true;
 
             try {
                 const response = await fetch(systemConfig.gasUrl, {
@@ -1387,17 +1428,20 @@
                 const result = await response.json();
                 
                 if (result.status === "success") {
-                    if (statusMsg) statusMsg.innerText = "บันทึกการตั้งค่าลง Google Sheets เรียบร้อยแล้ว!";
-                    alert("บันทึกการตั้งค่าลง Google Sheets เรียบร้อยแล้ว!");
+                    if (statusMsg) statusMsg.innerText = "✅ บันทึกการตั้งค่าลง Google Sheets เรียบร้อยแล้ว!";
                     updateDashboardUI();
+                    calculateTariffForMonth(document.getElementById('tariff-month-select')?.value || 'current');
+                    alert("บันทึกการตั้งค่าลง Google Sheets เรียบร้อยแล้ว!");
                 } else {
-                    if (statusMsg) statusMsg.innerText = "บันทึกไม่สำเร็จ: " + (result.message || "");
+                    if (statusMsg) statusMsg.innerText = "❌ บันทึกไม่สำเร็จ: " + (result.message || "");
                     alert("บันทึกไม่สำเร็จ: " + (result.message || "เกิดข้อผิดพลาด"));
                 }
             } catch (err) {
                 console.error(err);
-                if (statusMsg) statusMsg.innerText = "เกิดข้อผิดพลาดในการเชื่อมต่อ Google Sheets";
+                if (statusMsg) statusMsg.innerText = "❌ เกิดข้อผิดพลาดในการเชื่อมต่อ Google Sheets (ตรวจสอบการ Deploy Web App เป็น Everyone)";
                 alert("เกิดข้อผิดพลาดในการบันทึกข้อมูล");
+            } finally {
+                if (saveBtn) saveBtn.disabled = false;
             }
         }
     </script>
