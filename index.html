@@ -150,7 +150,7 @@
                         <span id="val-voltage" class="text-xl sm:text-2xl font-bold text-white font-mono">0.0</span>
                         <span class="text-xs text-slate-400">V</span>
                     </div>
-                    <p id="status-voltage-text" class="text-[10px] text-emerald-400 mt-0.5 truncate"><i class="fa-solid fa-circle-check"></i> ปกติ (220-240V)</p>
+                    <p id="status-voltage-text" class="text-[10px] text-emerald-400 mt-0.5 truncate"><i class="fa-solid fa-circle-check"></i> ปกติ (190-230V)</p>
                 </div>
 
                 <div class="glass-card p-3 sm:p-4 rounded-xl sm:rounded-2xl border-l-4 border-l-amber-500">
@@ -198,7 +198,7 @@
                         <span id="val-kwh-total" class="text-xl sm:text-2xl font-bold text-purple-300 font-mono">0.00</span>
                         <span class="text-xs text-slate-400">kWh</span>
                     </div>
-                    <p id="val-kwh-month-sub" class="text-[10px] text-purple-300 mt-0.5 truncate">เดือนนี้รวม: 0.00 kWh</p>
+                    <p id="val-kwh-month-sub" class="text-[10px] text-purple-300 mt-0.5 truncate">เดือนนี้ใช้ไป: 0.00 kWh</p>
                 </div>
 
                 <div class="glass-card p-3 sm:p-4 rounded-xl sm:rounded-2xl border-l-4 border-l-rose-500 glow-rose col-span-2 xs:col-span-2 sm:col-span-1">
@@ -304,12 +304,12 @@
                     <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
                         <i class="fa-solid fa-calculator text-emerald-400"></i> คำนวณค่าไฟฟ้าแบบขั้นบันได (Progressive Electricity Tariff)
                     </h2>
-                    <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">ระบบคำนวณโดยการบวกตรงรวมค่า kWh (คอลัมน์ H) ประจำเดือนจาก Google Sheets</p>
+                    <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">คำนวณจากผลต่างหน่วยไฟฟ้าที่ใช้จริง (คอลัมน์ H) ประจำเดือนจาก Google Sheets</p>
                 </div>
                 <div class="flex items-center gap-2 shrink-0">
                     <label class="text-xs text-slate-300 font-medium"><i class="fa-solid fa-calendar-days text-emerald-400 mr-1"></i>เลือกเดือน:</label>
                     <select id="tariff-month-select" onchange="calculateTariffForMonth(this.value)" class="bg-slate-900 text-xs text-emerald-400 font-bold border border-emerald-500/50 rounded-xl px-3 py-2 focus:outline-none cursor-pointer shadow-md">
-                        <option value="current">เดือนปัจจุบัน (บวกตรงคอลัมน์ H)</option>
+                        <option value="current">เดือนปัจจุบัน (คอลัมน์ H)</option>
                     </select>
                 </div>
             </div>
@@ -318,7 +318,7 @@
                 <div class="lg:col-span-2 glass-card p-4 sm:p-6 rounded-xl sm:rounded-2xl space-y-4">
                     <h3 class="text-sm sm:text-base font-semibold text-slate-200 border-b border-slate-800 pb-2.5 flex items-center justify-between">
                         <span><i class="fa-solid fa-receipt text-amber-400 mr-1.5"></i>รายละเอียดการคิดค่าไฟประจำเดือน (<span id="selected-month-label" class="text-emerald-400">เดือนปัจจุบัน</span>)</span>
-                        <span class="text-xs font-normal text-slate-400">หน่วยรวม (คอลัมน์ H): <strong id="calc-total-kwh" class="text-sky-400 font-mono text-sm">0.00</strong> kWh</span>
+                        <span class="text-xs font-normal text-slate-400">หน่วยที่ใช้จริง (คอลัมน์ H): <strong id="calc-total-kwh" class="text-sky-400 font-mono text-sm">0.00</strong> kWh</span>
                     </h3>
 
                     <div class="space-y-2.5 text-xs sm:text-sm">
@@ -413,23 +413,23 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                             <div class="space-y-1">
                                 <label class="text-slate-300 font-medium">Voltage MAX Warn (V):</label>
-                                <input type="number" id="cfg-v-max" value="242" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono focus:border-rose-500 focus:outline-none">
+                                <input type="number" id="cfg-v-max" value="230" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono focus:border-rose-500 focus:outline-none">
                             </div>
                             <div class="space-y-1">
                                 <label class="text-slate-300 font-medium">Voltage MIN Warn (V):</label>
-                                <input type="number" id="cfg-v-min" value="185" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono focus:border-rose-500 focus:outline-none">
+                                <input type="number" id="cfg-v-min" value="190" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono focus:border-rose-500 focus:outline-none">
                             </div>
                             <div class="space-y-1">
                                 <label class="text-slate-300 font-medium">Current MAX Warn (A):</label>
-                                <input type="number" id="cfg-i-max" value="45" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono focus:border-rose-500 focus:outline-none">
+                                <input type="number" id="cfg-i-max" value="30" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono focus:border-rose-500 focus:outline-none">
                             </div>
                             <div class="space-y-1">
                                 <label class="text-slate-300 font-medium">Frequency MAX Warn (Hz):</label>
-                                <input type="number" id="cfg-freq-max" value="55" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono focus:border-rose-500 focus:outline-none">
+                                <input type="number" id="cfg-freq-max" value="52" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono focus:border-rose-500 focus:outline-none">
                             </div>
                             <div class="space-y-1 sm:col-span-2">
                                 <label class="text-slate-300 font-medium">Frequency MIN Warn (Hz):</label>
-                                <input type="number" id="cfg-freq-min" value="45" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono focus:border-rose-500 focus:outline-none">
+                                <input type="number" id="cfg-freq-min" value="40" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono focus:border-rose-500 focus:outline-none">
                             </div>
                         </div>
                     </div>
@@ -471,11 +471,11 @@
                                     <i class="fa-brands fa-line text-emerald-400 text-base"></i> เปิดใช้งาน LINE Messaging API
                                 </span>
                                 <label class="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" id="cfg-line-enable" checked class="sr-only peer">
+                                    <input type="checkbox" id="cfg-line-enable" class="sr-only peer">
                                     <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
                                 </label>
                             </div>
-                            <input type="text" id="cfg-line-token" value="ln_token_example_vru6823271" placeholder="LINE Messaging API Channel Access Token" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-300 font-mono focus:border-emerald-500 focus:outline-none">
+                            <input type="password" id="cfg-line-token" placeholder="LINE Messaging API Channel Access Token" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-300 font-mono focus:border-emerald-500 focus:outline-none">
                         </div>
 
                         <div class="space-y-1.5 pt-1">
@@ -489,8 +489,8 @@
                                 </label>
                             </div>
                             <div class="grid grid-cols-2 gap-2">
-                                <input type="text" id="cfg-telegram-bot" value="bot123456789:ABC..." class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-300 font-mono focus:border-sky-500 focus:outline-none" placeholder="Telegram Bot Token">
-                                <input type="text" id="cfg-telegram-chat" value="-100987654321" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-300 font-mono focus:border-sky-500 focus:outline-none" placeholder="Chat ID">
+                                <input type="password" id="cfg-telegram-bot" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-300 font-mono focus:border-sky-500 focus:outline-none" placeholder="Telegram Bot Token">
+                                <input type="password" id="cfg-telegram-chat" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-300 font-mono focus:border-sky-500 focus:outline-none" placeholder="Chat ID">
                             </div>
                         </div>
                     </div>
@@ -693,20 +693,20 @@
         let currentSubTimeRange = '24h';
 
         let systemConfig = {
-            vMax: 242,
-            vMin: 185,
-            iMax: 45,
-            freqMax: 55,
-            freqMin: 45,
+            vMax: 230,
+            vMin: 190,
+            iMax: 30,
+            freqMax: 52,
+            freqMin: 40,
             onPeakInterval: 15,
             offPeakInterval: 30,
             gasUrl: DEFAULT_GAS_URL,
-            lineEnable: true,
-            lineToken: "ln_token_example_vru6823271",
+            lineEnable: false,
+            lineToken: "",
             telegramEnable: false,
-            telegramBotToken: "bot123456789:ABC...",
-            telegramChatId: "-100987654321",
-            firstSendEnable: false,
+            telegramBotToken: "",
+            telegramChatId: "",
+            firstSendEnable: true,
             firstSendMsg: "⚡ [System Boot] ระบบ Smart Energy Monitor (ESP32) เริ่มทำงานเรียบร้อยแล้ว สถานะบอร์ด: ONLINE",
             morningReportMsg: "สถานะบอร์ด: ONLINE",
             timerMorningReport: "07:00",
@@ -794,6 +794,14 @@
             return t || "-";
         }
 
+        function parseLogTimestamp(dateStr, timeStr) {
+            const d = cleanDateStr(dateStr);
+            const t = cleanTimeStr(timeStr);
+            if (!d) return NaN;
+            const dt = new Date(`${d}T${t}:00+07:00`);
+            return dt.getTime();
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             initCharts();
             loadSettingsFromGAS();
@@ -842,10 +850,10 @@
                     if (cfg["First_Boot_Message"]) systemConfig.firstSendMsg = cfg["First_Boot_Message"];
 
                     if (cfg["Morning_Report"]) systemConfig.morningReportMsg = cfg["Morning_Report"];
-                    if (cfg["Timer_Morning_Report"]) systemConfig.timerMorningReport = cfg["Timer_Morning_Report"].toString().substring(0, 5);
+                    if (cfg["Timer_Morning_Report"]) systemConfig.timerMorningReport = cleanTimeStr(cfg["Timer_Morning_Report"]);
 
                     if (cfg["Daily_Report"]) systemConfig.dailyReportMsg = cfg["Daily_Report"];
-                    if (cfg["Timer_Daily_Report"]) systemConfig.timerDailyReport = cfg["Timer_Daily_Report"].toString().substring(0, 5);
+                    if (cfg["Timer_Daily_Report"]) systemConfig.timerDailyReport = cleanTimeStr(cfg["Timer_Daily_Report"]);
 
                     if (cfg["Tariff_Tier1_Rate"] !== undefined) systemConfig.rateTier1 = parseFloat(cfg["Tariff_Tier1_Rate"]);
                     if (cfg["Tariff_Tier2_Rate"] !== undefined) systemConfig.rateTier2 = parseFloat(cfg["Tariff_Tier2_Rate"]);
@@ -953,13 +961,13 @@
             const currentMonthKey = getCurrentMonthSumKeySafe();
             const currentMonthSum = getCurrentMonthSumKwh();
 
-            let optionsHtml = `<option value="current">เดือนปัจจุบัน (${formatMonthYearTH(currentMonthKey)} รวม: ${currentMonthSum.toLocaleString('th-TH', {minimumFractionDigits: 2})} kWh)</option>`;
+            let optionsHtml = `<option value="current">เดือนปัจจุบัน (${formatMonthYearTH(currentMonthKey)} ใช้ไป: ${currentMonthSum.toLocaleString('th-TH', {minimumFractionDigits: 2})} kWh)</option>`;
 
             const sortedMonths = Object.keys(monthlyKwhSummary).sort().reverse();
             sortedMonths.forEach(monthKey => {
                 let sumKwh = parseFloat(monthlyKwhSummary[monthKey]) || 0;
                 let labelTH = formatMonthYearTH(monthKey);
-                optionsHtml += `<option value="${monthKey}">เดือน ${labelTH} (รวมคอลัมน์ H: ${sumKwh.toLocaleString('th-TH', {minimumFractionDigits: 2})} kWh)</option>`;
+                optionsHtml += `<option value="${monthKey}">เดือน ${labelTH} (คอลัมน์ H: ${sumKwh.toLocaleString('th-TH', {minimumFractionDigits: 2})} kWh)</option>`;
             });
 
             selectEl.innerHTML = optionsHtml;
@@ -1012,7 +1020,7 @@
             if (document.getElementById('ft-total-cost')) document.getElementById('ft-total-cost').innerText = `${ftCost.toLocaleString('th-TH', {minimumFractionDigits: 2})} บาท`;
             if (document.getElementById('total-bill-grand')) document.getElementById('total-bill-grand').innerText = `${grandTotalBill.toLocaleString('th-TH', {minimumFractionDigits: 2})} บาท`;
             if (document.getElementById('val-est-cost') && selectedVal === 'current') document.getElementById('val-est-cost').innerText = grandTotalBill.toLocaleString('th-TH', {maximumFractionDigits: 2});
-            if (document.getElementById('val-kwh-month-sub')) document.getElementById('val-kwh-month-sub').innerText = `เดือนนี้รวม: ${getCurrentMonthSumKwh().toFixed(2)} kWh`;
+            if (document.getElementById('val-kwh-month-sub')) document.getElementById('val-kwh-month-sub').innerText = `เดือนนี้ใช้ไป: ${getCurrentMonthSumKwh().toFixed(2)} kWh`;
         }
 
         function setMainTimeRange(range) {
@@ -1029,26 +1037,49 @@
             updateSubChart();
         }
 
+        // กรองข้อมูลตามช่วงเวลาจริงจาก Timestamp (รองรับการเปลี่ยนรอบส่ง On-Peak / Off-Peak)
         function filterLogsByRange(logs, range) {
             if (!logs || logs.length === 0) return [];
 
-            let countNeeded = 96;
-            let sampleStep = 1;
+            let latestMs = 0;
+            for (let i = logs.length - 1; i >= 0; i--) {
+                const ts = parseLogTimestamp(logs[i].date, logs[i].time);
+                if (!isNaN(ts)) {
+                    latestMs = ts;
+                    break;
+                }
+            }
+            if (latestMs === 0) latestMs = Date.now();
+
+            let windowMs = 24 * 3600 * 1000;
+            let maxPoints = 120;
 
             if (range === '7d') {
-                countNeeded = 672;
-                sampleStep = 4;
+                windowMs = 7 * 24 * 3600 * 1000;
+                maxPoints = 180;
             } else if (range === '30d') {
-                countNeeded = 2880;
-                sampleStep = 16;
+                windowMs = 30 * 24 * 3600 * 1000;
+                maxPoints = 220;
             }
 
-            const sliced = logs.slice(-countNeeded);
-            const filtered = [];
-            for (let i = 0; i < sliced.length; i += sampleStep) {
-                filtered.push(sliced[i]);
+            const cutoffMs = latestMs - windowMs;
+            const inWindow = logs.filter(log => {
+                const ts = parseLogTimestamp(log.date, log.time);
+                return !isNaN(ts) && ts >= cutoffMs;
+            });
+
+            const targetLogs = inWindow.length > 0 ? inWindow : logs.slice(-96);
+            if (targetLogs.length <= maxPoints) return targetLogs;
+
+            const step = Math.ceil(targetLogs.length / maxPoints);
+            const sampled = [];
+            for (let i = 0; i < targetLogs.length; i += step) {
+                sampled.push(targetLogs[i]);
             }
-            return filtered;
+            if (sampled[sampled.length - 1] !== targetLogs[targetLogs.length - 1]) {
+                sampled.push(targetLogs[targetLogs.length - 1]);
+            }
+            return sampled;
         }
 
         function updateMainChart() {
@@ -1073,9 +1104,9 @@
             realtimeChartInstance.update('none');
         }
 
+        // อัปเดตกราฟวงจรย่อยโดยไม่ทำลาย Chart Instance เดิม (ไม่กระพริบและจำค่าที่กดซ่อนเส้นได้)
         function updateSubChart() {
-            const canvas = document.getElementById('subcircuitBarChart');
-            if (!canvas) return;
+            if (!subcircuitBarChartInstance) return;
 
             const filtered = filterLogsByRange(historicalLogs, currentSubTimeRange);
 
@@ -1083,43 +1114,22 @@
                 ? filtered.map(l => formatCleanTime(l.time, l.date, currentSubTimeRange)) 
                 : [realData.time || 'ปัจจุบัน'];
             
-            const datasets = realData.cts.map((ct, index) => {
+            subcircuitBarChartInstance.data.labels = labels;
+
+            realData.cts.forEach((ct, index) => {
                 const name = systemConfig.ctNames[`ct${ct.id}`] || ct.name;
                 const dataPoints = filtered.length > 0 
                     ? filtered.map(l => (l.sub_circuits ? parseFloat(l.sub_circuits[`ct${ct.id}_w`]) || 0 : 0))
                     : [ct.power];
 
-                return {
-                    label: `CT${ct.id} ${name}`,
-                    data: dataPoints,
-                    borderColor: chartColors[index],
-                    backgroundColor: chartColors[index],
-                    borderWidth: 2,
-                    tension: 0.3,
-                    pointRadius: currentSubTimeRange === '24h' ? 2 : 1,
-                    fill: false
-                };
-            });
-
-            if (subcircuitBarChartInstance) {
-                subcircuitBarChartInstance.destroy();
-            }
-
-            subcircuitBarChartInstance = new Chart(canvas.getContext('2d'), {
-                type: 'line',
-                data: { labels, datasets },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'top', labels: { color: '#cbd5e1', font: { family: 'Prompt', size: 10 } } }
-                    },
-                    scales: {
-                        x: { grid: { color: 'rgba(51, 65, 85, 0.25)' }, ticks: { color: '#94a3b8', font: { size: 10 } } },
-                        y: { beginAtZero: true, grid: { color: 'rgba(51, 65, 85, 0.30)' }, ticks: { color: '#94a3b8', font: { size: 10 } } }
-                    }
+                if (subcircuitBarChartInstance.data.datasets[index]) {
+                    subcircuitBarChartInstance.data.datasets[index].label = `CT${ct.id} ${name}`;
+                    subcircuitBarChartInstance.data.datasets[index].data = dataPoints;
+                    subcircuitBarChartInstance.data.datasets[index].pointRadius = currentSubTimeRange === '24h' ? 2 : 1;
                 }
             });
+
+            subcircuitBarChartInstance.update('none');
         }
 
         function syncSettingsToUI() {
@@ -1134,11 +1144,30 @@
             document.getElementById('cfg-gas-url').value = systemConfig.gasUrl;
 
             document.getElementById('cfg-line-enable').checked = systemConfig.lineEnable;
-            document.getElementById('cfg-line-token').value = systemConfig.lineToken;
+            const lineInput = document.getElementById('cfg-line-token');
+            if (systemConfig.lineToken === "********") {
+                lineInput.value = "";
+                lineInput.placeholder = "🔒 บันทึก Token ไว้แล้ว (เว้นว่างหากไม่เปลี่ยน)";
+            } else {
+                lineInput.value = systemConfig.lineToken || "";
+            }
 
             document.getElementById('cfg-telegram-enable').checked = systemConfig.telegramEnable;
-            document.getElementById('cfg-telegram-bot').value = systemConfig.telegramBotToken;
-            document.getElementById('cfg-telegram-chat').value = systemConfig.telegramChatId;
+            const tgBotInput = document.getElementById('cfg-telegram-bot');
+            if (systemConfig.telegramBotToken === "********") {
+                tgBotInput.value = "";
+                tgBotInput.placeholder = "🔒 บันทึก Bot Token ไว้แล้ว";
+            } else {
+                tgBotInput.value = systemConfig.telegramBotToken || "";
+            }
+
+            const tgChatInput = document.getElementById('cfg-telegram-chat');
+            if (systemConfig.telegramChatId === "********") {
+                tgChatInput.value = "";
+                tgChatInput.placeholder = "🔒 บันทึก Chat ID ไว้แล้ว";
+            } else {
+                tgChatInput.value = systemConfig.telegramChatId || "";
+            }
 
             document.getElementById('cfg-firstsend-enable').checked = systemConfig.firstSendEnable;
             document.getElementById('cfg-firstsend-msg').value = systemConfig.firstSendMsg;
@@ -1203,14 +1232,29 @@
             }
 
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-sky-500', 'text-white', 'shadow-md'));
-            document.querySelectorAll('.mobile-nav-btn').forEach(btn => btn.classList.remove('text-sky-400', 'font-semibold'));
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-sky-500', 'text-white', 'shadow-md');
+                btn.classList.add('text-slate-400');
+            });
+            document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
+                btn.classList.remove('text-sky-400', 'font-semibold');
+                btn.classList.add('text-slate-400');
+            });
 
             const activeTab = document.getElementById(`tab-${tabId}`);
             if (activeTab) activeTab.classList.remove('hidden');
             
             const activeNav = document.getElementById(`nav-${tabId}`);
-            if (activeNav) activeNav.classList.add('bg-sky-500', 'text-white', 'shadow-md');
+            if (activeNav) {
+                activeNav.classList.remove('text-slate-400');
+                activeNav.classList.add('bg-sky-500', 'text-white', 'shadow-md');
+            }
+
+            const activeMobileNav = document.getElementById(`mobile-nav-${tabId}`);
+            if (activeMobileNav) {
+                activeMobileNav.classList.remove('text-slate-400');
+                activeMobileNav.classList.add('text-sky-400', 'font-semibold');
+            }
 
             setTimeout(() => {
                 if (tabId === 'dashboard' && realtimeChartInstance) realtimeChartInstance.resize();
@@ -1238,7 +1282,36 @@
                     });
                 }
 
-                updateSubChart();
+                const ctxSub = document.getElementById('subcircuitBarChart')?.getContext('2d');
+                if (ctxSub) {
+                    subcircuitBarChartInstance = new Chart(ctxSub, {
+                        type: 'line',
+                        data: {
+                            labels: [],
+                            datasets: realData.cts.map((ct, index) => ({
+                                label: `CT${ct.id} ${systemConfig.ctNames[`ct${ct.id}`] || ct.name}`,
+                                data: [],
+                                borderColor: chartColors[index],
+                                backgroundColor: chartColors[index],
+                                borderWidth: 2,
+                                tension: 0.3,
+                                pointRadius: 2,
+                                fill: false
+                            }))
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { position: 'top', labels: { color: '#cbd5e1', font: { family: 'Prompt', size: 10 } } }
+                            },
+                            scales: {
+                                x: { grid: { color: 'rgba(51, 65, 85, 0.25)' }, ticks: { color: '#94a3b8', font: { size: 10 } } },
+                                y: { beginAtZero: true, grid: { color: 'rgba(51, 65, 85, 0.30)' }, ticks: { color: '#94a3b8', font: { size: 10 } } }
+                            }
+                        }
+                    });
+                }
 
                 const ctxPie = document.getElementById('costDistributionChart')?.getContext('2d');
                 if (ctxPie) {
@@ -1269,6 +1342,24 @@
 
         function updateDashboardUI() {
             document.getElementById('val-voltage').innerText = realData.voltage.toFixed(1);
+
+            const vStatusEl = document.getElementById('status-voltage-text');
+            if (vStatusEl) {
+                if (realData.voltage <= 0) {
+                    vStatusEl.className = "text-[10px] text-slate-400 mt-0.5 truncate";
+                    vStatusEl.innerHTML = `<i class="fa-solid fa-circle-minus"></i> รอสัญญาณแรงดัน`;
+                } else if (realData.voltage > systemConfig.vMax) {
+                    vStatusEl.className = "text-[10px] text-rose-400 font-semibold mt-0.5 truncate";
+                    vStatusEl.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> แรงดันสูงเกิน (${systemConfig.vMax}V)`;
+                } else if (realData.voltage < systemConfig.vMin) {
+                    vStatusEl.className = "text-[10px] text-amber-400 font-semibold mt-0.5 truncate";
+                    vStatusEl.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> แรงดันตกต่ำกว่า (${systemConfig.vMin}V)`;
+                } else {
+                    vStatusEl.className = "text-[10px] text-emerald-400 mt-0.5 truncate";
+                    vStatusEl.innerHTML = `<i class="fa-solid fa-circle-check"></i> ปกติ (${systemConfig.vMin}-${systemConfig.vMax}V)`;
+                }
+            }
+
             document.getElementById('val-current-total').innerText = realData.currentTotal.toFixed(2);
             document.getElementById('val-power-total').innerText = Math.round(realData.powerTotal).toLocaleString('th-TH');
             document.getElementById('val-power-kw').innerText = `${(realData.powerTotal / 1000).toFixed(2)} kW`;
@@ -1276,7 +1367,7 @@
             document.getElementById('val-freq').innerText = `${realData.freq.toFixed(1)} Hz`;
             document.getElementById('val-kwh-total').innerText = realData.kwhTotal.toFixed(2);
             if (document.getElementById('val-kwh-month-sub')) {
-                document.getElementById('val-kwh-month-sub').innerText = `เดือนนี้รวม: ${getCurrentMonthSumKwh().toFixed(2)} kWh`;
+                document.getElementById('val-kwh-month-sub').innerText = `เดือนนี้ใช้ไป: ${getCurrentMonthSumKwh().toFixed(2)} kWh`;
             }
 
             let ctCardsHtml = '';
@@ -1310,20 +1401,21 @@
                 subPowerSum += ct.power;
                 const name = systemConfig.ctNames[`ct${ct.id}`] || ct.name;
                 const warnLimit = systemConfig.ctWarns[`ct${ct.id}`] || 15;
+                const isOverCurrent = ct.current > warnLimit;
 
                 subGridHtml += `
-                    <div class="glass-card p-3 sm:p-4 rounded-xl sm:rounded-2xl border-l-4 border-sky-500 space-y-2">
+                    <div class="glass-card p-3 sm:p-4 rounded-xl sm:rounded-2xl border-l-4 ${isOverCurrent ? 'border-rose-500' : 'border-sky-500'} space-y-2">
                         <div class="flex justify-between items-start">
                             <div>
                                 <span class="text-[9px] font-bold text-slate-400">CT CH ${ct.id} (GPIO ${ct.gpio})</span>
                                 <h4 class="text-xs sm:text-sm font-bold text-white truncate max-w-[140px]">${name}</h4>
                             </div>
-                            <span class="px-1.5 py-0.5 rounded text-[9px] bg-slate-800 text-slate-300 border border-slate-700">Warn: ${warnLimit}A</span>
+                            <span class="px-1.5 py-0.5 rounded text-[9px] ${isOverCurrent ? 'bg-rose-500/20 text-rose-300 border-rose-500/40' : 'bg-slate-800 text-slate-300 border-slate-700'} border">Warn: ${warnLimit}A</span>
                         </div>
                         <div class="grid grid-cols-2 gap-2 text-xs pt-1 border-t border-slate-800/80">
                             <div>
                                 <span class="text-slate-400 text-[9px] block">กระแสไฟฟ้า</span>
-                                <span class="text-base sm:text-lg font-bold text-emerald-400 font-mono">${ct.current.toFixed(2)} A</span>
+                                <span class="text-base sm:text-lg font-bold ${isOverCurrent ? 'text-rose-400' : 'text-emerald-400'} font-mono">${ct.current.toFixed(2)} A</span>
                             </div>
                             <div>
                                 <span class="text-slate-400 text-[9px] block">กำลังไฟฟ้า</span>
@@ -1345,11 +1437,11 @@
         }
 
         async function saveAllSettings() {
-            systemConfig.vMax = parseFloat(document.getElementById('cfg-v-max').value) || 242;
-            systemConfig.vMin = parseFloat(document.getElementById('cfg-v-min').value) || 185;
-            systemConfig.iMax = parseFloat(document.getElementById('cfg-i-max').value) || 45;
-            systemConfig.freqMax = parseFloat(document.getElementById('cfg-freq-max').value) || 55;
-            systemConfig.freqMin = parseFloat(document.getElementById('cfg-freq-min').value) || 45;
+            systemConfig.vMax = parseFloat(document.getElementById('cfg-v-max').value) || 230;
+            systemConfig.vMin = parseFloat(document.getElementById('cfg-v-min').value) || 190;
+            systemConfig.iMax = parseFloat(document.getElementById('cfg-i-max').value) || 30;
+            systemConfig.freqMax = parseFloat(document.getElementById('cfg-freq-max').value) || 52;
+            systemConfig.freqMin = parseFloat(document.getElementById('cfg-freq-min').value) || 40;
 
             systemConfig.onPeakInterval = parseInt(document.getElementById('cfg-interval-onpeak').value, 10) || 15;
             systemConfig.offPeakInterval = parseInt(document.getElementById('cfg-interval-offpeak').value, 10) || 30;
@@ -1357,11 +1449,15 @@
             systemConfig.gasUrl = inputUrl || DEFAULT_GAS_URL;
 
             systemConfig.lineEnable = document.getElementById('cfg-line-enable').checked;
-            systemConfig.lineToken = document.getElementById('cfg-line-token').value;
+            const newLineToken = document.getElementById('cfg-line-token').value.trim();
+            if (newLineToken !== "") systemConfig.lineToken = newLineToken;
 
             systemConfig.telegramEnable = document.getElementById('cfg-telegram-enable').checked;
-            systemConfig.telegramBotToken = document.getElementById('cfg-telegram-bot').value;
-            systemConfig.telegramChatId = document.getElementById('cfg-telegram-chat').value;
+            const newTgBot = document.getElementById('cfg-telegram-bot').value.trim();
+            if (newTgBot !== "") systemConfig.telegramBotToken = newTgBot;
+
+            const newTgChat = document.getElementById('cfg-telegram-chat').value.trim();
+            if (newTgChat !== "") systemConfig.telegramChatId = newTgChat;
 
             systemConfig.firstSendEnable = document.getElementById('cfg-firstsend-enable').checked;
             systemConfig.firstSendMsg = document.getElementById('cfg-firstsend-msg').value;
